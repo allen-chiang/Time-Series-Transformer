@@ -8,15 +8,16 @@ class Sequence_Transformer_Base(object):
         raise NotImplementedError()
 
 class Moving_Average(Sequence_Transformer_Base):
-    def __init__(self,window_size):
+    def __init__(self,window_size,padding_value = np.nan):
         super().__init__()
         self.window_size = window_size
+        self.padding_value = padding_value
 
     def Call(self,arr):
         return np.pad(
             self._moving_average(arr,self.window_size),
             (self.window_size-1,0),'constant',
-            constant_values = np.nan
+            constant_values = self.padding_value
         )
 
     def _moving_average(self,a,n) :

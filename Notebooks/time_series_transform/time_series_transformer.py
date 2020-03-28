@@ -11,7 +11,7 @@ from time_series_transform.sequence_transfomer import Sequence_Transformer_Base
 
 class Time_Series_Transformer(object):
 
-    def __init__ (self,df,dimList,encoder = LabelEncoder,encodeDict = None):
+    def __init__ (self,df,dimList,encoder = LabelEncoder,encodeDict = None,seqTransformerList= None):
         """__init__ this class transfroms pandas frame into time series tensors with its corresponding categorical data
         
         the column of data frame has to be [dim1, dim2,dim....., t0,t1,t2,t....], and the index has to be the item or id
@@ -24,8 +24,10 @@ class Time_Series_Transformer(object):
             list of categorical data in the data frame
         encoder : scikit-learn transformer like class, optional
             this attribute is used to label the categorical data, and it must implmemnt scikit-learn transformer api, by default LabelEncoder
-        encodeDict : dict with label encoder object, optional
+        encodeDict : dict of label encoder object, optional
             this dictionary will use pre-trained encoder to label data --> it is designed for validation set or test set data, by default None
+        seqTransformerList: list of transformer for seqential data
+            this list is used for manipulating sequential data as new feature --> item of this list must implment Sequence_Transformer_Base
         """
         super().__init__()
         self._df = df
@@ -42,18 +44,18 @@ class Time_Series_Transformer(object):
         return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)
 
     def _get_time_tensor(self,arr,window_size,returnY = True):
-        if not returnY:
-            return self._rolling_window(arr,window_size).reshape(-1,window_size,1) 
         tmp = self._rolling_window(arr,window_size+1)
         Xtensor = tmp[:,:-1].reshape(-1,window_size,1)
         Ytensor = tmp[:,-1].reshape(-1,1)
+        if not returnY:
+            return Xtensor
         return (Xtensor,Ytensor)
 
     def _tensor_transfomer(self,arr,window_size,transformer):
         if not isinstance(transformer,Sequence_Transformer_Base):
             raise ValueError('Transformer must implment Sequence_Transformer_Base')
         tmpArr = transformer.Call(arr)
-        return self._get_time_tensor(tmpArr,window_size)
+        return self._get_time_tensor(tmpArr,window_size,False)
 
     def _tensor_factory(self,arr,window_size,categoryIx,seqTransformerList=[]):
         X,Ytensor = self._get_time_tensor(arr,window_size)
@@ -96,7 +98,7 @@ class Time_Series_Transformer(object):
     def _get_tf_output_type(self):
         dct = {}
         for i in self.encodeDict:
-            dct[i] = tf.int16
+            dct[i] = tf.int8
         dct['time_series'] = tf.float32
         return (dct,tf.float32)
 
