@@ -9,9 +9,24 @@ from matplotlib import pyplot as plt
 from sklearn.preprocessing import LabelEncoder
 
 
-class feature_engineering(object):
+class Time_Series_Transformer(object):
 
     def __init__ (self,df,dimList,encoder = LabelEncoder,encodeDict = None):
+        """__init__ this class transfroms pandas frame into time series tensors with its corresponding categorical data
+        
+        the column of data frame has to be [dim1, dim2,dim....., t0,t1,t2,t....], and the index has to be the item or id
+        
+        Parameters
+        ----------
+        df : pandas data frame
+            the input data frame with time series data and categorical data as columns, and item or id as index
+        dimList : list or iterable
+            list of categorical data in the data frame
+        encoder : scikit-learn transformer like class, optional
+            this attribute is used to label the categorical data, and it must implmemnt scikit-learn transformer api, by default LabelEncoder
+        encodeDict : dict with label encoder object, optional
+            this dictionary will use pre-trained encoder to label data --> it is designed for validation set or test set data, by default None
+        """
         super().__init__()
         self._df = df
         self._dimList = dimList
@@ -41,13 +56,6 @@ class feature_engineering(object):
         Xtensor['sells'] = X
         return (Xtensor,Ytensor)
 
-    def np_to_time_tensor_generator(self,windowSize):
-        if np.ndim(self.arr) > 1:
-            for ix,v in enumerate(self.arr):
-                yield self._tensor_factory(v,windowSize,ix)
-        else:
-            yield self._tensor_factory(self.arr,windowSize,0) 
-
     def _label_encode(self,arr,encoder):
         if encoder is None:
             encoder = self._encoder()
@@ -74,24 +82,75 @@ class feature_engineering(object):
         tmp += label
         return tmp
 
-    def get_encoder_class(self,label):
-        return len(self.encodeDict[label].classes_)
-    
     def _get_tf_output_type(self):
         dct = {}
         for i in self.encodeDict:
             dct[i] = tf.int16
         dct['sells'] = tf.float32
         return (dct,tf.float32)
-    
+
     def _get_tf_output_shape(self,window_size):
         dct = {}
         for i in self.encodeDict:
             dct[i] = tf.TensorShape([None,1])
         dct['sells'] = tf.TensorShape([None,window_size,1])
         return (dct,tf.TensorShape([None,1]))
+
+
+    def np_to_time_tensor_generator(self,windowSize):
+        """np_to_time_tensor_generator this function will prepare the df data into generator type object
+        
+        this function is based on _tensor_factory function to transform the data
+        
+        Parameters
+        ----------
+        windowSize : int
+            window size used to group time series sequence
+        
+        Yields
+        -------
+        tuple
+            it will yield (X,y)
+        """
+        if np.ndim(self.arr) > 1:
+            for ix,v in enumerate(self.arr):
+                yield self._tensor_factory(v,windowSize,ix)
+        else:
+            yield self._tensor_factory(self.arr,windowSize,0) 
+
+    def get_encoder_class(self,label):
+        """get_encoder_class this function will return the class number of the encoding label
+        
+        
+        Parameters
+        ----------
+        label : str
+            encoding class name
+        
+        Returns
+        -------
+        int
+            the class number
+        """
+        return len(self.encodeDict[label].classes_)
+    
     
     def get_tf_dataset(self,window_size):
+        """get_tf_dataset create tensorflow dataset object
+        
+        the tensorflow dataset object will be from generator type and based upon np_to_time_tensor_generator obeject.
+        each iteration of the tensorflow object will be (X,y) --> ({'time_series':tensor,'dim':value,'dim2':value...},value)
+        
+        Parameters
+        ----------
+        window_size : int
+            window size using for time series sequence
+        
+        Returns
+        -------
+        tensorflow dataset
+            tensorflwow dataset for training deep learning model
+        """
         return tf.data.Dataset.from_generator(
                     self.np_to_time_tensor_generator,
                     self._get_tf_output_type(),
