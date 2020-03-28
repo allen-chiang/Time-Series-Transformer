@@ -107,7 +107,7 @@ class Time_Series_Transformer(object):
         dct = {}
         for i in self.encodeDict:
             dct[i] = tf.TensorShape([None,1])
-        dct['time_series'] = tf.TensorShape([None,window_size,1])
+        dct['time_series'] = tf.TensorShape([None,window_size,1+len(self.seqTransformerList)])
         return (dct,tf.TensorShape([None,1]))
 
 
