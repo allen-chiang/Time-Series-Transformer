@@ -7,7 +7,7 @@ from pyarrow import parquet as pq
 from collections import defaultdict
 from matplotlib import pyplot as plt
 from sklearn.preprocessing import LabelEncoder
-
+from time_series_transform.sequence_transfomer import Sequence_Transformer_Base
 
 class Time_Series_Transformer(object):
 
@@ -41,19 +41,30 @@ class Time_Series_Transformer(object):
         strides = a.strides + (a.strides[-1],)
         return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)
 
-    def _get_time_tensor(self,arr,window_size):
+    def _get_time_tensor(self,arr,window_size,returnY = True):
+        if not returnY:
+            return self._rolling_window(arr,window_size).reshape(-1,window_size,1) 
         tmp = self._rolling_window(arr,window_size+1)
         Xtensor = tmp[:,:-1].reshape(-1,window_size,1)
         Ytensor = tmp[:,-1].reshape(-1,1)
         return (Xtensor,Ytensor)
 
-    def _tensor_factory(self,arr,window_size,categoryIx):
+    def _tensor_transfomer(self,arr,window_size,transformer):
+        if not isinstance(transformer,Sequence_Transformer_Base):
+            raise ValueError('Transformer must implment Sequence_Transformer_Base')
+        tmpArr = transformer.Call(arr)
+        return self._get_time_tensor(tmpArr,window_size)
+
+    def _tensor_factory(self,arr,window_size,categoryIx,seqTransformerList=[]):
         X,Ytensor = self._get_time_tensor(arr,window_size)
+        for i in seqTransformerList:
+            tmpArr = self._tensor_transfomer(arr,window_size,i)
+            X = np.dstack((X,tmpArr))
         Xtensor = {}
         for i in self.labelDict:
             label = self.labelDict[i][categoryIx]
             Xtensor[i] = self._label_shape_transform(label,Ytensor.shape)
-        Xtensor['sells'] = X
+        Xtensor['time_series'] = X
         return (Xtensor,Ytensor)
 
     def _label_encode(self,arr,encoder):
@@ -86,14 +97,14 @@ class Time_Series_Transformer(object):
         dct = {}
         for i in self.encodeDict:
             dct[i] = tf.int16
-        dct['sells'] = tf.float32
+        dct['time_series'] = tf.float32
         return (dct,tf.float32)
 
     def _get_tf_output_shape(self,window_size):
         dct = {}
         for i in self.encodeDict:
             dct[i] = tf.TensorShape([None,1])
-        dct['sells'] = tf.TensorShape([None,window_size,1])
+        dct['time_series'] = tf.TensorShape([None,window_size,1])
         return (dct,tf.TensorShape([None,1]))
 
 
