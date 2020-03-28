@@ -36,6 +36,7 @@ class Time_Series_Transformer(object):
         self.indexList = df.index.tolist()
         self._encoder = encoder
         self.labelDict,self.encodeDict = self._pandas_to_categorical_encode(encodeDict)
+        self.seqTransformerList = seqTransformerList
 
 
     def _rolling_window(self,a, window):
@@ -127,9 +128,9 @@ class Time_Series_Transformer(object):
         """
         if np.ndim(self.arr) > 1:
             for ix,v in enumerate(self.arr):
-                yield self._tensor_factory(v,windowSize,ix)
+                yield self._tensor_factory(v,windowSize,ix,self.seqTransformerList)
         else:
-            yield self._tensor_factory(self.arr,windowSize,0) 
+            yield self._tensor_factory(self.arr,windowSize,0,self.seqTransformerList) 
 
     def get_encoder_class(self,label):
         """get_encoder_class this function will return the class number of the encoding label
