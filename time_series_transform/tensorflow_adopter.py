@@ -3,8 +3,13 @@ import pandas as pd
 import tensorflow as tf
 
 class TFRecord_Generator(object):
-    def __init__(self):
-        pass
+    def __init__(self,fileName,dtypeDict={}):
+        self.fileName = fileName
+        self._dtypeDict = dtypeDict
+
+    def _get_dtypes(self):
+        dtypeDict = {}
+        return dtypeDict
     
     def _bytes_feature(self,value):
         """Returns a bytes_list from a string / byte."""
@@ -21,17 +26,21 @@ class TFRecord_Generator(object):
         return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
 
     def _tensor_feature(self,value):
+        """Returns an bytes_list from a numpy tensor"""
         return self._bytes_feature(tf.io.serialize_tensor(value))
 
     def _valueDict_builder(self,data):
         valueDict = {}
         for i in data:
             if np.ndim(data[i]) > 0:
+                self._dtypeDict[i] = 'tensor'
                 valueDict[i] = self._tensor_feature(data[i])
             else:
                 if data[i].dtype == np.int:
+                    self._dtypeDict[i] = 'int'
                     valueDict[i] = self._int64_feature(data[i])
                 else:
+                    self._dtypeDict[i] = 'float'
                     valueDict[i] = self._float_feature(data[i])
         return valueDict
 
@@ -39,9 +48,37 @@ class TFRecord_Generator(object):
         example_proto = tf.train.Example(features=tf.train.Features(feature=valueDict))
         return example_proto.SerializeToString()
 
-    def write_tfRecord(self,fileName,data):
-        with tf.io.TFRecordWriter(fileName) as writer:
-            for i in data:
-                serialized_features_dataset = self.tfExample_factory(i)
+    def write_tfRecord(self,data):
+        with tf.io.TFRecordWriter(self.fileName) as writer:
+            for X,y in data:
+                X['label'] = y
+                valueDict = self._valueDict_builder(X)
+                serialized_features_dataset = self.tfExample_factory(valueDict)
                 writer.write(serialized_features_dataset)
+
+    def feature_des_builder(self):
+        feature_desc = {}
+        for i in self._dtypeDict:
+            if self._dtypeDict[i] == 'tensor':
+                feature_desc[i] = tf.io.FixedLenFeature((), tf.string)
+            elif self._dtypeDict[i] == 'float':
+                feature_desc[i] = tf.io.FixedLenFeature((), tf.float32)
+            elif self._dtypeDict[i] == 'int':
+                feature_desc[i] = tf.io.FixedLenFeature((), tf.int64)
+        return feature_desc
+
+    def _read_tfrecord(self,serialized_example,feature_desc,dtypeDict):
+        record = {}
+        example = tf.io.parse_single_example(serialized_example,feature_desc)
+        for i in dtypeDict:
+            if dtypeDict[i] == 'tensor':
+                record[i] = tf.io.parse_tensor(example[i], out_type = tf.float32)
+            else:
+                record[i] = example[i]
+        return record
+
+    def make_tfDataset(self):
+        feature_desc = self.feature_des_builder()
+        raw_dataset = tf.data.TFRecordDataset(self.fileName)
+        return raw_dataset.map(lambda x: self._read_tfrecord(x,feature_desc,self._dtypeDict))
 
