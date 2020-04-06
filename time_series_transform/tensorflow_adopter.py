@@ -3,9 +3,10 @@ import pandas as pd
 import tensorflow as tf
 
 class TFRecord_Generator(object):
-    def __init__(self,fileName,dtypeDict={}):
+    def __init__(self,fileName,dtypeDict={},compression_type = 'GZIP'):
         self.fileName = fileName
         self._dtypeDict = dtypeDict
+        self._compression_type = compression_type
 
     def _get_dtypes(self):
         dtypeDict = {}
@@ -59,7 +60,7 @@ class TFRecord_Generator(object):
         return example_proto.SerializeToString()
 
     def write_tfRecord(self,data):
-        with tf.io.TFRecordWriter(self.fileName) as writer:
+        with tf.io.TFRecordWriter(self.fileName,self._compression_type) as writer:
             for X,y in data:
                 X['label'] = y
                 valueDict = self._valueDict_builder(X)
@@ -79,6 +80,6 @@ class TFRecord_Generator(object):
 
     def make_tfDataset(self,tensor_opt_dtype = tf.float32):
         feature_desc = self.feature_des_builder()
-        raw_dataset = tf.data.TFRecordDataset(self.fileName)
+        raw_dataset = tf.data.TFRecordDataset(self.fileName,compression_type=self._compression_type)
         return raw_dataset.map(lambda x: self._read_tfrecord(x,feature_desc,self._dtypeDict,tensor_opt_dtype))
 
