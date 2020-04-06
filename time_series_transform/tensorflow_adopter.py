@@ -27,7 +27,7 @@ class TFRecord_Generator(object):
 
     def _tensor_feature(self,value):
         """Returns an bytes_list from a numpy tensor"""
-        return self._bytes_feature(tf.io.serialize_tensor(value))
+        return self._bytes_feature(tf.io.serialize_tensor(value.astype(np.float32)))
 
     def _valueDict_builder(self,data):
         valueDict = {}
