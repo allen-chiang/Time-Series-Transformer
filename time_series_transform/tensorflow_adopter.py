@@ -3,9 +3,10 @@ import pandas as pd
 import tensorflow as tf
 
 class TFRecord_Generator(object):
-    def __init__(self,fileName,dtypeDict={}):
+    def __init__(self,fileName,dtypeDict={},compression_type = 'GZIP'):
         self.fileName = fileName
         self._dtypeDict = dtypeDict
+        self._compression_type = compression_type
 
     def _get_dtypes(self):
         dtypeDict = {}
@@ -33,14 +34,14 @@ class TFRecord_Generator(object):
         valueDict = {}
         for i in data:
             if np.ndim(data[i]) > 0:
-                self._dtypeDict[i] = 'tensor'
+                self._dtypeDict[i] = ('tensor',data[i].shape)
                 valueDict[i] = self._tensor_feature(data[i])
             else:
                 if data[i].dtype == np.int:
-                    self._dtypeDict[i] = 'int'
+                    self._dtypeDict[i] = ('int',[1])
                     valueDict[i] = self._int64_feature(data[i])
                 else:
-                    self._dtypeDict[i] = 'float'
+                    self._dtypeDict[i] = ('float',[1])
                     valueDict[i] = self._float_feature(data[i])
         return valueDict
 
@@ -48,8 +49,10 @@ class TFRecord_Generator(object):
         record = {}
         example = tf.io.parse_single_example(serialized_example,feature_desc)
         for i in dtypeDict:
-            if dtypeDict[i] == 'tensor':
-                record[i] = tf.io.parse_tensor(example[i], out_type = tensor_opt_dtype)
+            if dtypeDict[i][0] == 'tensor':
+                tmp = tf.io.parse_tensor(example[i], out_type = tensor_opt_dtype)
+                tmp.set_shape(dtypeDict[i][1])
+                record[i] = tmp
             else:
                 record[i] = example[i]
         return record
@@ -59,7 +62,7 @@ class TFRecord_Generator(object):
         return example_proto.SerializeToString()
 
     def write_tfRecord(self,data):
-        with tf.io.TFRecordWriter(self.fileName) as writer:
+        with tf.io.TFRecordWriter(self.fileName,self._compression_type) as writer:
             for X,y in data:
                 X['label'] = y
                 valueDict = self._valueDict_builder(X)
@@ -69,16 +72,16 @@ class TFRecord_Generator(object):
     def feature_des_builder(self):
         feature_desc = {}
         for i in self._dtypeDict:
-            if self._dtypeDict[i] == 'tensor':
+            if self._dtypeDict[i][0] == 'tensor':
                 feature_desc[i] = tf.io.FixedLenFeature((), tf.string)
-            elif self._dtypeDict[i] == 'float':
+            elif self._dtypeDict[i][0] == 'float':
                 feature_desc[i] = tf.io.FixedLenFeature((), tf.float32)
-            elif self._dtypeDict[i] == 'int':
+            elif self._dtypeDict[i][0] == 'int':
                 feature_desc[i] = tf.io.FixedLenFeature((), tf.int64)
         return feature_desc
 
     def make_tfDataset(self,tensor_opt_dtype = tf.float32):
         feature_desc = self.feature_des_builder()
-        raw_dataset = tf.data.TFRecordDataset(self.fileName)
+        raw_dataset = tf.data.TFRecordDataset(self.fileName,compression_type=self._compression_type)
         return raw_dataset.map(lambda x: self._read_tfrecord(x,feature_desc,self._dtypeDict,tensor_opt_dtype))
 
