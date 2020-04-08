@@ -34,14 +34,14 @@ class TFRecord_Generator(object):
         valueDict = {}
         for i in data:
             if np.ndim(data[i]) > 0:
-                self._dtypeDict[i] = 'tensor'
+                self._dtypeDict[i] = ('tensor',data[i].shape)
                 valueDict[i] = self._tensor_feature(data[i])
             else:
                 if data[i].dtype == np.int:
-                    self._dtypeDict[i] = 'int'
+                    self._dtypeDict[i] = ('int',[1])
                     valueDict[i] = self._int64_feature(data[i])
                 else:
-                    self._dtypeDict[i] = 'float'
+                    self._dtypeDict[i] = ('float',[1])
                     valueDict[i] = self._float_feature(data[i])
         return valueDict
 
@@ -49,8 +49,10 @@ class TFRecord_Generator(object):
         record = {}
         example = tf.io.parse_single_example(serialized_example,feature_desc)
         for i in dtypeDict:
-            if dtypeDict[i] == 'tensor':
-                record[i] = tf.io.parse_tensor(example[i], out_type = tensor_opt_dtype)
+            if dtypeDict[i][0] == 'tensor':
+                tmp = tf.io.parse_tensor(example[i], out_type = tensor_opt_dtype)
+                tmp.set_shape(dtypeDict[i][1])
+                record[i] = tmp
             else:
                 record[i] = example[i]
         return record
@@ -70,11 +72,11 @@ class TFRecord_Generator(object):
     def feature_des_builder(self):
         feature_desc = {}
         for i in self._dtypeDict:
-            if self._dtypeDict[i] == 'tensor':
+            if self._dtypeDict[i][0] == 'tensor':
                 feature_desc[i] = tf.io.FixedLenFeature((), tf.string)
-            elif self._dtypeDict[i] == 'float':
+            elif self._dtypeDict[i][0] == 'float':
                 feature_desc[i] = tf.io.FixedLenFeature((), tf.float32)
-            elif self._dtypeDict[i] == 'int':
+            elif self._dtypeDict[i][0] == 'int':
                 feature_desc[i] = tf.io.FixedLenFeature((), tf.int64)
         return feature_desc
 
