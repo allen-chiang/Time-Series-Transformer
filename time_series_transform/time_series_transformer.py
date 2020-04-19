@@ -12,7 +12,7 @@ from time_series_transform.sequence_transfomer import Sequence_Transformer_Base
 class Time_Series_Transformer(object):
 
     def __init__ (self,df,dimList,encoder = LabelEncoder,encodeDict = None,seqTransformerList= None):
-        """__init__ this class transfroms pandas frame into time series tensors with its corresponding categorical data
+        """this class transfroms pandas frame into time series tensors with its corresponding categorical data
         
         the column of data frame has to be [dim1, dim2,dim....., t0,t1,t2,t....], and the index has to be the item or id
         
@@ -96,21 +96,6 @@ class Time_Series_Transformer(object):
         tmp += label
         return tmp
 
-    def _get_tf_output_type(self):
-        dct = {}
-        for i in self.encodeDict:
-            dct[i] = tf.int8
-        dct['time_series'] = tf.float32
-        return (dct,tf.float32)
-
-    def _get_tf_output_shape(self,window_size):
-        dct = {}
-        for i in self.encodeDict:
-            dct[i] = tf.TensorShape([None,1])
-        dct['time_series'] = tf.TensorShape([None,window_size,1+len(self.seqTransformerList)])
-        return (dct,tf.TensorShape([None,1]))
-
-
     def np_to_time_tensor_generator(self,windowSize):
         """np_to_time_tensor_generator this function will prepare the df data into generator type object
         
@@ -147,27 +132,17 @@ class Time_Series_Transformer(object):
             the class number
         """
         return len(self.encodeDict[label].classes_)
+
+
+class Time_Series_Tensor_Factory(object):
+
+    def __init__(self):
+        super().__init__()
+
     
+
+class Time_Series_Tensor(object):
+    def __init__(self):
+        self.data = None
+
     
-    def get_tf_dataset(self,window_size):
-        """get_tf_dataset create tensorflow dataset object
-        
-        the tensorflow dataset object will be from generator type and based upon np_to_time_tensor_generator obeject.
-        each iteration of the tensorflow object will be (X,y) --> ({'time_series':tensor,'dim':value,'dim2':value...},value)
-        
-        Parameters
-        ----------
-        window_size : int
-            window size using for time series sequence
-        
-        Returns
-        -------
-        tensorflow dataset
-            tensorflwow dataset for training deep learning model
-        """
-        return tf.data.Dataset.from_generator(
-                    self.np_to_time_tensor_generator,
-                    self._get_tf_output_type(),
-                    output_shapes = self._get_tf_output_shape(window_size),
-                    args = [window_size]
-        ), len(list(self.np_to_time_tensor_generator(window_size)))
