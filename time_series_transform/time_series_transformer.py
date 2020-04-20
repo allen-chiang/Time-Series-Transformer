@@ -133,26 +133,3 @@ class Time_Series_Transformer(object):
         """
         return len(self.encodeDict[label].classes_)
 
-
-class Time_Series_Tensor_Factory(object):
-
-    def __init__(self):
-        super().__init__()
-
-    def get_time_series_tensor(self):
-        return
-
-
-
-class Time_Series_Tensor(object):
-    def __init__(self):
-        self.data = None
-        self.dtype = None
-    
-
- 
-
-def rolling_window(arr, window):
-    shape = arr.shape[:-1] + (arr.shape[-1] - window + 1, window)
-    strides = arr.strides + (arr.strides[-1],)
-    return np.lib.stride_tricks.as_strided(arr, shape=shape, strides=strides)
