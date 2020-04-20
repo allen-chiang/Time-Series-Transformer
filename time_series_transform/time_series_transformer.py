@@ -177,4 +177,14 @@ class Pandas_Time_Series_Dataset(object):
             }
 
     def make_data_generator(self):
-        pass
+        data = self.df.to_dict('records')
+        for i in data:
+            res = self._make_time_series_dataset(i)
+            Xtensor = {}
+            Ytensor = None
+            for c in self.config:
+                if self.config[c].get("responseVariable"):
+                    Ytensor = res[c]
+                else:
+                    Xtensor[c] = res[c] 
+            yield (Xtensor,Ytensor)
