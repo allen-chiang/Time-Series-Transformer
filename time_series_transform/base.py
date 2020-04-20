@@ -19,7 +19,7 @@ class Time_Series_Tensor_Factory(object):
         self.tensorType = tensorType
         self.data = data
 
-    def get_time_series_tensor(self,name,windowSize,batchSize=None,outType=None):
+    def get_time_series_tensor(self,name,windowSize=None,batchSize=None,outType=None):
         if self.tensorType == 'sequence':
             # using window function, transform array into 3D tensor with 1 feature
             tensor = rolling_window(self.data,windowSize)
