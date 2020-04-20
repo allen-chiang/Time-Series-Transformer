@@ -183,6 +183,8 @@ class Pandas_Time_Series_Dataset(object):
             Xtensor = {}
             Ytensor = None
             for c in self.config:
+                if self.config[c].get("sequence_stack") is not None:
+                    continue
                 if self.config[c].get("responseVariable"):
                     Ytensor = res[c]
                 else:
