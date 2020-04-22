@@ -69,7 +69,7 @@ class Time_Series_Tensor_Factory(object):
         self.tensorType = tensorType
         self.data = data
 
-    def get_time_series_tensor(self,name,windowSize=None,batchSize=None,outType=None):
+    def get_time_series_tensor(self,name,windowSize,seqSize,outType):
         """
         get_time_series_tensor the function to create Time_Series_Tensor
         
@@ -77,11 +77,11 @@ class Time_Series_Tensor_Factory(object):
         ----------
         name : str
             the name of Time_Series_Tensor
-        windowSize : int, optional
+        windowSize : int,
             the window size used for grouping sequence or label type of data, by default None
-        batchSize : int, optional
+        seqSize : int,
             the batch size for category type of data, by default None
-        outType : numpy data type, optional
+        outType : numpy data type,
             the data type of Time_Series_Tensor, by default None
         
         Returns
@@ -105,6 +105,7 @@ class Time_Series_Tensor_Factory(object):
             return Time_Series_Tensor(tensor,outType,name)
         elif self.tensorType == 'category':
             # clone single value and reshape array into (batch size, array length)
+            batchSize = seqSize - windowSize
             tensor = identity_window(self.data,batchSize)
             return Time_Series_Tensor(tensor,outType,name)
         else:
