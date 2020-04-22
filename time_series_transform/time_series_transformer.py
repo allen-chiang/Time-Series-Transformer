@@ -101,7 +101,8 @@ class Time_Series_Transformer(object):
         """np_to_time_tensor_generator this function will prepare the df data into generator type object
         
         this function is based on _tensor_factory function to transform the data
-        
+
+
         Parameters
         ----------
         windowSize : int
@@ -137,9 +138,61 @@ class Time_Series_Transformer(object):
 
 class Pandas_Time_Series_Dataset(object):
     def __init__(self,pandasFrame,config={}):
+        """
+        Pandas_Time_Series_Dataset prepared pandas data into sequence data type
+        
+        This class will follow the configuration to transform the pandas dataframe into sequence data
+        the restriction for using this interface:
+            - the column of data frame has to be [dim1, dim2,dim....., t0,t1,t2,t....], and the index has to be the item or id
+            - the configuration data has to be a dictionary and follow by this template
+            {
+                "colName": str,
+                "tensorType":{'sequence','label','category'},
+                "param": {"windowSize":int,"batchSize":int,"outType":numpy datatype}
+                "sequence_stack": other colName [option]
+                "responseVariable": {True,False} [optional]
+            }
+
+        Parameters
+        ----------
+        pandasFrame : pandas DataFrame
+            input data
+        config : dict, optional
+            the configuration to trainsform pandas dataFrame, by default {}
+        """
         super().__init__()
         self.df = pandasFrame
         self.config = config
+
+    def set_config(self,name,colNames,tensorType,param,sequence_stack,isResponseVar):
+        """
+        set_config the setter of config
+        
+        this setter provide an quick entry point to setup configuration
+        
+        Parameters
+        ----------
+        name : str
+            the name of the output sequence or output column
+        colNames : list of string
+            the name of pandas frame used for transformation
+        tensorType : {'sequence','label','category'}
+            provide different type of transformation
+        param : dict
+            {"windowSize":int,"batchSize":int,"outType":numpy datatype}
+        sequence_stack : string of name for stacking
+            the target name for stacking
+        isResponseVar : bool
+            whether the data is response variable or predictor
+        """
+        self.config[name] = {
+            'colNames':colNames,
+            'tensorType':tensorType,
+            'param':param,
+            'sequence_stack':sequence_stack,
+            'responseVariable':isResponseVar
+            }
+
 
     def _dict_keys_values(self,data,keys):
         res = []
@@ -167,16 +220,17 @@ class Pandas_Time_Series_Dataset(object):
         tensorList =  [ v for v in tensorDict.values() ]
         return Time_Series_Dataset(tensorList).make_dataset()
 
-    def set_config(self,name,colNames,tensorType,param,sequence_stack,isResponseVar):
-        self.config[name] = {
-            'colNames':colNames,
-            'tensorType':tensorType,
-            'param':param,
-            'sequence_stack':sequence_stack,
-            'responseVariable':isResponseVar
-            }
 
     def make_data_generator(self):
+        """
+        make_data_generator prepare an generator to output the transformed data
+        
+        
+        Yields
+        -------
+        tuple
+            it will output X data and Y data
+        """
         data = self.df.to_dict('records')
         for i in data:
             res = self._make_time_series_dataset(i)
@@ -186,7 +240,7 @@ class Pandas_Time_Series_Dataset(object):
                 if self.config[c].get("sequence_stack") is not None:
                     continue
                 if self.config[c].get("responseVariable"):
-                    Ytensor = res[c]
+                    Ytensor = res['data'][c]
                 else:
-                    Xtensor[c] = res[c] 
+                    Xtensor[c] = res['data'][c] 
             yield (Xtensor,Ytensor)
