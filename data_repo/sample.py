@@ -9,3 +9,4 @@ print(info)
 
 df = client.getHistoricalByRange('aapl',start_date='20200102',end_date='20200401')
 print(df)
+
