@@ -7,6 +7,7 @@ from pyarrow import parquet as pq
 from collections import defaultdict
 from matplotlib import pyplot as plt
 from sklearn.preprocessing import LabelEncoder
+from time_series_transform.base import *
 from time_series_transform.sequence_transfomer import Sequence_Transformer_Base
 
 class Time_Series_Transformer(object):
@@ -134,15 +135,58 @@ class Time_Series_Transformer(object):
         return len(self.encodeDict[label].classes_)
 
 
-class Time_Series_Tensor_Factory(object):
-
-    def __init__(self):
+class Pandas_Time_Series_Dataset(object):
+    def __init__(self,pandasFrame,config={}):
         super().__init__()
+        self.df = pandasFrame
+        self.config = config
 
-    
+    def _dict_keys_values(self,data,keys):
+        res = []
+        for k in keys:
+            res.append(data[k])
+        return np.array(res)
 
-class Time_Series_Tensor(object):
-    def __init__(self):
-        self.data = None
+    def _make_time_series_dataset(self,data):
+        tensorDict = {}
+        for i in self.config:
+            process_data = self._dict_keys_values(data,self.config[i]['colNames'])
+            tsf = Time_Series_Tensor_Factory(
+                process_data,
+                self.config[i]['tensorType']
+                )
+            tensor = tsf.get_time_series_tensor(
+                name = i,
+                **self.config[i]['param']
+                )
+            if self.config[i].get('sequence_stack') is not None:
+                sequence_stack = self.config[i].get('sequence_stack')
+                tensorDict[sequence_stack].stack_time_series_tensors(tensor)
+            else:
+                tensorDict[i] = tensor
+        tensorList =  [ v for v in tensorDict.values() ]
+        return Time_Series_Dataset(tensorList).make_dataset()
 
-    
+    def set_config(self,name,colNames,tensorType,param,sequence_stack,isResponseVar):
+        self.config[name] = {
+            'colNames':colNames,
+            'tensorType':tensorType,
+            'param':param,
+            'sequence_stack':sequence_stack,
+            'responseVariable':isResponseVar
+            }
+
+    def make_data_generator(self):
+        data = self.df.to_dict('records')
+        for i in data:
+            res = self._make_time_series_dataset(i)
+            Xtensor = {}
+            Ytensor = None
+            for c in self.config:
+                if self.config[c].get("sequence_stack") is not None:
+                    continue
+                if self.config[c].get("responseVariable"):
+                    Ytensor = res[c]
+                else:
+                    Xtensor[c] = res[c] 
+            yield (Xtensor,Ytensor)
