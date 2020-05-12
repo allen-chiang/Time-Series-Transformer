@@ -601,3 +601,4 @@ MigrationBackup/
 # End of https://www.gitignore.io/api/python,pycharm,windows,visualstudio,jupyternotebooks,visualstudiocode
 Data/
 *.ipynb_checkpoints
+Notebooks
