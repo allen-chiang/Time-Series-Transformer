@@ -1,4 +1,5 @@
-import gc,uuid
+import gc
+import uuid
 import pandas as pd
 import numpy as np
 import pyarrow as pa
@@ -7,12 +8,14 @@ from pyarrow import parquet as pq
 from collections import defaultdict
 from matplotlib import pyplot as plt
 from sklearn.preprocessing import LabelEncoder
+from time_series_transform.base import *
 from time_series_transform.sequence_transfomer import Sequence_Transformer_Base
+
 
 class Time_Series_Transformer(object):
 
-    def __init__ (self,df,dimList,encoder = LabelEncoder,encodeDict = None,seqTransformerList= None):
-        """__init__ this class transfroms pandas frame into time series tensors with its corresponding categorical data
+    def __init__(self, df, dimList, encoder=LabelEncoder, encodeDict=None, seqTransformerList=None):
+        """this class transfroms pandas frame into time series tensors with its corresponding categorical data
         
         the column of data frame has to be [dim1, dim2,dim....., t0,t1,t2,t....], and the index has to be the item or id
         
@@ -32,90 +35,77 @@ class Time_Series_Transformer(object):
         super().__init__()
         self._df = df
         self._dimList = dimList
-        self.arr = df.drop(dimList,axis =1).values
+        self.arr = df.drop(dimList, axis=1).values
         self.indexList = df.index.tolist()
         self._encoder = encoder
-        self.labelDict,self.encodeDict = self._pandas_to_categorical_encode(encodeDict)
+        self.labelDict, self.encodeDict = self._pandas_to_categorical_encode(
+            encodeDict)
         self.seqTransformerList = seqTransformerList
-
-
-    def _rolling_window(self,a, window):
+    def _rolling_window(self, a, window):
         shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
         strides = a.strides + (a.strides[-1],)
         return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)
 
-    def _get_time_tensor(self,arr,window_size,returnY = True):
-        tmp = self._rolling_window(arr,window_size+1)
-        Xtensor = tmp[:,:-1].reshape(-1,window_size,1)
-        Ytensor = tmp[:,-1].reshape(-1,1)
+    def _get_time_tensor(self, arr, window_size, returnY=True):
+        tmp = self._rolling_window(arr, window_size+1)
+        Xtensor = tmp[:, :-1].reshape(-1, window_size, 1)
+        Ytensor = tmp[:, -1].reshape(-1, 1)
         if not returnY:
             return Xtensor
-        return (Xtensor,Ytensor)
+        return (Xtensor, Ytensor)
 
-    def _tensor_transfomer(self,arr,window_size,transformer):
-        if not isinstance(transformer,Sequence_Transformer_Base):
-            raise ValueError('Transformer must implment Sequence_Transformer_Base')
+    def _tensor_transfomer(self, arr, window_size, transformer):
+        if not isinstance(transformer, Sequence_Transformer_Base):
+            raise ValueError(
+                'Transformer must implment Sequence_Transformer_Base')
         tmpArr = transformer.Call(arr)
-        return self._get_time_tensor(tmpArr,window_size,False)
+        return self._get_time_tensor(tmpArr, window_size, False)
 
-    def _tensor_factory(self,arr,window_size,categoryIx,seqTransformerList=[]):
-        X,Ytensor = self._get_time_tensor(arr,window_size)
+    def _tensor_factory(self, arr, window_size, categoryIx, seqTransformerList=[]):
+        X, Ytensor = self._get_time_tensor(arr, window_size)
         for i in seqTransformerList:
-            tmpArr = self._tensor_transfomer(arr,window_size,i)
-            X = np.dstack((X,tmpArr))
+            tmpArr = self._tensor_transfomer(arr, window_size, i)
+            X = np.dstack((X, tmpArr))
         Xtensor = {}
         for i in self.labelDict:
             label = self.labelDict[i][categoryIx]
-            Xtensor[i] = self._label_shape_transform(label,Ytensor.shape)
+            Xtensor[i] = self._label_shape_transform(label, Ytensor.shape)
         Xtensor['time_series'] = X
-        return (Xtensor,Ytensor)
+        return (Xtensor, Ytensor)
 
-    def _label_encode(self,arr,encoder):
+    def _label_encode(self, arr, encoder):
         if encoder is None:
             encoder = self._encoder()
             enc_arr = encoder.fit_transform(arr)
         else:
             enc_arr = encoder.transform(arr)
-        return enc_arr,encoder
+        return enc_arr, encoder
 
-    def _pandas_to_categorical_encode(self,encodeDict):
+    def _pandas_to_categorical_encode(self, encodeDict):
         if encodeDict is None:
             encodeDict = {}
         labelDict = {}
         for i in self._dimList:
             if i in encodeDict:
-                enc_arr,encoder = self._label_encode(self._df[i],encodeDict[i])
+                enc_arr, encoder = self._label_encode(
+                    self._df[i], encodeDict[i])
             else:
-                enc_arr,encoder = self._label_encode(self._df[i],None)
+                enc_arr, encoder = self._label_encode(self._df[i], None)
             encodeDict[i] = encoder
             labelDict[i] = enc_arr
-        return labelDict,encodeDict
+        return labelDict, encodeDict
 
-    def _label_shape_transform(self,label,shape):
+    def _label_shape_transform(self, label, shape):
         tmp = np.zeros(shape)
         tmp += label
         return tmp
 
-    def _get_tf_output_type(self):
-        dct = {}
-        for i in self.encodeDict:
-            dct[i] = tf.int8
-        dct['time_series'] = tf.float32
-        return (dct,tf.float32)
-
-    def _get_tf_output_shape(self,window_size):
-        dct = {}
-        for i in self.encodeDict:
-            dct[i] = tf.TensorShape([None,1])
-        dct['time_series'] = tf.TensorShape([None,window_size,1+len(self.seqTransformerList)])
-        return (dct,tf.TensorShape([None,1]))
-
-
-    def np_to_time_tensor_generator(self,windowSize):
+    def np_to_time_tensor_generator(self, windowSize):
         """np_to_time_tensor_generator this function will prepare the df data into generator type object
         
         this function is based on _tensor_factory function to transform the data
-        
+
+
         Parameters
         ----------
         windowSize : int
@@ -127,12 +117,12 @@ class Time_Series_Transformer(object):
             it will yield (X,y)
         """
         if np.ndim(self.arr) > 1:
-            for ix,v in enumerate(self.arr):
-                yield self._tensor_factory(v,windowSize,ix,self.seqTransformerList)
+            for ix, v in enumerate(self.arr):
+                yield self._tensor_factory(v, windowSize, ix, self.seqTransformerList)
         else:
-            yield self._tensor_factory(self.arr,windowSize,0,self.seqTransformerList) 
+            yield self._tensor_factory(self.arr, windowSize, 0, self.seqTransformerList)
 
-    def get_encoder_class(self,label):
+    def get_encoder_class(self, label):
         """get_encoder_class this function will return the class number of the encoding label
         
         
@@ -147,27 +137,120 @@ class Time_Series_Transformer(object):
             the class number
         """
         return len(self.encodeDict[label].classes_)
-    
-    
-    def get_tf_dataset(self,window_size):
-        """get_tf_dataset create tensorflow dataset object
+
+
+class Pandas_Time_Series_Dataset(object):
+    def __init__(self, pandasFrame, config={}):
+        """
+        Pandas_Time_Series_Dataset prepared pandas data into sequence data type
         
-        the tensorflow dataset object will be from generator type and based upon np_to_time_tensor_generator obeject.
-        each iteration of the tensorflow object will be (X,y) --> ({'time_series':tensor,'dim':value,'dim2':value...},value)
+        This class will follow the configuration to transform the pandas dataframe into sequence data
+        the restriction for using this interface:
+            - the column of data frame has to be [dim1, dim2,dim....., t0,t1,t2,t....], and the index has to be the item or id
+            - the configuration data has to be a dictionary and follow by this template
+            {
+                "colName": str,
+                "tensorType":{'sequence','label','category'},
+                "param": {"windowSize":int,"seqSize":int,"outType":numpy datatype}
+                "sequence_stack": other colName [option]
+                "responseVariable": {True,False} [optional]
+            }
+
+        Parameters
+        ----------
+        pandasFrame : pandas DataFrame
+            input data
+        config : dict, optional
+            the configuration to trainsform pandas dataFrame, by default {}
+        """
+        super().__init__()
+        self.df = pandasFrame
+        self.config = config
+
+    def set_config(self, name, colNames, tensorType, sequence_stack, isResponseVar, windowSize, seqSize, outType):
+        """
+        set_config the setter of config
+        
+        this setter provide an quick entry point to setup configuration
         
         Parameters
         ----------
-        window_size : int
-            window size using for time series sequence
-        
-        Returns
-        -------
-        tensorflow dataset
-            tensorflwow dataset for training deep learning model
+        name : str
+            the name of the output sequence or output column
+        colNames : list of string
+            the name of pandas frame used for transformation
+        tensorType : {'sequence','label','category'}
+            provide different type of transformation
+        sequence_stack : string of name for stacking
+            the target name for stacking
+        isResponseVar : bool
+            whether the data is response variable or predictor
+        windowSize: int
+            sequence grouping size
+        seqSize: int
+            total length of sequence
+        outType: numpy data type
+            output data type
         """
-        return tf.data.Dataset.from_generator(
-                    self.np_to_time_tensor_generator,
-                    self._get_tf_output_type(),
-                    output_shapes = self._get_tf_output_shape(window_size),
-                    args = [window_size]
-        ), len(list(self.np_to_time_tensor_generator(window_size)))
+        self.config[name] = {
+            'colNames': colNames,
+            'tensorType': tensorType,
+            'param': {
+                "windowSize": windowSize, 
+                "seqSize": seqSize, 
+                "outType": outType
+                },
+            'sequence_stack': sequence_stack,
+            'responseVariable': isResponseVar
+        }
+
+    def _dict_keys_values(self, data, keys):
+        res = []
+        for k in keys:
+            res.append(data[k])
+        return np.array(res)
+
+    def _make_time_series_dataset(self, data):
+        tensorDict = {}
+        for i in self.config:
+            process_data = self._dict_keys_values(
+                data, self.config[i]['colNames'])
+            tsf = Time_Series_Tensor_Factory(
+                process_data,
+                self.config[i]['tensorType']
+            )
+            tensor = tsf.get_time_series_tensor(
+                name=i,
+                **self.config[i]['param']
+            )
+            if self.config[i].get('sequence_stack') is not None:
+                sequence_stack = self.config[i].get('sequence_stack')
+                tensorDict[sequence_stack].stack_time_series_tensors(tensor)
+            else:
+                tensorDict[i] = tensor
+        tensorList = [v for v in tensorDict.values()]
+        return Time_Series_Dataset(tensorList).make_dataset()
+
+    def make_data_generator(self):
+        """
+        make_data_generator prepare an generator to output the transformed data
+        
+        
+        Yields
+        -------
+        tuple
+            it will output X data and Y data
+        """
+        data = self.df.to_dict('records')
+        for i in data:
+            res = self._make_time_series_dataset(i)
+            Xtensor = {}
+            Ytensor = None
+            for c in self.config:
+                if self.config[c].get("sequence_stack") is not None:
+                    continue
+                if self.config[c].get("responseVariable"):
+                    Ytensor = res['data'][c]
+                else:
+                    Xtensor[c] = res['data'][c]
+            yield (Xtensor, Ytensor)
