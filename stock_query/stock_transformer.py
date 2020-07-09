@@ -9,15 +9,17 @@ class Stock_Transformer(object):
         Parameters
         ----------
         symbol : string
-            the input symbol of desired stock data
+            symbol of desired stock data
         
         """
         self.symbol = symbol
         self.df = ystock(symbol)
 
     def get_company_info(self):
-        print(self.df.getCompanyInfo())
         return self.df.getCompanyInfo()
+
+    def get_action(self):
+        return self.df.getActions()
 
     def _get_historical_data(self, period, start= None, end = None):
         result = self.df.getHistoricalByPeriod(period)
@@ -41,27 +43,32 @@ class Stock_Transformer(object):
     
 class Standard_Indicator(object):
 
-    def __init__(self, symbol):
+    def __init__(self, symbol, period="1y", start= None, end = None):
         """this class output the standard analysis
         
         Parameters
         ----------
         symbol : string
-            the input symbol of desired stock data
+            symbol of desired stock data
+        period: string
+            duration from current timestamp
+            valid input: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max
+        start, end: string
+            either period or start/end is required
+            format: "%Y-%m-%d", eg "2020-02-20"
         
         """
         self.symbol = symbol
-        self.df = Stock_Transformer(symbol)
+        self.df = Stock_Transformer(symbol).get_stock_data_pandas(period, start, end)
 
-    def moving_average(self, window, period="1y", start= None, end = None):
-        data = self.df.get_stock_data_pandas(period, start, end)
-        ma = data.rolling(window).mean().dropna()
+    def moving_average(self, window):
+        ma = self.df.rolling(window).mean().dropna()
         return ma
     
-    def ma_plot(self, windows, period="1y", start= None, end = None):
+    def ma_plot(self, windows):
         for window in windows:
-            ma = self.moving_average(window, period, start, end)
+            ma = self.moving_average(window)
             plt.plot(ma['Close'])
+        plt.legend(["window = " + str(win) for win in windows])
         plt.show()
-    
     
