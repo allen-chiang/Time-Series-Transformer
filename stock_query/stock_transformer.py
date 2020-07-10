@@ -1,4 +1,5 @@
 from ystock import ystock
+import scipy
 import matplotlib.pyplot as plt
 
 class Stock_Transformer(object):
@@ -43,6 +44,12 @@ class Stock_Transformer(object):
     
 class Standard_Indicator(object):
 
+# fft
+# rfft
+# ema
+# prophet (arima)
+# wavelet
+
     def __init__(self, symbol, period="1y", start= None, end = None):
         """this class output the standard analysis
         
@@ -71,4 +78,32 @@ class Standard_Indicator(object):
             plt.plot(ma['Close'])
         plt.legend(["window = " + str(win) for win in windows])
         plt.show()
+    
+    def fft_transform(self, col):
+        return scipy.fft.fft(self.df[col].values)
+
+    def rfft(self, col):
+        return scipy.fft.rfft(self.df[col].values)
+    
+    def ema(self, alpha):
+        """
+        calculate the Exponential Moving Average
+
+        Args:
+            alpha (float): specify the smoothing factor, where 0 < alpha <= 1
+        """
+        try:
+            res = self.df.ewm(alpha = alpha).mean()
+            return res
+        except Exception as e:
+            print(e)
+
+         
+    
+    def prophet(self):
+        return 
+    
+    def wavelet(self):
+        return
+
     
