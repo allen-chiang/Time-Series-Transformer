@@ -3,3 +3,4 @@ pandas
 tensorflow
 pyarrow
 ystock
+scipy
