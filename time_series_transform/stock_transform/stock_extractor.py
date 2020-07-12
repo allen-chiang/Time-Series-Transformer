@@ -32,8 +32,6 @@ class Portfolio_Extractor(object):
 
 
 
-
-
 class yahoo_stock(object):
 
     """
