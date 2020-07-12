@@ -1,10 +1,9 @@
 import scipy
 import numpy as np
 import pandas as pd
-from functools import wraps
 import matplotlib.pyplot as plt
-from joblib import Parallel, delayed
 from collections import ChainMap
+from joblib import Parallel, delayed
 
 
 class Stock (object):
@@ -72,7 +71,16 @@ class Portfolio(object):
                 portfolio = portfolio.append(self.stockDict[v].dataFrame)
         return portfolio
 
-
+    def plot(self,stockIndicators,samePlot=False,*args,**kwargs):
+        for ix,i in enumerate(stockIndicators):
+            if samePlot:
+                if ix == 0:
+                    ax = self.stockDict[i].plot(stockIndicators[i],*args,**kwargs)
+                else:
+                    self.stockDict[i].plot(stockIndicators[i],ax = ax,*args,**kwargs)
+            else:
+                self.stockDict[i].plot(stockIndicators[i],*args,**kwargs)
+        plt.show()
 
 
 def moving_average(arr, windowSize=3) :
