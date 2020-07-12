@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 from functools import wraps
 import matplotlib.pyplot as plt
+from joblib import Parallel, delayed
+from collections import ChainMap
 
 
 class Stock (object):
@@ -26,20 +28,50 @@ class Stock (object):
 
     def plot(self,colName,*args,**kwargs):
         self.df[colName].plot(*args,**kwargs)
-        plt.show()
 
-    def make_technical_indicator(self,colName,labelName,indicator,return_indicator,*args,**kwargs):
+    def make_technical_indicator(self,colName,labelName,indicator,*args,**kwargs):
         techList = self._get_transformation_list()
         arr = self.df[colName].values
         indicator = techList[indicator](arr,*args,**kwargs)
         self.df[f'{labelName}_{colName}'] = indicator
-        if return_indicator:
-            return indicator
+        return self
 
 
 class Portfolio(object):
     def __init__(self,stockList):
-        pass
+        self.stockDict = self._get_stock_dict(stockList)
+
+    def _get_stock_dict(self,stockList):
+        stockDict = {}
+        for i in stockList:
+            key = i.symbol
+            stockDict[key] = i
+        return stockDict
+
+    def make_technical_indicator(self,colName,labelName,indicator,n_jobs =1,verbose = 0,*args,**kwargs):
+        dctList =  Parallel(n_jobs,verbose = verbose)(delayed(self._stock_technical_indicator)(
+            self.stockDict[i],
+            i,colName,
+            labelName,
+            indicator,
+            *args,
+            **kwargs) for i in self.stockDict)
+        self.stockDict = dict(ChainMap(*dctList))
+
+
+    def _stock_technical_indicator(self,stock,symbol,colName,labelName,indicator,*args,**kwargs):
+        return {symbol:stock.make_technical_indicator(colName,labelName,indicator,*args,**kwargs)}
+
+
+    def get_portfolio_dataFrame(self):
+        portfolio = None
+        for ix,v in enumerate(self.stockDict):
+            if ix == 0:
+                portfolio = self.stockDict[v].dataFrame
+            else:
+                portfolio = portfolio.append(self.stockDict[v].dataFrame)
+        return portfolio
+
 
 
 
