@@ -1,5 +1,5 @@
-from ystock import ystock
 import scipy
+from ystock import ystock
 import matplotlib.pyplot as plt
 
 class Stock_Transformer(object):
