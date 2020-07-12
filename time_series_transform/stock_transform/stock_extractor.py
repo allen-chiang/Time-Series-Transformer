@@ -1,13 +1,40 @@
-from datetime import datetime
 import yfinance as yf
+from datetime import datetime
+from time_series_transform.stock_transform.base import *
 
-class ystock(object):
-    # todo:
-    # single symbol query
-    # data format changes
-    # local data download
-    # multiple symbol query
-    # async call
+
+class Stock_Extractor(object):
+    def __init__(self,symbol,engine):
+        self.client = self._get_extractor(engine)
+        self.symbol = symbol
+        self.stock = None
+
+    def _get_extractor(self,engine):
+        engineDict = {
+            'yahoo':yahoo_stock
+        }
+        return engineDict[engine]
+
+    def get_stock_period(self,period):
+        data = self.client.getHistoricalByPeriod(period)
+        additionalInfo = self.client.getAdditionalInfo()
+        self.stock = Stock(self.symbol,data,additionalInfo)
+
+    def get_stock_date(self,start_date,end_date):
+        data = self.client.getHistoricalByRange(start_date,end_date)
+        self.stock = Stock(self.symbol,data)
+
+
+class Portfolio_Extractor(object):
+    def __init__(self,symbolList,engine):
+        self.engine = engine
+        self.portfolio = None
+
+
+
+
+
+class yahoo_stock(object):
 
     """
     Fetching stock data from yahoo finance
@@ -33,6 +60,7 @@ class ystock(object):
     @property
     def symbol(self):
         return self._symbol
+
     @symbol.setter
     def symbol(self, symbol):
         self._symbol = symbol
@@ -41,7 +69,6 @@ class ystock(object):
     def _getStock(self, symbol):
         ticker = yf.Ticker(symbol)
         return ticker
-
 
     def getCompanyInfo(self):
         return self.ticker.info
@@ -83,3 +110,8 @@ class ystock(object):
     def getNextEvent(self):
         return self.ticker.calendar
 
+    def getCashFlow(self):
+        return self.ticker.cashflow
+
+    def getAdditionalInfo(self):
+        pass

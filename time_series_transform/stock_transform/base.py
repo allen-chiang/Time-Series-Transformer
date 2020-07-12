@@ -6,9 +6,11 @@ import matplotlib.pyplot as plt
 
 
 class Stock (object):
-    def __init__(self,data,symbol):
+    def __init__(self,symbol,data,additionalInfo=None):
         self.df = data
         self.symbol = symbol
+        self.additionalInfo = additionalInfo
+
 
     @property
     def dataFrame(self):
@@ -36,7 +38,7 @@ class Stock (object):
 
 
 class Portfolio(object):
-    def __init__(self):
+    def __init__(self,stockList):
         pass
 
 
