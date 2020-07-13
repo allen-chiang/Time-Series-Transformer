@@ -19,17 +19,59 @@ class Stock_Extractor(object):
         data = self.client.getHistoricalByPeriod(period)
         additionalInfo = self.client.getAdditionalInfo()
         self.stock = Stock(self.symbol,data,additionalInfo)
+        return self.stock
 
     def get_stock_date(self,start_date,end_date):
         data = self.client.getHistoricalByRange(start_date,end_date)
         self.stock = Stock(self.symbol,data)
+        return self.stock
 
+    # I/O
+    @classmethod
+    def get_stock_from_csv(cls, symbol, path, *args, **kwargs):
+        data = pd.read_csv(path)
+        stock_data = Stock(symbol, data, *args, **kwargs)
+        return stock_data
+
+
+    @classmethod
+    def get_stock_from_parquet(cls, symbol, path, *args, **kwargs):
+        data = pd.read_parquet(path, engin = 'pyarrow')
+        stock_data = Stock(symbol, data, *args, **kwargs)
+        return stock_data
+
+    def download_stock_data(self, path, format):
+        data = self.stock.df
+        download_path = path + "/" + self.symbol + "_stock_extract." + format
+        if format == 'csv':
+            data.to_csv(download_path)
+        elif format == 'parquet':
+            data.to_parquet(download_path)
+        raise ValueError("invalid format value")
 
 class Portfolio_Extractor(object):
     def __init__(self,symbolList,engine):
         self.engine = engine
+        self.symbolList = symbolList
         self.portfolio = None
 
+    def get_portfolio_period(self,period):
+        stockList = []
+        for symbol in self.symbolList:
+            stock_data = Stock_Extractor(symbol, self.engine).get_stock_period(period)
+            stockList.append(stock_data)
+
+        self.portfolio = Portfolio(stockList)
+        return self.portfolio
+
+    def get_portfolio_date(self,start_date, end_date):
+        stockList = []
+        for symbol in self.symbolList:
+            stock_data = Stock_Extractor(symbol, self.engine).get_stock_date(start_date. end_date)
+            stockList.append(stock_data)
+
+        self.portfolio = Portfolio(stockList)
+        return self.portfolio
 
 
 class yahoo_stock(object):
@@ -108,8 +150,12 @@ class yahoo_stock(object):
     def getNextEvent(self):
         return self.ticker.calendar
 
-    def getCashFlow(self):
-        return self.ticker.cashflow
-
     def getAdditionalInfo(self):
-        pass
+        data = {
+            'company_info':self.getCompanyInfo(),
+            'actions': self.getActions(),
+            'sustainability': self.getSustainability(),
+            'recommendations': self.getRecommendations(),
+            'next_event': self.getNextEvent()
+        }
+        return data
