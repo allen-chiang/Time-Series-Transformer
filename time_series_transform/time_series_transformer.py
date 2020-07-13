@@ -11,10 +11,10 @@ from time_series_transform.base import *
 
 
 
-class Pandas_Time_Series_Dataset(object):
+class Pandas_Time_Series_Tensor_Dataset(object):
     def __init__(self, pandasFrame, config={}):
         """
-        Pandas_Time_Series_Dataset prepared pandas data into sequence data type
+        Pandas_Time_Series_Tensor_Dataset prepared pandas data into sequence data type
         
         This class will follow the configuration to transform the pandas dataframe into sequence data
         the restriction for using this interface:
@@ -126,3 +126,56 @@ class Pandas_Time_Series_Dataset(object):
                 else:
                     Xtensor[c] = res['data'][c]
             yield (Xtensor, Ytensor)
+
+
+
+class Pandas_Time_Series_Panel_Dataset(object):
+
+    def __init__(self,pandasFrame):
+        self.df = pandasFrame
+
+    def expand_dataFrame_by_category(self,indexCol,keyCol):
+        keys = self.df[keyCol].unique()
+        tmpDf = None
+        for ix,k in enumerate(keys):
+            if ix == 0:
+                tmpDf = self.df[self.df[keyCol]==k]
+                tmpDf = tmpDf.set_index(indexCol)
+                tmpDf = tmpDf.drop(keyCol,axis=1)
+                tmpDf.columns = list(map(lambda x: f'{x}_{k}',tmpDf.columns))
+            else:
+                df2 = self.df[self.df[keyCol]==k]
+                df2 = df2.drop(keyCol,axis=1).set_index(indexCol)
+                df2.columns = list(map(lambda x: f'{x}_{k}',df2.columns))
+                tmpDf = tmpDf.join(df2,how='outer')
+        self.df = tmpDf
+        return self
+
+
+    def make_slide_window(self,indexCol,windowSize,colList=None,groupby=None):
+        if colList is None:
+            colList = self.df.columns.tolist()
+            self.df = self.df.sort_values(indexCol,ascending = True)
+        for col in colList:
+            for i in range(1,windowSize+1):
+                if groupby is None:
+                    self.df[f'{col}_lag{str(i)}'] = self.df[col].shift(i)
+                else:
+                    if col == groupby:
+                        continue
+                    self.df[f'{col}_lag{str(i)}'] = self.df.groupby(groupby)[col].shift(i)
+        return self
+
+
+    def make_lead_column(self,indexCol,baseCol,leadNum,groupby=None):
+        self.df = self.df.sort_values(indexCol,ascending = False)
+        if groupby is None:
+            self.df[f'{baseCol}_lead{str(leadNum)}'] = self.df[baseCol].shift(leadNum)
+        else:
+            self.df[f'{baseCol}_lead{str(leadNum)}'] = self.df.groupby(groupby)[baseCol].shift(leadNum)            
+        return self
+
+
+    def __repr__(self):
+        return repr(self.df)
+        
