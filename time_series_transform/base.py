@@ -145,11 +145,43 @@ class Time_Series_Dataset(object):
     
 
 def rolling_window(arr, window):
+    """
+    rolling_window create an rolling window tensor
+    
+    this function create a rolling window numpy tensor given its original sequence and window size
+    
+    Parameters
+    ----------
+    arr : numpy 1D array
+        the original data sequence
+    window : int
+        aggregation window size
+    
+    Returns
+    -------
+    numpy 2d array
+        the rolling window array
+    """
     shape = arr.shape[:-1] + (arr.shape[-1] - window + 1, window)
     strides = arr.strides + (arr.strides[-1],)
     return np.lib.stride_tricks.as_strided(arr, shape=shape, strides=strides)
 
 def identity_window(arr,batchLen):
+    """
+    identity_window create an 2d numpy array with same items
+    
+    Parameters
+    ----------
+    arr : numpy array
+        the original sequence
+    batchLen : int
+        window size
+    
+    Returns
+    -------
+    numpy 2d array
+        2d array with same item corresponding to original sequence
+    """
     res = None
     for value in arr:
         tmp = np.full((batchLen),value)
