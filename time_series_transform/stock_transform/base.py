@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from collections import ChainMap
 from joblib import Parallel, delayed
+from functools import reduce
 
 
 class Stock (object):
@@ -82,12 +83,23 @@ class Portfolio(object):
         return portfolio
 
     def plot(self,stockIndicators,samePlot=False,*args,**kwargs):
-        x_axis = self.stockDict[0].df['Date']
+        df = []
         for ix,i in enumerate(stockIndicators):
             if samePlot:
-                plt.plot()
+                tmp = self.stockDict[i].df[stockIndicators[i]]
+                tmp.insert(0,"Date",self.stockDict[i].df['Date'])
+                colName = ['Date']
+                colName.extend([f'{i}_{d}' for d in stockIndicators[i]])
+                tmp.columns = colName
+                df.append(tmp)
+
             else:
                 self.stockDict[i].plot(stockIndicators[i],*args,**kwargs)
+        
+        if samePlot:
+            res = reduce(lambda  left,right: pd.merge(left,right,on=['Date'], how='outer'), df)
+            res.plot()
+            
         plt.show()
 
 
