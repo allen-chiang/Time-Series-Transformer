@@ -28,6 +28,16 @@ class Stock (object):
     def plot(self,colName,*args,**kwargs):
         self.df[colName].plot(*args,**kwargs)
 
+    def save(self, path, format = "csv"):
+        data = self.df
+        download_path = path + "/" + self.symbol + "_stock_extract." + format
+        if format == 'csv':
+            data.to_csv(download_path)
+        elif format == 'parquet':
+            data.to_parquet(download_path)
+        else:
+            raise ValueError("invalid format value")
+
     def make_technical_indicator(self,colName,labelName,indicator,*args,**kwargs):
         techList = self._get_transformation_list()
         arr = self.df[colName].values
@@ -72,12 +82,10 @@ class Portfolio(object):
         return portfolio
 
     def plot(self,stockIndicators,samePlot=False,*args,**kwargs):
+        x_axis = self.stockDict[0].df['Date']
         for ix,i in enumerate(stockIndicators):
             if samePlot:
-                if ix == 0:
-                    ax = self.stockDict[i].plot(stockIndicators[i],*args,**kwargs)
-                else:
-                    self.stockDict[i].plot(stockIndicators[i],ax = ax,*args,**kwargs)
+                plt.plot()
             else:
                 self.stockDict[i].plot(stockIndicators[i],*args,**kwargs)
         plt.show()

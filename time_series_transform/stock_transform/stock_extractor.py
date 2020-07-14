@@ -40,15 +40,6 @@ class Stock_Extractor(object):
         stock_data = Stock(symbol, data, *args, **kwargs)
         return stock_data
 
-    def download_stock_data(self, path, format):
-        data = self.stock.df
-        download_path = path + "/" + self.symbol + "_stock_extract." + format
-        if format == 'csv':
-            data.to_csv(download_path)
-        elif format == 'parquet':
-            data.to_parquet(download_path)
-        raise ValueError("invalid format value")
-
 class Portfolio_Extractor(object):
     def __init__(self,symbolList,engine):
         self.engine = engine
@@ -151,11 +142,20 @@ class yahoo_stock(object):
         return self.ticker.calendar
 
     def getAdditionalInfo(self):
-        data = {
+        info_dict = {
             'company_info':self.getCompanyInfo(),
+            'sustainability': self.getSustainability()
+        }
+
+        schedule_dict = {
             'actions': self.getActions(),
-            'sustainability': self.getSustainability(),
             'recommendations': self.getRecommendations(),
             'next_event': self.getNextEvent()
+        }
+       
+        data = {
+            'info': info_dict,
+            'schedule': schedule_dict
+            
         }
         return data
