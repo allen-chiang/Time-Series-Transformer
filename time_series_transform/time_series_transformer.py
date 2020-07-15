@@ -193,6 +193,32 @@ class Pandas_Time_Series_Tensor_Dataset(object):
         return resDf
 
 
+    def transform_dataFrame(self,colName,targetCol,timeSeriesCol,transformFunc,axis =1,*args,**kwargs):
+        """
+        transform_dataFrame this function use apply method to transfrom dataFrame
+        
+        Parameters
+        ----------
+        colName : str
+            target column for transformation
+        targetCol : str
+            the column to store new data
+        timeSeriesCol : str
+            time series column for sorting before apply function
+        transformFunc : func
+            the function implmented in the apply function
+        axis : int, optional
+            0 for row 1 for column, by default 1
+
+        """
+        self.df = self.df.sort_by_values(timeSeriesCol,ascending = True)
+        self.df[targetCol] = self.df[colName].apply(lambda x: transformFunc(x,*args,**kwargs),axis =axis)
+        return self
+
+
+
+
+
     def __repr__(self):
         return f"Tensor Transformer Config: {repr(self.config)}"
 
@@ -286,7 +312,7 @@ class Pandas_Time_Series_Panel_Dataset(object):
         this function is for creating label for supervised learning
         groupby is for category columns. This paramemter for dataFrame which did not
         expand by categories.
-        
+
         Parameters
         ----------
         indexCol : str
@@ -310,6 +336,27 @@ class Pandas_Time_Series_Panel_Dataset(object):
             self.df[f'{baseCol}_lead{str(leadNum)}'] = self.df.groupby(groupby)[baseCol].shift(leadNum)            
         return self
 
+    def transform_dataFrame(self,colName,targetCol,timeSeriesCol,transformFunc,axis =1,*args,**kwargs):
+        """
+        transform_dataFrame this function use apply method to transfrom dataFrame
+        
+        Parameters
+        ----------
+        colName : str
+            target column for transformation
+        targetCol : str
+            the column to store new data
+        timeSeriesCol : str
+            time series column for sorting before apply function
+        transformFunc : func
+            the function implmented in the apply function
+        axis : int, optional
+            0 for row 1 for column, by default 1
+
+        """
+        self.df = self.df.sort_by_values(timeSeriesCol,ascending = True)
+        self.df[targetCol] = self.df[colName].apply(lambda x: transformFunc(x,*args,**kwargs),axis =axis)
+        return self
 
     def __repr__(self):
         return repr(self.df)
