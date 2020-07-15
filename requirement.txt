@@ -4,3 +4,4 @@ tensorflow
 pyarrow
 ystock
 scipy
+functools

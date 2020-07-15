@@ -28,6 +28,16 @@ class Stock (object):
     def plot(self,colName,*args,**kwargs):
         self.df[colName].plot(*args,**kwargs)
 
+    def save(self, path, format = "csv"):
+        data = self.df
+        download_path = path + "/" + self.symbol + "_stock_extract." + format
+        if format == 'csv':
+            data.to_csv(download_path)
+        elif format == 'parquet':
+            data.to_parquet(download_path)
+        else:
+            raise ValueError("invalid format value")
+
     def make_technical_indicator(self,colName,labelName,indicator,*args,**kwargs):
         techList = self._get_transformation_list()
         arr = self.df[colName].values
@@ -71,15 +81,34 @@ class Portfolio(object):
                 portfolio = portfolio.append(self.stockDict[v].dataFrame)
         return portfolio
 
-    def plot(self,stockIndicators,samePlot=False,*args,**kwargs):
+    def plot(self,stockIndicators, keyCol = 'Default' ,samePlot=False,*args,**kwargs):
+        df = None
+        keyArr = None
         for ix,i in enumerate(stockIndicators):
             if samePlot:
-                if ix == 0:
-                    ax = self.stockDict[i].plot(stockIndicators[i],*args,**kwargs)
+                if keyCol == 'Default':
+                    keyArr = [i for i in range(self.stockDict[i].df.shape[0])]
                 else:
-                    self.stockDict[i].plot(stockIndicators[i],ax = ax,*args,**kwargs)
+                    keyArr = self.stockDict[i].df[keyCol]
+
+                tmp = self.stockDict[i].df[stockIndicators[i]]
+                tmp.insert(0,keyCol,keyArr)
+                colName = [keyCol]
+                colName.extend([f'{i}_{d}' for d in stockIndicators[i]])
+                tmp.columns = colName
+
+                if ix == 0:
+                    df = tmp
+                else:
+                    df = pd.merge(df,tmp, on = [keyCol], how = 'outer')
+
             else:
                 self.stockDict[i].plot(stockIndicators[i],*args,**kwargs)
+        
+        if samePlot:
+            df = df.set_index(keyCol)
+            df.plot(*args, **kwargs)
+            
         plt.show()
 
 
