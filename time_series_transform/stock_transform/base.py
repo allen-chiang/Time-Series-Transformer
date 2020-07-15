@@ -4,7 +4,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from collections import ChainMap
 from joblib import Parallel, delayed
-from functools import reduce
 
 
 class Stock (object):
@@ -82,23 +81,33 @@ class Portfolio(object):
                 portfolio = portfolio.append(self.stockDict[v].dataFrame)
         return portfolio
 
-    def plot(self,stockIndicators,samePlot=False,*args,**kwargs):
-        df = []
+    def plot(self,stockIndicators, keyCol = 'Default' ,samePlot=False,*args,**kwargs):
+        df = None
+        keyArr = None
         for ix,i in enumerate(stockIndicators):
             if samePlot:
+                if keyCol == 'Default':
+                    keyArr = [i for i in range(self.stockDict[i].df.shape[0])]
+                else:
+                    keyArr = self.stockDict[i].df[keyCol]
+
                 tmp = self.stockDict[i].df[stockIndicators[i]]
-                tmp.insert(0,"Date",self.stockDict[i].df['Date'])
-                colName = ['Date']
+                tmp.insert(0,keyCol,keyArr)
+                colName = [keyCol]
                 colName.extend([f'{i}_{d}' for d in stockIndicators[i]])
                 tmp.columns = colName
-                df.append(tmp)
+
+                if ix == 0:
+                    df = tmp
+                else:
+                    df = pd.merge(df,tmp, on = [keyCol], how = 'outer')
 
             else:
                 self.stockDict[i].plot(stockIndicators[i],*args,**kwargs)
         
         if samePlot:
-            res = reduce(lambda  left,right: pd.merge(left,right,on=['Date'], how='outer'), df)
-            res.plot()
+            df = df.set_index(keyCol)
+            df.plot(*args, **kwargs)
             
         plt.show()
 
