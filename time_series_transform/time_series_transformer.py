@@ -6,7 +6,6 @@ import pyarrow as pa
 import tensorflow as tf
 from pyarrow import parquet as pq
 from collections import defaultdict
-from matplotlib import pyplot as plt
 from time_series_transform.base import *
 
 
@@ -38,6 +37,7 @@ class Pandas_Time_Series_Tensor_Dataset(object):
         super().__init__()
         self.df = pandasFrame
         self.config = config
+
 
     def set_config(self, name, colNames, tensorType, sequence_stack, isResponseVar, windowSize, seqSize, outType):
         """
@@ -128,13 +128,131 @@ class Pandas_Time_Series_Tensor_Dataset(object):
             yield (Xtensor, Ytensor)
 
 
+    def expand_dataFrame_by_date(self, categoryCol,timeSeriesCol,newIX=True,byCategory=True,dropna=False):
+        """
+        expand_dataFrame_by_date A help function to prepare dataFrame for tensor transformation
+        
+        It will change the original dataFrame of
+        byCategory is set to be True [x1,x2,x3,time series,category] -> [x1_t1,x1_t2...x3_t|index->category]
+        byCategory is set to be False [x1,x2,x3,time series,category] -> [category_x1_t1,category_x1_t2...category_x3_t]
+        
+        Note: 
+        x is column name 
+        t represent time series column i.e. Date --> YYYY-MM-DD format is recommended
+        
+        Parameters
+        ----------
+        categoryCol : str
+            column name of category
+        timeSeriesCol : str
+            column name of time series
+        newIX : bool, optional
+            if True, time series column will be converted into 1,2,3,....len(timeSeriesCol), by default True
+        byCategory : bool, optional
+            if True, the dataFrame will create new row instead of different column for categories, by default True
+        dropna : bool, optional
+            if True, nan column will be dropped, by default False
+        
+        Returns
+        -------
+        iterable
+            the index of time series columns
+        """
+        if newIX:
+            self.df = self.df.sort_values(timeSeriesCol,ascending = True)
+            ixDict = dict(zip(self.df[timeSeriesCol].unique(),list(range(1,len(self.df[timeSeriesCol].unique())+1))))
+            self.df[timeSeriesCol] = self.df[timeSeriesCol].apply(lambda x: ixDict[x])
+        else:
+            ixDict = self.df[timeSeriesCol].values
+
+        if byCategory:
+            self.df = self._pivot_df(self.df,categoryCol,timeSeriesCol,dropna)
+        else:
+            self.df = self._flatten_df(self.df,categoryCol,timeSeriesCol,dropna)
+        return ixDict
+
+    def _pivot_df(self,df,categoryCol,timeSeriesCol,dropna):
+        df = df.pivot(categoryCol,timeSeriesCol,df.columns.drop([categoryCol,timeSeriesCol]))
+        df.columns = list(map(lambda x: f"{x[0]}_{x[1]}",df.columns))
+        if dropna:
+            df = df.dropna(axis =1)
+        return df
+
+    def _flatten_df(self,df,categoryCol,timeSeriesCol,dropna):
+        categoryList = df[categoryCol].unique()
+        resDf = None
+        for i in categoryList:
+            subDf = df[df[categoryCol]==i]
+            subDf = self._pivot_df(subDf,categoryCol,timeSeriesCol,dropna)
+            subDf.columns = list(map(lambda x: f"{i}_{x}",subDf.columns))
+            subDf = subDf.reset_index(drop=True)
+            if resDf is None:
+                resDf = subDf
+            else:
+                resDf = pd.concat([resDf,subDf],axis =1)
+        return resDf
+
+
+    def transform_dataFrame(self,colName,targetCol,timeSeriesCol,transformFunc,*args,**kwargs):
+        """
+        transform_dataFrame this function use apply method to transfrom dataFrame
+        
+        Parameters
+        ----------
+        colName : str
+            target column for transformation
+        targetCol : str
+            the column to store new data
+        timeSeriesCol : str
+            time series column for sorting before apply function
+        transformFunc : func
+            the function implmented in the apply function
+        axis : int, optional
+            0 for row 1 for column, by default 1
+
+        """
+        self.df = self.df.sort_values(timeSeriesCol,ascending = True)
+        self.df[targetCol] = transformFunc(self.df[colName].values,*args,**kwargs)
+        return self
+
+
+
+
+
+    def __repr__(self):
+        return f"Tensor Transformer Config: {repr(self.config)}"
+
+
 
 class Pandas_Time_Series_Panel_Dataset(object):
 
     def __init__(self,pandasFrame):
+        """
+        Pandas_Time_Series_Panel_Dataset prepares the dataset for traditional machine learning problem.
+        
+        It can convert the pandas Frame into multiple lagging features or create a lead feature as label.
+        
+        Parameters
+        ----------
+        pandasFrame : pandas dataFrame
+            the dataFrame for preprocessing
+        """
         self.df = pandasFrame
 
     def expand_dataFrame_by_category(self,indexCol,keyCol):
+        """
+        expand_dataFrame_by_category to create columns for different categories
+        
+        it convert the dataFrame from [x1,x2,x3,...,category] -> [category_x1,category_x2,category_x3,....]
+        
+        Parameters
+        ----------
+        indexCol : str
+            the time series column
+        keyCol : str
+            the category column
+        
+        """
         keys = self.df[keyCol].unique()
         tmpDf = None
         for ix,k in enumerate(keys):
@@ -153,6 +271,26 @@ class Pandas_Time_Series_Panel_Dataset(object):
 
 
     def make_slide_window(self,indexCol,windowSize,colList=None,groupby=None):
+        """
+        make_slide_window make lag features given with the range of window size
+        
+        this function will create lag features along with the given window size.
+        if colList set to be None, all column will be used to create lag features.
+        groupby is for category columns. This paramemter for dataFrame which did not
+        expand by categories.
+        
+        Parameters
+        ----------
+        indexCol : str
+            time series column
+        windowSize : int
+            lag number created
+        colList : list, optional
+            the columns used to create lag features, by default None
+        groupby : str, optional
+            category column, by default None
+
+        """
         if colList is None:
             colList = self.df.columns.tolist()
             self.df = self.df.sort_values(indexCol,ascending = True)
@@ -168,6 +306,29 @@ class Pandas_Time_Series_Panel_Dataset(object):
 
 
     def make_lead_column(self,indexCol,baseCol,leadNum,groupby=None):
+        """
+        make_lead_column this function will create lead feature along with the lead number
+        
+        this function is for creating label for supervised learning
+        groupby is for category columns. This paramemter for dataFrame which did not
+        expand by categories.
+
+        Parameters
+        ----------
+        indexCol : str
+            time series column
+        baseCol : str
+            the column for lead feature
+        leadNum : int
+            the lead time unit
+        groupby : str, optional
+            category column, by default None
+        
+        Returns
+        -------
+        [type]
+            [description]
+        """
         self.df = self.df.sort_values(indexCol,ascending = False)
         if groupby is None:
             self.df[f'{baseCol}_lead{str(leadNum)}'] = self.df[baseCol].shift(leadNum)
@@ -175,6 +336,27 @@ class Pandas_Time_Series_Panel_Dataset(object):
             self.df[f'{baseCol}_lead{str(leadNum)}'] = self.df.groupby(groupby)[baseCol].shift(leadNum)            
         return self
 
+    def transform_dataFrame(self,colName,targetCol,timeSeriesCol,transformFunc,*args,**kwargs):
+        """
+        transform_dataFrame this function use apply method to transfrom dataFrame
+        
+        Parameters
+        ----------
+        colName : str
+            target column for transformation
+        targetCol : str
+            the column to store new data
+        timeSeriesCol : str
+            time series column for sorting before apply function
+        transformFunc : func
+            the function implmented in the apply function
+        axis : int, optional
+            0 for row 1 for column, by default 1
+
+        """
+        self.df = self.df.sort_values(timeSeriesCol,ascending = True)
+        self.df[targetCol] = transformFunc(self.df[colName].values,*args,**kwargs)
+        return self
 
     def __repr__(self):
         return repr(self.df)

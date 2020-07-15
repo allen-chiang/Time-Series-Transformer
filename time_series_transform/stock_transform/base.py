@@ -4,7 +4,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from collections import ChainMap
 from joblib import Parallel, delayed
-
+from numpy.fft import *
+from time_series_transform.util import *
 
 class Stock (object):
     def __init__(self,symbol,data,additionalInfo=None):
@@ -17,13 +18,6 @@ class Stock (object):
     def dataFrame(self):
         self.df['symbol'] = self.symbol
         return self.df
-
-    def _get_transformation_list(self):
-        return {
-            'moving_average':moving_average,
-            'fast_fourier':fft_transform,
-            'real_fast_fourier':rfft
-        }
 
     def plot(self,colName,*args,**kwargs):
         self.df[colName].plot(*args,**kwargs)
@@ -38,11 +32,10 @@ class Stock (object):
         else:
             raise ValueError("invalid format value")
 
-    def make_technical_indicator(self,colName,labelName,indicator,*args,**kwargs):
-        techList = self._get_transformation_list()
+    def make_technical_indicator(self,colName,labelName,indicatorFunction,*args,**kwargs):
         arr = self.df[colName].values
-        indicator = techList[indicator](arr,*args,**kwargs)
-        self.df[f'{labelName}_{colName}'] = indicator
+        indicator = indicatorFunction(arr,*args,**kwargs)
+        self.df[f'{colName}_{labelName}'] = indicator
         return self
 
 
@@ -103,7 +96,7 @@ class Portfolio(object):
                     df = pd.merge(df,tmp, on = [keyCol], how = 'outer')
 
             else:
-                self.stockDict[i].plot(stockIndicators[i],*args,**kwargs)
+                self.stockDict[i].plot(stockIndicators[keyCol],*args,**kwargs)
         
         if samePlot:
             df = df.set_index(keyCol)
@@ -112,19 +105,7 @@ class Portfolio(object):
         plt.show()
 
 
-def moving_average(arr, windowSize=3) :
-    ret = np.cumsum(arr, dtype=float)
-    ret[windowSize:] = ret[windowSize:] - ret[:-windowSize]
-    ret = ret[windowSize - 1:] / windowSize
-    res = np.empty((int(len(arr)-len(ret))))
-    res[:] = np.nan
-    return np.append(res,ret) 
 
-def fft_transform(arr):
-    return scipy.fft.fft(arr)
-
-def rfft(arr):
-    return scipy.fft.rfft(arr)
 
 def macd(arr):
     df = pd.DataFrame(data = arr, columns = ["Origin"])
