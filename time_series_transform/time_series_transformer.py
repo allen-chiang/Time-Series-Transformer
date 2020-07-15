@@ -193,7 +193,7 @@ class Pandas_Time_Series_Tensor_Dataset(object):
         return resDf
 
 
-    def transform_dataFrame(self,colName,targetCol,timeSeriesCol,transformFunc,axis =1,*args,**kwargs):
+    def transform_dataFrame(self,colName,targetCol,timeSeriesCol,transformFunc,*args,**kwargs):
         """
         transform_dataFrame this function use apply method to transfrom dataFrame
         
@@ -212,7 +212,7 @@ class Pandas_Time_Series_Tensor_Dataset(object):
 
         """
         self.df = self.df.sort_values(timeSeriesCol,ascending = True)
-        self.df[targetCol] = self.df[colName].apply(lambda x: transformFunc(x,*args,**kwargs),axis =axis)
+        self.df[targetCol] = transformFunc(self.df[targetCol].values,*args,**kwargs)
         return self
 
 
@@ -336,7 +336,7 @@ class Pandas_Time_Series_Panel_Dataset(object):
             self.df[f'{baseCol}_lead{str(leadNum)}'] = self.df.groupby(groupby)[baseCol].shift(leadNum)            
         return self
 
-    def transform_dataFrame(self,colName,targetCol,timeSeriesCol,transformFunc,axis =1,*args,**kwargs):
+    def transform_dataFrame(self,colName,targetCol,timeSeriesCol,transformFunc,*args,**kwargs):
         """
         transform_dataFrame this function use apply method to transfrom dataFrame
         
@@ -355,7 +355,7 @@ class Pandas_Time_Series_Panel_Dataset(object):
 
         """
         self.df = self.df.sort_values(timeSeriesCol,ascending = True)
-        self.df[targetCol] = self.df[colName].apply(lambda x: transformFunc(x,*args,**kwargs),axis =axis)
+        self.df[targetCol] = transformFunc(self.df[targetCol].values,*args,**kwargs)
         return self
 
     def __repr__(self):
