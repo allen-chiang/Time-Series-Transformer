@@ -125,3 +125,13 @@ def fft_transform(arr):
 
 def rfft(arr):
     return scipy.fft.rfft(arr)
+
+def macd(arr):
+    df = pd.DataFrame(data = arr, columns = ["Origin"])
+    df['EMA_12'] = df['Origin'].ewm(span=12).mean()
+    df['EMA_26'] = df['Origin'].ewm(span=26).mean()
+
+    df['DIF'] = df['EMA_12'] - df['EMA_26']
+    df['DEM'] = df['DIF'].ewm(span=9).mean()
+    df['OSC'] = df['DIF'] - df['DEM']
+    return df
