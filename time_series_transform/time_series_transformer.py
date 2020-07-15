@@ -212,7 +212,7 @@ class Pandas_Time_Series_Tensor_Dataset(object):
 
         """
         self.df = self.df.sort_values(timeSeriesCol,ascending = True)
-        self.df[targetCol] = transformFunc(self.df[targetCol].values,*args,**kwargs)
+        self.df[targetCol] = transformFunc(self.df[colName].values,*args,**kwargs)
         return self
 
 
@@ -355,7 +355,7 @@ class Pandas_Time_Series_Panel_Dataset(object):
 
         """
         self.df = self.df.sort_values(timeSeriesCol,ascending = True)
-        self.df[targetCol] = transformFunc(self.df[targetCol].values,*args,**kwargs)
+        self.df[targetCol] = transformFunc(self.df[colName].values,*args,**kwargs)
         return self
 
     def __repr__(self):
