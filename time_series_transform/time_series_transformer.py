@@ -211,7 +211,7 @@ class Pandas_Time_Series_Tensor_Dataset(object):
             0 for row 1 for column, by default 1
 
         """
-        self.df = self.df.sort_by_values(timeSeriesCol,ascending = True)
+        self.df = self.df.sort_values(timeSeriesCol,ascending = True)
         self.df[targetCol] = self.df[colName].apply(lambda x: transformFunc(x,*args,**kwargs),axis =axis)
         return self
 
@@ -354,7 +354,7 @@ class Pandas_Time_Series_Panel_Dataset(object):
             0 for row 1 for column, by default 1
 
         """
-        self.df = self.df.sort_by_values(timeSeriesCol,ascending = True)
+        self.df = self.df.sort_values(timeSeriesCol,ascending = True)
         self.df[targetCol] = self.df[colName].apply(lambda x: transformFunc(x,*args,**kwargs),axis =axis)
         return self
 
