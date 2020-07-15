@@ -32,7 +32,7 @@ class Stock (object):
         techList = self._get_transformation_list()
         arr = self.df[colName].values
         indicator = techList[indicator](arr,*args,**kwargs)
-        self.df[f'{labelName}_{colName}'] = indicator
+        self.df[f'{colName}_{labelName}'] = indicator
         return self
 
 
