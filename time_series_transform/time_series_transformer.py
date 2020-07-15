@@ -6,7 +6,6 @@ import pyarrow as pa
 import tensorflow as tf
 from pyarrow import parquet as pq
 from collections import defaultdict
-from matplotlib import pyplot as plt
 from time_series_transform.base import *
 
 
@@ -126,6 +125,13 @@ class Pandas_Time_Series_Tensor_Dataset(object):
                 else:
                     Xtensor[c] = res['data'][c]
             yield (Xtensor, Ytensor)
+
+
+    def expand_dataFrame_by_date(self, parameter_list):
+        pass
+        
+    def __repr__(self):
+        return f"Tensor Transformer Config: {repr(self.config)}"
 
 
 

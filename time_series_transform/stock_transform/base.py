@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from collections import ChainMap
 from joblib import Parallel, delayed
+from numpy.fft import *
 
 
 class Stock (object):
@@ -21,8 +22,7 @@ class Stock (object):
     def _get_transformation_list(self):
         return {
             'moving_average':moving_average,
-            'fast_fourier':fft_transform,
-            'real_fast_fourier':rfft
+            'fast_fourier':rfft_transform
         }
 
     def plot(self,colName,*args,**kwargs):
@@ -91,8 +91,12 @@ def moving_average(arr, windowSize=3) :
     res[:] = np.nan
     return np.append(res,ret) 
 
-def fft_transform(arr):
-    return scipy.fft.fft(arr)
 
-def rfft(arr):
-    return scipy.fft.rfft(arr)
+def rfft_transform(arr, threshold=1e3):
+    fourier = rfft(arr)
+    frequencies = rfftfreq(arr.size, d=20e-3/arr.size)
+    fourier[frequencies > threshold] = 0
+    fourier =  irfft(fourier)
+    res = np.empty((int(len(arr)-len(fourier))))
+    res[:] = np.nan
+    return np.append(res,fourier) 
