@@ -5,7 +5,7 @@ from time_series_transform.stock_transform.base import *
 
 class Stock_Extractor(object):
     def __init__(self,symbol,engine):
-        self.client = self._get_extractor(engine)
+        self.client = self._get_extractor(engine)(symbol)
         self.symbol = symbol
         self.stock = None
 
