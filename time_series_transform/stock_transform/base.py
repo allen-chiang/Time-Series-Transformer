@@ -35,19 +35,20 @@ class Stock (object):
     def make_technical_indicator(self,colName,labelName,indicatorFunction,*args,**kwargs):
         arr = self.df[colName].values
         indicator = indicatorFunction(arr,*args,**kwargs)
-        self.df[f'{colName}_{labelName}'] = indicator
+        if isinstance(indicator,dict):
+            for k in indicator:
+                self.df[f'{colName}_{labelName}_{k}'] = indicator[k]
+        else:
+            self.df[f'{colName}_{labelName}'] = indicator
         return self
 
     def macd_plot(self, colName):
         df = macd(self.df[colName].values)
-        colList = df.columns.tolist()
-        colList[0] = colName
-        df.columns =colList
 
         fig,ax = plt.subplots(2,1,figsize=(10,10))
         plt.subplots_adjust(hspace=0.8)
 
-        df[colName].plot(ax = ax[0])
+        self.df[colName].plot(ax = ax[0])
         df['EMA_12'].plot(ax=ax[0])
         df['EMA_26'].plot(ax=ax[0])
 
@@ -125,44 +126,27 @@ class Portfolio(object):
         plt.show()
 
 
-def macd(arr, targetCol = None):
-    colName = 'Base'
-    df = pd.DataFrame(data = arr, columns = [colName])
-    df['EMA_12'] = df[colName].ewm(span=12).mean()
-    df['EMA_26'] = df[colName].ewm(span=26).mean()
+def macd(arr):
+    df = {}
+    df['EMA_12'] = ema(arr, span=12).mean().to_numpy()
+    df['EMA_26'] = ema(arr, span=26).mean().to_numpy()
 
     df['DIF'] = df['EMA_12'] - df['EMA_26']
-    df['DEM'] = df['DIF'].ewm(span=9).mean()
+    df['DEM'] = ema(arr, span=9).mean().to_numpy()
     df['OSC'] = df['DIF'] - df['DEM']
-
-    if targetCol is None:
-        return df
-    else:
-        return df[targetCol].values
-
-def stochastic_oscillator(df):
-    rsv_day = 9
-    alpha = 1/3
-
-    rsv_rolling = df['Close'].rolling(rsv_day)
-    df['rsv'] = 100*(df['Close'] - rsv_rolling.min())/(rsv_rolling.max() - rsv_rolling.min())
-    df = df.dropna()
-    
-    k_list = [50]
-    for i, rsv in enumerate(list(df['rsv'])):
-        k_val_prev = k_list[i]
-        k_val = (1-alpha) * k_val_prev + alpha * rsv
-        k_list.append(k_val)
-    
-    df['k_val'] = k_list[1:]
-    
-    d_list = [50]
-    for i, k in enumerate(list(df['k_val'])):
-        d_val_prev = d_list[i]
-        d_val = (1-alpha) * d_val_prev + alpha * k
-        d_list.append(d_val)
-    
-    df['d_val'] = d_list[1:]
     return df
+
+def stochastic_oscillator(arr):
+    rsv_day = 9
+    ret = {}
+    df = pd.DataFrame(arr)
+
+    rsv_rolling = df.rolling(rsv_day)
+    rsv_val = 100*(df - rsv_rolling.min())/(rsv_rolling.max() - rsv_rolling.min())
+    ret['k_val'] = rsv_val
+    ret['d_val'] = np.array(ret['k_val'].rolling(3).mean())
+    ret['k_val'] = np.array(rsv_val)
+    
+    return ret
 
 
