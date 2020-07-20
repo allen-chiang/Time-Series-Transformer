@@ -216,9 +216,6 @@ class Pandas_Time_Series_Tensor_Dataset(object):
         return self
 
 
-
-
-
     def __repr__(self):
         return f"Tensor Transformer Config: {repr(self.config)}"
 
