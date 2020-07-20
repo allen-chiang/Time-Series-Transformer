@@ -5,3 +5,4 @@ pyarrow
 ystock
 scipy
 functools
+plotly

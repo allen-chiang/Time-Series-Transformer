@@ -6,6 +6,7 @@ from collections import ChainMap
 from joblib import Parallel, delayed
 from numpy.fft import *
 from time_series_transform.util import *
+import plotly.graph_objects as go
 
 class Stock (object):
     def __init__(self,symbol,data,additionalInfo=None):
@@ -60,6 +61,17 @@ class Stock (object):
         ax[1].fill_between(df.index,0,df['OSC'])
         ax[1].legend()
         plt.show()
+
+    def candle_plot(self, *args, **kwargs):
+        df = self.df
+        fig = go.Figure(data=[go.Candlestick(x=df['Date'],
+                open=df['Open'],
+                high=df['High'],
+                low=df['Low'],
+                close=df['Close'])],
+                *args, **kwargs)
+
+        fig.show()
 
 
 class Portfolio(object):
@@ -151,4 +163,14 @@ def stochastic_oscillator(arr):
     
     return ret
 
+def rsi(arr):
+    dif = [arr[i+1]-arr[i] for i in range(len(arr)-1)]
+    u_val = pd.DataFrame([val if val>0 else 0 for val in dif])
+    d_val = pd.DataFrame([-1*val if val<0 else 0 for val in dif])
 
+    u_ema = ema(u_val, span = 14).mean()
+    d_ema = ema(d_val,span=14).mean()
+    rs = u_ema/d_ema
+    rsi = 100*(1-1/(1+rs))
+
+    return rsi
