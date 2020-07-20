@@ -43,7 +43,9 @@ class Stock (object):
         return self
 
     def macd_plot(self, colName):
-        df = macd(self.df[colName].values)
+        df = macd(self.df[colName])
+        df[colName] = self.df[colName].values
+        df = pd.DataFrame(df)
 
         fig,ax = plt.subplots(2,1,figsize=(10,10))
         plt.subplots_adjust(hspace=0.8)
@@ -132,7 +134,7 @@ def macd(arr):
     df['EMA_26'] = ema(arr, span=26).mean().to_numpy()
 
     df['DIF'] = df['EMA_12'] - df['EMA_26']
-    df['DEM'] = ema(arr, span=9).mean().to_numpy()
+    df['DEM'] = ema(pd.DataFrame(df['DIF']), span=9).mean().to_numpy().reshape(df['DIF'].shape[0])
     df['OSC'] = df['DIF'] - df['DEM']
     return df
 
