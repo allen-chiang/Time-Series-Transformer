@@ -64,14 +64,51 @@ class Stock (object):
 
     def candle_plot(self, *args, **kwargs):
         df = self.df
-        fig = go.Figure(data=[go.Candlestick(x=df['Date'],
+        colors = []
+        INCREASING_COLOR = '#008000'
+        DECREASING_COLOR = '#FF0000'
+
+        data=[dict(type='candlestick',
+                x=df['Date'],
                 open=df['Open'],
                 high=df['High'],
                 low=df['Low'],
-                close=df['Close'])],
-                *args, **kwargs)
+                close=df['Close'],
+                yaxis = 'y2',
+                name = self.symbol)]
+        layout = dict()
+        fig = dict(data = data,layout=layout)
 
-        fig.show()
+        fig['layout']['plot_bgcolor'] = 'rgb(250, 250, 250)'
+        fig['layout']['xaxis'] = dict( rangeselector = dict( visible = True ) )
+        fig['layout']['yaxis'] = dict( domain = [0, 0.2], showticklabels = False )
+        fig['layout']['yaxis2'] = dict( domain = [0.2, 0.8] )
+        fig['layout']['legend'] = dict( orientation = 'h', y=0.9, x=0.3, yanchor='bottom' )
+        fig['layout']['margin'] = dict( t=40, b=40, r=40, l=40 )
+
+        
+        for i in range(len(df['Close'])):
+            if i != 0:
+                if df['Close'][i] > df['Close'][i-1]:
+                    colors.append(INCREASING_COLOR)
+                else:
+                    colors.append(DECREASING_COLOR)
+            else:
+                colors.append(DECREASING_COLOR)
+                
+        fig['data'].append( dict( x=df['Date'], y=df['Volume'],                         
+                                marker=dict( color=colors ),
+                                type='bar', yaxis='y', name='Volume' ) )
+
+        ret = go.Figure(fig)
+        ret.update_xaxes(
+            rangebreaks=[
+                dict(bounds=["sat", "mon"]), 
+                dict(values=["2015-12-25", "2016-01-01"])
+            ]
+        )
+
+        ret.show()
 
 
 class Portfolio(object):
@@ -173,4 +210,4 @@ def rsi(arr):
     rs = u_ema/d_ema
     rsi = 100*(1-1/(1+rs))
 
-    return rsi
+    return rsi.to_numpy()
