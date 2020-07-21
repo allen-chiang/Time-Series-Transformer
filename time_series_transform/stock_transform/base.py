@@ -10,6 +10,18 @@ import plotly.graph_objects as go
 
 class Stock (object):
     def __init__(self,symbol,data,additionalInfo=None):
+        """
+        The class initialize data as a Stock object 
+        
+        Parameters
+        ----------
+        symbol : str 
+            symbol of the stock
+        data : pandas dataframe
+            main data of the stock, for example, Date, High, Low, Open, Close, Volume
+        additionalInfo: dict, optional
+            supplemental information beside the data, by default None
+        """
         self.df = data
         self.symbol = symbol
         self.additionalInfo = additionalInfo
@@ -21,9 +33,30 @@ class Stock (object):
         return self.df
 
     def plot(self,colName,*args,**kwargs):
+        """
+        plot the stock data of the given column using matplot
+        
+        Parameters
+        ----------
+        colName : str 
+            column of the data used for plotting
+        """
         self.df[colName].plot(*args,**kwargs)
 
     def save(self, path, format = "csv",compression = None):
+        """
+        save the main data locally using pandas
+        
+        Parameters
+        ----------
+        path : str 
+            path of local directory
+        format : str, optional
+            format of the file
+            valid values: csv, parquet
+        compression: str, optional
+            compression method, by default None
+        """
         data = self.df
         download_path = path + "/" + self.symbol + "_stock_extract." + format
         if format == 'csv':
@@ -34,6 +67,18 @@ class Stock (object):
             raise ValueError("invalid format value")
 
     def make_technical_indicator(self,colName,labelName,indicatorFunction,*args,**kwargs):
+        """
+        make_technical_indicator applies the indicatorFunctions to the given column
+        
+        Parameters
+        ----------
+        colName : str 
+            column of the data used for the indicator functions
+        labelName : str
+            label name to show on the dataframe
+        indicatorFunction: dict
+            dict of the indicator functions
+        """
         arr = self.df[colName].values
         indicator = indicatorFunction(arr,*args,**kwargs)
         if isinstance(indicator,dict):
@@ -44,6 +89,14 @@ class Stock (object):
         return self
 
     def macd_plot(self, colName):
+        """
+        macd_plot plot the macd using the given column
+        
+        Parameters
+        ----------
+        colName : str 
+            column of the data used for macd plotting
+        """
         df = macd(self.df[colName])
         df[colName] = self.df[colName].values
         df = pd.DataFrame(df)
@@ -63,6 +116,10 @@ class Stock (object):
         plt.show()
 
     def candle_plot(self, *args, **kwargs):
+        """
+        candle_plot plot the candle plot using plotly
+        
+        """
         df = self.df
         colors = []
         INCREASING_COLOR = '#008000'
@@ -100,7 +157,7 @@ class Stock (object):
                                 marker=dict( color=colors ),
                                 type='bar', yaxis='y', name='Volume' ) )
 
-        ret = go.Figure(fig)
+        ret = go.Figure(fig,*args, **kwargs)
         ret.update_xaxes(
             rangebreaks=[
                 dict(bounds=["sat", "mon"]), 
@@ -113,9 +170,25 @@ class Stock (object):
 
 class Portfolio(object):
     def __init__(self,stockList):
+        """
+        The class initialize data as a Portfolio object, which stores multiple Stock data
+        
+        Parameters
+        ----------
+        stockList : list[Stock]
+            list of Stock data
+        """
         self.stockDict = self._get_stock_dict(stockList)
 
     def _get_stock_dict(self,stockList):
+        """
+        _get_stock_dict transform the stock list into dictionary
+        
+        Parameters
+        ----------
+        stockList : list[Stock] 
+            list of Stock data
+        """
         stockDict = {}
         for i in stockList:
             key = i.symbol
@@ -123,6 +196,22 @@ class Portfolio(object):
         return stockDict
 
     def make_technical_indicator(self,colName,labelName,indicator,n_jobs =1,verbose = 0,*args,**kwargs):
+        """
+        make_technical_indicator applies the indicator to the given column
+        
+        Parameters
+        ----------
+        colName : str 
+            column of the data used for the indicator functions
+        labelName : str
+            label name to show on the dataframe
+        indicator : function
+            function of the indicator
+        n_jobs : int
+            The maximum number of concurrently running jobs, by default 1
+        verbose : int
+            The verbosity level: if non zero, progress messages are printed, by default 0
+        """
         dctList =  Parallel(n_jobs,verbose = verbose)(delayed(self._stock_technical_indicator)(
             self.stockDict[i],
             i,colName,
@@ -138,6 +227,14 @@ class Portfolio(object):
 
 
     def get_portfolio_dataFrame(self):
+        """
+        get_portfolio_dataFrame return the portfolio overview
+        
+        Returns
+        -------
+        portfolio
+            portfolio dataset including all of the applied indicators
+        """
         portfolio = None
         for ix,v in enumerate(self.stockDict):
             if ix == 0:
@@ -147,6 +244,19 @@ class Portfolio(object):
         return portfolio
 
     def plot(self,stockIndicators, keyCol = 'Default' ,samePlot=False,*args,**kwargs):
+        """
+        plot the given stock indicator in the portfolio
+        
+        Parameters
+        ----------
+        stockIndicators : dict 
+            dictionary of the stock indicator used for plotting 
+        keyCol : str
+            xaxis of the plot, by default "Default"
+            valid value: columns of the data
+        samePlot : boolean
+            whether to show the stock in the same plot
+        """
         df = None
         keyArr = None
         for ix,i in enumerate(stockIndicators):
@@ -178,6 +288,19 @@ class Portfolio(object):
 
 
 def macd(arr):
+    """
+    Return the moving average convergence/divergence 
+    
+    Parameters
+    ----------
+    arr : array 
+        data used to calculate the macd
+
+    Returns
+    -------
+    df : dict
+        macd of the given data, including EMA_12, EMA_26, DIF, DEM, OSC
+    """
     df = {}
     df['EMA_12'] = ema(arr, span=12).mean().to_numpy()
     df['EMA_26'] = ema(arr, span=26).mean().to_numpy()
@@ -188,6 +311,19 @@ def macd(arr):
     return df
 
 def stochastic_oscillator(arr):
+    """
+    Return the stochastic oscillator 
+    
+    Parameters
+    ----------
+    arr : array 
+        data used to calculate the stochastic oscillator
+
+    Returns
+    -------
+    ret : dict
+        stochastic oscillator of the given data, including k and d values
+    """
     rsv_day = 9
     ret = {}
     df = pd.DataFrame(arr)
@@ -201,6 +337,19 @@ def stochastic_oscillator(arr):
     return ret
 
 def rsi(arr):
+    """
+    Return the Relative Strength Index 
+    
+    Parameters
+    ----------
+    arr : array 
+        data used to calculate the Relative Strength Index
+
+    Returns
+    -------
+    rsi : array
+        Relative Strength Index of the given array
+    """
     dif = [arr[i+1]-arr[i] for i in range(len(arr)-1)]
     u_val = pd.DataFrame([val if val>0 else 0 for val in dif])
     d_val = pd.DataFrame([-1*val if val<0 else 0 for val in dif])
