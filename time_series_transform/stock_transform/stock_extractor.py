@@ -79,6 +79,18 @@ class yahoo_stock(object):
 
     """
     def __init__(self,symbol):
+        """
+        Historical Data
+        ---
+        Input:
+        symbol: string
+        period: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max
+        (default is '1mo')
+        start_date, end_date: String, "%Y-%m-%d", eg "2020-02-20"
+        ---
+        Return:
+        date, open, high, low, close, volume, dividends, stock splits
+        """
         self._symbol = symbol
         self._ticker = self._getStock(symbol)
     
@@ -102,20 +114,11 @@ class yahoo_stock(object):
         return ticker
 
     def getCompanyInfo(self):
-        return self.ticker.info
+        try:
+            return self.ticker.info
+        except:
+            return None
 
-    """
-    Historical Data
-    ---
-    Input:
-    symbol: string
-    period: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max
-    (default is '1mo')
-    start_date, end_date: String, "%Y-%m-%d", eg "2020-02-20"
-    ---
-    Return:
-    date, open, high, low, close, volume, dividends, stock splits
-    """
 
     def getHistoricalByPeriod(self, period = '1mo'):
         return self.ticker.history(period)
@@ -124,22 +127,40 @@ class yahoo_stock(object):
         return self.ticker.history(start = start_date, end = end_date)
 
     def getActions(self):
-        return self.ticker.actions
+        try:
+            return self.ticker.actions
+        except:
+            return None
 
     def getDividends(self):
-        return self.ticker.dividends
+        try:
+            return self.ticker.dividends
+        except:
+            return None
 
     def getSplits(self):
-        return self.ticker.splits
+        try:
+            return self.ticker.splits
+        except:
+            return None
 
     def getSustainability(self):
-        return self.ticker.sustainability
+        try:
+            return self.ticker.sustainability
+        except:
+            return None
 
     def getRecommendations(self):
-        return self.ticker.recommendations
+        try:
+            return self.ticker.recommendations
+        except:
+            return None
 
     def getNextEvent(self):
-        return self.ticker.calendar
+        try:
+            return self.ticker.calendar
+        except:
+            return None
 
     def getAdditionalInfo(self):
         info_dict = {

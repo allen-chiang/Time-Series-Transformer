@@ -60,6 +60,8 @@ def differencing(arr,order =1):
     res = np.empty((int(len(arr)-len(diff))))
     res[:] = np.nan
     return np.append(res,diff) 
+
+    
 def ema(arr, com = None, span = None, halflife = None, alpha = None, adjust = True, min_periods = 0, ignore_na = False, axis = 0):
     return arr.ewm(com = com, span = span, halflife = halflife, alpha = alpha, min_periods = min_periods, adjust = adjust, ignore_na = ignore_na, axis = axis)
 
