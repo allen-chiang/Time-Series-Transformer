@@ -287,7 +287,7 @@ class Portfolio(object):
         plt.show()
 
 
-def macd(arr):
+def macd(arr, return_diff = False):
     """
     Return the moving average convergence/divergence 
     
@@ -302,13 +302,16 @@ def macd(arr):
         macd of the given data, including EMA_12, EMA_26, DIF, DEM, OSC
     """
     df = {}
-    df['EMA_12'] = ema(arr, span=12).mean().to_numpy()
-    df['EMA_26'] = ema(arr, span=26).mean().to_numpy()
+    df['EMA_12'] = ema(arr, span=12)
+    df['EMA_26'] = ema(arr, span=26)
 
     df['DIF'] = df['EMA_12'] - df['EMA_26']
-    df['DEM'] = ema(pd.DataFrame(df['DIF']), span=9).mean().to_numpy().reshape(df['DIF'].shape[0])
+    df['DEM'] = ema(pd.DataFrame(df['DIF']), span=9).reshape(df['DIF'].shape[0])
     df['OSC'] = df['DIF'] - df['DEM']
-    return df
+    if return_diff:
+        return df['OSC']
+    else:
+        return df
 
 def stochastic_oscillator(arr):
     """
@@ -351,15 +354,15 @@ def rsi(arr):
         Relative Strength Index of the given array
     """
     dif = [arr[i+1]-arr[i] for i in range(len(arr)-1)]
-    u_val = pd.DataFrame([val if val>0 else 0 for val in dif])
-    d_val = pd.DataFrame([-1*val if val<0 else 0 for val in dif])
+    u_val = np.array([val if val>0 else 0 for val in dif])
+    d_val = np.array([-1*val if val<0 else 0 for val in dif])
 
-    u_ema = ema(u_val, span = 14).mean()
-    d_ema = ema(d_val,span=14).mean()
+    u_ema = ema(u_val, span = 14)
+    d_ema = ema(d_val,span=14)
     rs = u_ema/d_ema
     rsi = 100*(1-1/(1+rs))
 
-    return rsi.to_numpy()
+    return rsi
 
 def williams_r(arr, n_day=14):
     """
