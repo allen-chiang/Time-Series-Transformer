@@ -43,7 +43,19 @@ class Time_Series_Tensor(object):
         time_series_tensor : Time_Series_Tensor
             the input Time_Series_Tensor's data will be stacked into the other
         """
+        concatDim = time_series_tensor.data.ndim
+        if time_series_tensor.data.ndim == 1:
+            time_series_tensor.data = time_series_tensor.data.reshape((-1,1))
+
+        if self.data.ndim == 1:
+            self.data = self.data.reshape((-1,1))
+        elif self.data.ndim == 2:
+            self.data = self.data.reshape((self.data.shape[0],1,self.data.shape[1]))
+        
         self.data = np.dstack((self.data,time_series_tensor.data))
+
+        if concatDim == 1:
+            self.data = self.data.reshape((-1,self.data.shape[-1]))
 
 class Time_Series_Tensor_Factory(object):
     def __init__(self,data,tensorType):
