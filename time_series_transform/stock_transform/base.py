@@ -360,3 +360,24 @@ def rsi(arr):
     rsi = 100*(1-1/(1+rs))
 
     return rsi.to_numpy()
+
+def williams_r(arr, n_day=14):
+    """
+    Return the Williams %R index
+    
+    Parameters
+    ----------
+    arr : array 
+        data used to calculate the Williams %R
+    n_day : int
+        window of the indicator
+
+    Returns
+    -------
+    r_val : array
+        Relative Strength Index of the given array
+    """
+    df = pd.DataFrame(arr)
+    r_rolling = df.rolling(n_day)
+    r_val = 100*(r_rolling.max()-df)/(r_rolling.max() - r_rolling.min())
+    return r_val.to_numpy()
