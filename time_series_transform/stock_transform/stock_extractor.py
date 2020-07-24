@@ -1,7 +1,7 @@
 import yfinance as yf
 from datetime import datetime
 from time_series_transform.stock_transform.base import *
-
+import pandas as pd
 
 class Stock_Extractor(object):
     def __init__(self,symbol,engine):
@@ -43,8 +43,10 @@ class Stock_Extractor(object):
             The stock data of selected period
         """
         data = self.client.getHistoricalByPeriod(period)
+        data = pd.DataFrame(data.to_records())
+        data['Date'] = data.Date.astype(str)
         additionalInfo = self.client.getAdditionalInfo()
-        self.stock = Stock(self.symbol,data,additionalInfo)
+        self.stock = Stock(self.symbol,data,additionalInfo,'Date')
         return self.stock
 
     def get_stock_date(self,start_date,end_date):
@@ -67,7 +69,10 @@ class Stock_Extractor(object):
             The stock data of selected period
         """
         data = self.client.getHistoricalByRange(start_date,end_date)
-        self.stock = Stock(self.symbol,data)
+        data = pd.DataFrame(data.to_records())
+        data['Date'] = data.Date.astype(str)
+        additionalInfo = self.client.getAdditionalInfo()
+        self.stock = Stock(self.symbol,data,additionalInfo,'Date')
         return self.stock
 
     # I/O
@@ -107,6 +112,8 @@ class Portfolio_Extractor(object):
 
         self.portfolio = Portfolio(stockList)
         return self.portfolio
+
+
 
 
 class yahoo_stock(object):

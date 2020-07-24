@@ -9,7 +9,7 @@ from time_series_transform.util import *
 import plotly.graph_objects as go
 
 class Stock (object):
-    def __init__(self,symbol,data,additionalInfo=None):
+    def __init__(self,symbol,data,additionalInfo=None,timeSeriesCol = 'Date'):
         """
         The class initialize data as a Stock object 
         
@@ -21,11 +21,15 @@ class Stock (object):
             main data of the stock, for example, Date, High, Low, Open, Close, Volume
         additionalInfo: dict, optional
             supplemental information beside the data, by default None
+        timeSeriesCol: str, optional
+            time series column name for sorting data
         """
         self.df = data
         self.symbol = symbol
         self.additionalInfo = additionalInfo
-
+        self.timeSeriesCol = timeSeriesCol
+        self.df = self.df.sort_values(timeSeriesCol,ascending = True)
+        self.dateRange = self.df[timeSeriesCol].unique().tolist()
 
     @property
     def dataFrame(self):
@@ -66,7 +70,7 @@ class Stock (object):
         else:
             raise ValueError("invalid format value")
 
-    def make_technical_indicator(self,colName,labelName,indicatorFunction,*args,**kwargs):
+    def make_technical_indicator(self,colNames,labelName,indicatorFunction,*args,**kwargs):
         """
         make_technical_indicator applies the indicatorFunctions to the given column
         
@@ -79,13 +83,16 @@ class Stock (object):
         indicatorFunction: dict
             dict of the indicator functions
         """
-        arr = self.df[colName].values
-        indicator = indicatorFunction(arr,*args,**kwargs)
-        if isinstance(indicator,dict):
-            for k in indicator:
-                self.df[f'{colName}_{labelName}_{k}'] = indicator[k]
+        if isinstance(colNames,list):
+            arr = self.df[colNames]
         else:
-            self.df[f'{colName}_{labelName}'] = indicator
+            arr = self.df[colNames].values
+        indicator = indicatorFunction(arr,*args,**kwargs)
+        if isinstance(indicator,dict) or isinstance(indicator,pd.DataFrame):
+            for k in indicator:
+                self.df[f'{labelName}_{k}'] = indicator[k]
+        else:
+            self.df[f'{labelName}'] = indicator
         return self
 
     def macd_plot(self, colName):
@@ -242,6 +249,23 @@ class Portfolio(object):
             else:
                 portfolio = portfolio.append(self.stockDict[v].dataFrame)
         return portfolio
+
+
+    def remove_different_date(self):
+        timeCol = {}
+        for i in self.stockDict:
+            for v in self.stockDict[i].dateRange:
+                if v not in timeCol:
+                    timeCol[v] = 1
+                else:
+                    timeCol[v]+=1
+        timeCol = [k for k,v in timeCol.items() if v == len(self.stockDict)]
+        for i in self.stockDict:
+            self.stockDict[i].dateRange = timeCol
+            timeSeriesCol = self.stockDict[i].timeSeriesCol
+            self.stockDict[i].df = self.stockDict[i].df[self.stockDict[i].df[timeSeriesCol].isin(timeCol)]
+
+
 
     def plot(self,stockIndicators, keyCol = 'Default' ,samePlot=False,*args,**kwargs):
         """
