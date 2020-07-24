@@ -70,7 +70,7 @@ class Stock (object):
         else:
             raise ValueError("invalid format value")
 
-    def make_technical_indicator(self,colName,labelName,indicatorFunction,*args,**kwargs):
+    def make_technical_indicator(self,colNames,labelName,indicatorFunction,*args,**kwargs):
         """
         make_technical_indicator applies the indicatorFunctions to the given column
         
@@ -83,13 +83,16 @@ class Stock (object):
         indicatorFunction: dict
             dict of the indicator functions
         """
-        arr = self.df[colName].values
-        indicator = indicatorFunction(arr,*args,**kwargs)
-        if isinstance(indicator,dict):
-            for k in indicator:
-                self.df[f'{colName}_{labelName}_{k}'] = indicator[k]
+        if isinstance(colNames,list):
+            arr = self.df[colNames]
         else:
-            self.df[f'{colName}_{labelName}'] = indicator
+            arr = self.df[colNames].values
+        indicator = indicatorFunction(arr,*args,**kwargs)
+        if isinstance(indicator,dict) or isinstance(indicator,pd.DataFrame):
+            for k in indicator:
+                self.df[f'{labelName}_{k}'] = indicator[k]
+        else:
+            self.df[f'{labelName}'] = indicator
         return self
 
     def macd_plot(self, colName):
