@@ -63,7 +63,8 @@ def differencing(arr,order =1):
 
     
 def ema(arr, com = None, span = None, halflife = None, alpha = None, adjust = True, min_periods = 0, ignore_na = False, axis = 0):
-    return arr.ewm(com = com, span = span, halflife = halflife, alpha = alpha, min_periods = min_periods, adjust = adjust, ignore_na = ignore_na, axis = axis)
+    df = pd.DataFrame(arr)
+    return df.ewm(com = com, span = span, halflife = halflife, alpha = alpha, min_periods = min_periods, adjust = adjust, ignore_na = ignore_na, axis = axis).mean().to_numpy()
 
 
 
