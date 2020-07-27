@@ -6,7 +6,7 @@ import pyarrow as pa
 import tensorflow as tf
 from pyarrow import parquet as pq
 from collections import defaultdict
-from time_series_transform.base import *
+from time_series_transform.transform_core_api.base import *
 
 
 
