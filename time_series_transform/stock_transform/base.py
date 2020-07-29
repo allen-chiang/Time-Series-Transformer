@@ -29,7 +29,7 @@ class Stock (object):
         self.additionalInfo = additionalInfo
         self.timeSeriesCol = timeSeriesCol
         self.df = self.df.sort_values(timeSeriesCol,ascending = True)
-        self.dateRange = self.df[timeSeriesCol].unique().tolist()
+        self.dateRange = self.df.sort_values(timeSeriesCol,ascending=True)[timeSeriesCol].unique().tolist()
 
     @property
     def dataFrame(self):
@@ -326,11 +326,11 @@ def macd(arr, return_diff = False):
         macd of the given data, including EMA_12, EMA_26, DIF, DEM, OSC
     """
     df = {}
-    df['EMA_12'] = ema(arr, span=12)
-    df['EMA_26'] = ema(arr, span=26)
+    df['EMA_12'] = ema(arr, span=12).flatten()
+    df['EMA_26'] = ema(arr, span=26).flatten()
 
     df['DIF'] = df['EMA_12'] - df['EMA_26']
-    df['DEM'] = ema(pd.DataFrame(df['DIF']), span=9).reshape(df['DIF'].shape[0])
+    df['DEM'] = ema(pd.DataFrame(df['DIF']), span=9).flatten()
     df['OSC'] = df['DIF'] - df['DEM']
     if return_diff:
         return df['OSC']
