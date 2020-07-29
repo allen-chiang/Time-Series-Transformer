@@ -107,7 +107,8 @@ class Portfolio_Extractor(object):
     def get_portfolio_date(self,start_date, end_date):
         stockList = []
         for symbol in self.symbolList:
-            stock_data = Stock_Extractor(symbol, self.engine).get_stock_date(start_date, end_date)
+            stock_data = Stock_Extractor(symbol, self.engine)
+            stock_data = stock_data.get_stock_date(start_date, end_date)
             stockList.append(stock_data)
 
         self.portfolio = Portfolio(stockList)
