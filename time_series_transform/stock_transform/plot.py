@@ -10,6 +10,11 @@ class Plot(object):
         self._checkStock(stock)
         self.stock = stock
         self.fig = self._candleplot()
+        self.layers = ['y','y2']
+        self.plots = {
+            'candleplot' : 'y',
+            'volume' : 'y2'
+        }
 
     def _checkStock(self, object):
         if isinstance(object,Stock):
@@ -62,9 +67,14 @@ class Plot(object):
     def show(self):
         self.fig.show()
 
-    def add_line(self, colName, color, legendName, subplot = 'y', data = None):
+    def add_line(self, colName, color, legendName, showLegend = True, subplot = 'y', data = None):
+        if legendName in self.plots:
+            raise ValueError("duplicated legendName or indicator")
+
         if data is None:
             data = self.stock.df[colName]
+        
+        self.plots[legendName] = subplot
 
         self.fig.add_trace(
             go.Scatter(
@@ -72,39 +82,38 @@ class Plot(object):
                 y= data,
                 mode="lines",
                 line=go.scatter.Line(color=color),
-                showlegend= legendName is not None,
+                showlegend= showLegend,
                 yaxis = subplot,
                 name = legendName)
             )
 
     def add_macd(self):
         macd_data = macd(self.stock.df['Close'])
-        macd_line_data = {'DIF':macd_data['DIF'], 'DEM':macd_data['DEM'], 'ignore': np.zeros(macd_data['DEM'].shape[0])}
+        macd_line_data = {'DIF':macd_data['DIF'], 'DEM':macd_data['DEM'], 'macdBase1': np.zeros(macd_data['DEM'].shape[0])}
         
-        self._add_subplot_layout()
-        self._add_multi_trace(macd_line_data, ['#a0bbe8', '#ff6767', 'grey'], 'y3')
+        axis_num = 'y' + str(int(self.layers[-1][1:]) + 1)
+        self._add_multi_trace(macd_line_data, ['#a0bbe8', '#ff6767', 'grey'], axis_num)
         self.fig.add_trace(dict( x=self.stock.df['Date'], y=macd_data['OSC'],                         
                                 showlegend = False,
-                                type='bar', yaxis='y3', name='osc' ))
+                                type='bar', yaxis=axis_num, name='osc' ))
+        self._add_subplot_layer()
         
     def _add_multi_trace(self, data, colors, subplot):
         indx = 0
         for i in data:
+            showLegend = True
             trace = data[i]
-            if i.find('ignore') > 0 :
-                i = None
-            self.add_line(colName = None, color = colors[indx], legendName = i, subplot= subplot, data = trace)
+            if i.find('Base') >= 0 :
+                showLegend = False
+            self.add_line(colName = None, color = colors[indx], legendName = i,showLegend=showLegend, subplot= subplot, data = trace)
             indx += 1
 
-    def _add_subplot_layout(self):
-        axes = [self.fig.layout[e] for e in self.fig.layout if e[0:5] == 'yaxis']
-        layoutNum = len(axes)
+    def _add_subplot_layer(self):
+        newlayer = 'y' + str(int(self.layers[-1][1:]) + 1)
+        layoutNum = len(self.layers)
         offset = 0.05 * (layoutNum-1)  + 0.15 * (layoutNum -1) + 0.1
 
-        layout = {
-            "xaxis" + str(layoutNum): dict( domain = [0,1.0], rangeselector = dict( visible = False ) )
-        }
-
+        layout = {}
         for num in range(1,layoutNum+2):
             if num == 1:
                 layout['yaxis'] = dict( domain = [round(offset, 2), 0.85])
@@ -116,8 +125,19 @@ class Plot(object):
                 layout['yaxis' + str(num)] = dict( domain = [round(offset, 2), round(offset + 0.15,2)])
         
         self.fig.update_layout(layout)
-        return 'y' + str(layoutNum +1)
+        self.layers.append(newlayer)
 
+    def remove_line(self, legendName):
+        remove_indx = [i for i in range(len(self.fig.data)) if self.fig.data[i]['name'] == legendName][0]
+        new_data = [self.fig.data[i] for i in range(len(self.fig.data)) if i != remove_indx]
+        self.fig.data = new_data
+        layer_loc = self.plots.pop(legendName)
+        if layer_loc not in self.plots.values():
+            self.remove_layer(layer_loc)
+
+    def remove_layer(self, layer_loc):
+        self.layers.remove(layer_loc)
+        pass
 
     # def _create_go_obj(self, **kwargs):
     #     ret = {}
