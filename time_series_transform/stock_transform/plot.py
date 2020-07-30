@@ -10,11 +10,11 @@ class Plot(object):
         self._checkStock(stock)
         self.stock = stock
         self.fig = self._candleplot()
-        self.layers = ['y','y2']
-        self.plots = {
-            'candleplot' : 'y',
-            'volume' : 'y2'
+        self._plots = {
+            'y' : ['candleplot'],
+            'y2' : ['volume']
         }
+        self._subplots = {}
 
     def _checkStock(self, object):
         if isinstance(object,Stock):
@@ -64,17 +64,21 @@ class Plot(object):
         return ret
 
 
+    def get_all_subplots(self):
+        return list(self._subplots.keys())
+    
     def show(self):
         self.fig.show()
 
     def add_line(self, colName, color, legendName, showLegend = True, subplot = 'y', data = None):
-        if legendName in self.plots:
-            raise ValueError("duplicated legendName or indicator")
+        for li in list(self._plots.values()):
+            if legendName in li:
+                raise ValueError("duplicated legendName or indicator")
 
         if data is None:
             data = self.stock.df[colName]
         
-        self.plots[legendName] = subplot
+        self._plots[subplot].append(legendName)
 
         self.fig.add_trace(
             go.Scatter(
@@ -88,15 +92,28 @@ class Plot(object):
             )
 
     def add_macd(self):
+        if 'macd' in list(self._subplots.keys()):
+            raise ValueError("macd already exists")
         macd_data = macd(self.stock.df['Close'])
         macd_line_data = {'DIF':macd_data['DIF'], 'DEM':macd_data['DEM'], 'macdBase1': np.zeros(macd_data['DEM'].shape[0])}
         
-        axis_num = 'y' + str(int(self.layers[-1][1:]) + 1)
+        axis_num = self._find_next_layer()
+        self._add_subplot_layer()
         self._add_multi_trace(macd_line_data, ['#a0bbe8', '#ff6767', 'grey'], axis_num)
         self.fig.add_trace(dict( x=self.stock.df['Date'], y=macd_data['OSC'],                         
                                 showlegend = False,
                                 type='bar', yaxis=axis_num, name='osc' ))
-        self._add_subplot_layer()
+        self._plots[axis_num].append('osc')
+        self._subplots['macd'] = axis_num
+
+    def _find_next_layer(self):
+        cur_max = 0
+        for k in self._plots.keys():
+            if len(k) > 1:
+                cur_max = max(cur_max, int(k[1:]))
+        
+        return 'y' + str(cur_max + 1)
+
         
     def _add_multi_trace(self, data, colors, subplot):
         indx = 0
@@ -109,12 +126,17 @@ class Plot(object):
             indx += 1
 
     def _add_subplot_layer(self):
-        newlayer = 'y' + str(int(self.layers[-1][1:]) + 1)
-        layoutNum = len(self.layers)
-        offset = 0.05 * (layoutNum-1)  + 0.15 * (layoutNum -1) + 0.1
+        newlayer = self._find_next_layer()
+        self._plots[newlayer] = list()
+        self._update_layout()
+        
+    
+    def _update_layout(self):
+        layoutNum = len(self._plots.keys())
+        offset = 0.05 * (layoutNum-2)  + 0.15 * (layoutNum -2) + 0.1
 
         layout = {}
-        for num in range(1,layoutNum+2):
+        for num in range(1,layoutNum+1):
             if num == 1:
                 layout['yaxis'] = dict( domain = [round(offset, 2), 0.85])
             elif num == 2:
@@ -125,19 +147,31 @@ class Plot(object):
                 layout['yaxis' + str(num)] = dict( domain = [round(offset, 2), round(offset + 0.15,2)])
         
         self.fig.update_layout(layout)
-        self.layers.append(newlayer)
 
     def remove_line(self, legendName):
-        remove_indx = [i for i in range(len(self.fig.data)) if self.fig.data[i]['name'] == legendName][0]
-        new_data = [self.fig.data[i] for i in range(len(self.fig.data)) if i != remove_indx]
-        self.fig.data = new_data
-        layer_loc = self.plots.pop(legendName)
-        if layer_loc not in self.plots.values():
-            self.remove_layer(layer_loc)
+        try:
+            remove_indx = [i for i in range(len(self.fig.data)) if self.fig.data[i]['name'] == legendName][0]
+            new_data = [self.fig.data[i] for i in range(len(self.fig.data)) if i != remove_indx]
+            self.fig.data = new_data
+            layer_loc = [ix for i, ix in enumerate(self._plots) if legendName in self._plots[ix]][0]
+            if layer_loc in self._plots:
+                if len(self._plots[layer_loc]) == 0:
+                    self._remove_layer(layer_loc)
+        except:
+            print(legendName + ' not exist')
+       
 
-    def remove_layer(self, layer_loc):
-        self.layers.remove(layer_loc)
-        pass
+    def _remove_layer(self, layer_loc):
+        deleted_item = self._plots[layer_loc]
+        for i in deleted_item:
+            self.remove_line(i)
+        self._plots.pop(layer_loc)
+        self.fig.layout.pop('yaxis' + layer_loc[1:])
+        self._update_layout()
 
-    # def _create_go_obj(self, **kwargs):
-    #     ret = {}
+    def remove_subplot(self, subplotName):
+        layer = self._subplots[subplotName]
+        self._remove_layer(layer)
+        self._subplots.pop(subplotName)
+
+
