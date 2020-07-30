@@ -170,6 +170,8 @@ class Plot(object):
         self._update_layout()
 
     def remove_subplot(self, subplotName):
+        if subplotName not in self._subplots:
+            raise ValueError(subplotName + " does not exist")
         layer = self._subplots[subplotName]
         self._remove_layer(layer)
         self._subplots.pop(subplotName)

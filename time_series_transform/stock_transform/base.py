@@ -363,7 +363,7 @@ def stochastic_oscillator(arr):
     
     return ret
 
-def rsi(arr):
+def rsi(arr, days = 14):
     """
     Return the Relative Strength Index 
     
@@ -377,16 +377,21 @@ def rsi(arr):
     rsi : array
         Relative Strength Index of the given array
     """
+    orgLen = len(arr)
+    arr = arr[~np.isnan(arr)]
+
     dif = [arr[i+1]-arr[i] for i in range(len(arr)-1)]
     u_val = np.array([val if val>0 else 0 for val in dif])
     d_val = np.array([-1*val if val<0 else 0 for val in dif])
 
-    u_ema = ema(u_val, span = 14)
-    d_ema = ema(d_val,span=14)
+    u_ema = ema(u_val, span = days)
+    d_ema = ema(d_val,span=days)
     rs = u_ema/d_ema
     rsi = 100*(1-1/(1+rs))
-
-    return rsi
+    rsi = rsi.reshape(-1)
+    res = np.empty((int(orgLen-len(rsi))))
+    res[:] = np.nan
+    return np.append(res,rsi) 
 
 def williams_r(arr, n_day=14):
     """
