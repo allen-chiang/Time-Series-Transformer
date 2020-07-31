@@ -46,7 +46,7 @@ def wavelet_denoising(arr, wavelet='db4',coeff_mode = "per",threshold_mode='hard
             return wav[:len(arr)]
         else:
             res = np.empty((int(orgLen-len(wav))))
-            res[:] = np.na0n
+            res[:] = np.nan
             return np.append(res,wav) 
     else:
         return wav
