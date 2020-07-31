@@ -386,7 +386,7 @@ def rsi(arr):
     rs = u_ema/d_ema
     rsi = 100*(1-1/(1+rs))
 
-    return rsi
+    return rsi.reshape(-1)
 
 def williams_r(arr, n_day=14):
     """

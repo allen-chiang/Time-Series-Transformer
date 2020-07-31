@@ -2,6 +2,8 @@ from numpy.fft import *
 import pandas as pd
 import numpy as np
 import pywt
+from scipy.stats.mstats import gmean
+
 
 def moving_average(arr, windowSize=3) :
     orgLen = len(arr)
@@ -68,3 +70,5 @@ def ema(arr, com = None, span = None, halflife = None, alpha = None, adjust = Tr
 
 
 
+def geometric_ma(arr,windowSize):
+    return pd.Series(arr).rolling(window=windowSize).apply(gmean)
