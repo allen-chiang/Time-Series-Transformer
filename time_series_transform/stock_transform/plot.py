@@ -7,6 +7,14 @@ from time_series_transform.stock_transform.base import *
 
 class Plot(object):
     def __init__(self, stock):
+        """
+        Plot uses the stock data to create various plots
+
+        Parameters
+        ----------
+        stock : Stock
+            stock data to create the plot
+        """
         self._checkStock(stock)
         self.stock = stock
         self.fig = self._candleplot()
@@ -65,15 +73,48 @@ class Plot(object):
 
 
     def get_all_subplots(self):
+        """
+        get_all_subplots returns a list of current subplots
+
+        Returns
+        -------
+        subplots
+            list of the current subplots
+        """
         return list(self._subplots.keys())
     
     def show(self):
+        """
+        show the current plot
+        """
         self.fig.show()
 
     def add_line(self, colName, color, legendName, showLegend = True, subplot = 'y', data = None):
+        """
+        add_line add line to the current plot
+
+        Parameters
+        ----------
+        colName : str
+            the column name of the stock data
+        color : str
+            color of the line
+        legendName : str
+            legend name of the line
+        showLegend : bool, optional
+            show legend, by default True
+        subplot : str, optional
+            subplot label, by default 'y'
+            for example, y, y2, y3...
+        data : list, optional
+            array of the data to plot, by default None
+            either data or colName is required
+        """
         for li in list(self._plots.values()):
             if legendName in li:
                 raise ValueError("duplicated legendName or indicator")
+        if subplot not in list(self._plots.keys()):
+            raise ValueError("subplot does not exist")
 
         if data is None:
             data = self.stock.df[colName]
@@ -92,6 +133,14 @@ class Plot(object):
             )
 
     def add_macd(self):
+        """
+        add the moving average convergence divergence plot
+
+        Raises
+        ------
+        ValueError
+            raise exception when the macd is already in the plot
+        """
         if 'macd' in list(self._subplots.keys()):
             raise ValueError("macd already exists")
         macd_data = macd(self.stock.df['Close'])
@@ -149,6 +198,23 @@ class Plot(object):
         self.fig.update_layout(layout)
 
     def remove_line(self, legendName):
+        """
+        remove the line by the given legendName from the plot
+
+        Parameters
+        ----------
+        legendName : str
+            legend name of the line
+
+        Raises
+        ------
+        ValueError
+            raise when it is trying to remove the default candle plot
+        """
+        default_plot = [self.stock.symbol, 'volume', 'candleplot']
+        if legendName in default_plot:
+            raise ValueError("Cannot remove default plot")
+
         try:
             remove_indx = [i for i in range(len(self.fig.data)) if self.fig.data[i]['name'] == legendName][0]
             new_data = [self.fig.data[i] for i in range(len(self.fig.data)) if i != remove_indx]
@@ -170,6 +236,19 @@ class Plot(object):
         self._update_layout()
 
     def remove_subplot(self, subplotName):
+        """
+        remove subplot from the plot
+
+        Parameters
+        ----------
+        subplotName : str
+            subplot name deleted
+
+        Raises
+        ------
+        ValueError
+            raise when the subplot does not exist
+        """
         if subplotName not in self._subplots:
             raise ValueError(subplotName + " does not exist")
         layer = self._subplots[subplotName]

@@ -95,85 +95,7 @@ class Stock (object):
             self.df[f'{labelName}'] = indicator
         return self
 
-    def macd_plot(self, colName):
-        """
-        macd_plot plot the macd using the given column
-        
-        Parameters
-        ----------
-        colName : str 
-            column of the data used for macd plotting
-        """
-        df = macd(self.df[colName])
-        df[colName] = self.df[colName].values
-        df = pd.DataFrame(df)
-
-        fig,ax = plt.subplots(2,1,figsize=(10,10))
-        plt.subplots_adjust(hspace=0.8)
-
-        self.df[colName].plot(ax = ax[0])
-        df['EMA_12'].plot(ax=ax[0])
-        df['EMA_26'].plot(ax=ax[0])
-
-        ax[0].legend()
-        df['DIF'].plot(ax=ax[1])
-        df['DEM'].plot(ax=ax[1])
-        ax[1].fill_between(df.index,0,df['OSC'])
-        ax[1].legend()
-        plt.show()
-
-    def candle_plot(self, *args, **kwargs):
-        """
-        candle_plot plot the candle plot using plotly
-        
-        """
-        df = self.df
-        colors = []
-        INCREASING_COLOR = '#008000'
-        DECREASING_COLOR = '#FF0000'
-
-        data=[dict(type='candlestick',
-                x=df['Date'],
-                open=df['Open'],
-                high=df['High'],
-                low=df['Low'],
-                close=df['Close'],
-                yaxis = 'y2',
-                name = self.symbol)]
-        layout = dict()
-        fig = dict(data = data,layout=layout)
-
-        fig['layout']['plot_bgcolor'] = 'rgb(250, 250, 250)'
-        fig['layout']['xaxis'] = dict( rangeselector = dict( visible = True ) )
-        fig['layout']['yaxis'] = dict( domain = [0, 0.2], showticklabels = False )
-        fig['layout']['yaxis2'] = dict( domain = [0.2, 0.8] )
-        fig['layout']['legend'] = dict( orientation = 'h', y=0.9, x=0.3, yanchor='bottom' )
-        fig['layout']['margin'] = dict( t=40, b=40, r=40, l=40 )
-
-        
-        for i in range(len(df['Close'])):
-            if i != 0:
-                if df['Close'][i] > df['Close'][i-1]:
-                    colors.append(INCREASING_COLOR)
-                else:
-                    colors.append(DECREASING_COLOR)
-            else:
-                colors.append(DECREASING_COLOR)
-                
-        fig['data'].append( dict( x=df['Date'], y=df['Volume'],                         
-                                marker=dict( color=colors ),
-                                type='bar', yaxis='y', name='Volume' ) )
-
-        ret = go.Figure(fig,*args, **kwargs)
-        ret.update_xaxes(
-            rangebreaks=[
-                dict(bounds=["sat", "mon"]), 
-                dict(values=["2015-12-25", "2016-01-01"])
-            ]
-        )
-
-        ret.show()
-
+    
 
 class Portfolio(object):
     def __init__(self,stockList):
@@ -363,7 +285,7 @@ def stochastic_oscillator(arr):
     
     return ret
 
-def rsi(arr, days = 14):
+def rsi(arr, n_day = 14):
     """
     Return the Relative Strength Index 
     
@@ -384,8 +306,8 @@ def rsi(arr, days = 14):
     u_val = np.array([val if val>0 else 0 for val in dif])
     d_val = np.array([-1*val if val<0 else 0 for val in dif])
 
-    u_ema = ema(u_val, span = days)
-    d_ema = ema(d_val,span=days)
+    u_ema = ema(u_val, span = n_day)
+    d_ema = ema(d_val,span = n_day)
     rs = u_ema/d_ema
     rsi = 100*(1-1/(1+rs))
     rsi = rsi.reshape(-1)
@@ -409,7 +331,11 @@ def williams_r(arr, n_day=14):
     r_val : array
         Relative Strength Index of the given array
     """
+    orgLen = len(arr)
+    arr = arr[~np.isnan(arr)]
     df = pd.DataFrame(arr)
     r_rolling = df.rolling(n_day)
     r_val = 100*(r_rolling.max()-df)/(r_rolling.max() - r_rolling.min())
-    return r_val.to_numpy()
+    res = np.empty((int(orgLen-len(r_val))))
+    res[:] = np.nan
+    return np.append(res,rsi) 
