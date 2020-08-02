@@ -6,7 +6,7 @@ import pyarrow as pa
 import tensorflow as tf
 from pyarrow import parquet as pq
 from collections import defaultdict
-from time_series_transform.base import *
+from time_series_transform.transform_core_api.base import *
 
 
 
@@ -263,7 +263,7 @@ class Pandas_Time_Series_Panel_Dataset(object):
                 df2 = df2.drop(keyCol,axis=1).set_index(indexCol)
                 df2.columns = list(map(lambda x: f'{x}_{k}',df2.columns))
                 tmpDf = tmpDf.join(df2,how='outer')
-        self.df = tmpDf
+        self.df = pd.DataFrame(tmpDf.to_records())
         return self
 
 
@@ -290,7 +290,7 @@ class Pandas_Time_Series_Panel_Dataset(object):
         """
         if colList is None:
             self.df = self.df.sort_values(indexCol,ascending = True)
-            colList = self.df.columns.drop(indexCol,axis =1).tolist()
+            colList = self.df.columns.drop(indexCol).tolist()
         for col in colList:
             for i in range(1,windowSize+1):
                 if groupby is None:

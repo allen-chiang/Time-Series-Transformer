@@ -1,7 +1,7 @@
+import pandas as pd
 import yfinance as yf
 from datetime import datetime
 from time_series_transform.stock_transform.base import *
-import pandas as pd
 
 class Stock_Extractor(object):
     def __init__(self,symbol,engine):
@@ -181,7 +181,8 @@ class Portfolio_Extractor(object):
         """
         stockList = []
         for symbol in self.symbolList:
-            stock_data = Stock_Extractor(symbol, self.engine).get_stock_date(start_date, end_date)
+            stock_data = Stock_Extractor(symbol, self.engine)
+            stock_data = stock_data.get_stock_date(start_date, end_date)
             stockList.append(stock_data)
 
         self.portfolio = Portfolio(stockList)

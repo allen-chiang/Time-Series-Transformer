@@ -1,0 +1,1432 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.8.4" />
+<title>time_series_transform.stock_transform.base API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>time_series_transform.stock_transform.base</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import scipy
+import numpy as np
+import pandas as pd
+from numpy.fft import *
+import matplotlib.pyplot as plt
+from collections import ChainMap
+from joblib import Parallel, delayed
+import plotly.graph_objects as go
+from time_series_transform.transform_core_api.util import *
+
+class Stock (object):
+    def __init__(self,symbol,data,additionalInfo=None,timeSeriesCol = &#39;Date&#39;):
+        &#34;&#34;&#34;
+        The class initialize data as a Stock object 
+        
+        Parameters
+        ----------
+        symbol : str 
+            symbol of the stock
+        data : pandas dataframe
+            main data of the stock, for example, Date, High, Low, Open, Close, Volume
+        additionalInfo: dict, optional
+            supplemental information beside the data, by default None
+        timeSeriesCol: str, optional
+            time series column name for sorting data
+        &#34;&#34;&#34;
+        self.df = data
+        self.symbol = symbol
+        self.additionalInfo = additionalInfo
+        self.timeSeriesCol = timeSeriesCol
+        self.df = self.df.sort_values(timeSeriesCol,ascending = True)
+        self.dateRange = self.df[timeSeriesCol].unique().tolist()
+
+    @property
+    def dataFrame(self):
+        self.df[&#39;symbol&#39;] = self.symbol
+        return self.df
+
+    def plot(self,colName,*args,**kwargs):
+        &#34;&#34;&#34;
+        plot the stock data of the given column using matplot
+        
+        Parameters
+        ----------
+        colName : str 
+            column of the data used for plotting
+        &#34;&#34;&#34;
+        self.df[colName].plot(*args,**kwargs)
+
+    def save(self, path, format = &#34;csv&#34;,compression = None):
+        &#34;&#34;&#34;
+        save the main data locally using pandas
+        
+        Parameters
+        ----------
+        path : str 
+            path of local directory
+        format : str, optional
+            format of the file
+            valid values: csv, parquet
+        compression: str, optional
+            compression method, by default None
+        &#34;&#34;&#34;
+        data = self.df
+        download_path = path + &#34;/&#34; + self.symbol + &#34;_stock_extract.&#34; + format
+        if format == &#39;csv&#39;:
+            data.to_csv(download_path,compression = compression)
+        elif format == &#39;parquet&#39;:
+            data.to_parquet(download_path,compression = compression)
+        else:
+            raise ValueError(&#34;invalid format value&#34;)
+
+    def make_technical_indicator(self,colNames,labelName,indicatorFunction,*args,**kwargs):
+        &#34;&#34;&#34;
+        make_technical_indicator applies the indicatorFunctions to the given column
+        
+        Parameters
+        ----------
+        colName : str 
+            column of the data used for the indicator functions
+        labelName : str
+            label name to show on the dataframe
+        indicatorFunction: dict
+            dict of the indicator functions
+        &#34;&#34;&#34;
+        if isinstance(colNames,list):
+            arr = self.df[colNames]
+        else:
+            arr = self.df[colNames].values
+        indicator = indicatorFunction(arr,*args,**kwargs)
+        if isinstance(indicator,dict) or isinstance(indicator,pd.DataFrame):
+            for k in indicator:
+                self.df[f&#39;{labelName}_{k}&#39;] = indicator[k]
+        else:
+            self.df[f&#39;{labelName}&#39;] = indicator
+        return self
+
+    def macd_plot(self, colName):
+        &#34;&#34;&#34;
+        macd_plot plot the macd using the given column
+        
+        Parameters
+        ----------
+        colName : str 
+            column of the data used for macd plotting
+        &#34;&#34;&#34;
+        df = macd(self.df[colName])
+        df[colName] = self.df[colName].values
+        df = pd.DataFrame(df)
+
+        fig,ax = plt.subplots(2,1,figsize=(10,10))
+        plt.subplots_adjust(hspace=0.8)
+
+        self.df[colName].plot(ax = ax[0])
+        df[&#39;EMA_12&#39;].plot(ax=ax[0])
+        df[&#39;EMA_26&#39;].plot(ax=ax[0])
+
+        ax[0].legend()
+        df[&#39;DIF&#39;].plot(ax=ax[1])
+        df[&#39;DEM&#39;].plot(ax=ax[1])
+        ax[1].fill_between(df.index,0,df[&#39;OSC&#39;])
+        ax[1].legend()
+        plt.show()
+
+    def candle_plot(self, *args, **kwargs):
+        &#34;&#34;&#34;
+        candle_plot plot the candle plot using plotly
+        
+        &#34;&#34;&#34;
+        df = self.df
+        colors = []
+        INCREASING_COLOR = &#39;#008000&#39;
+        DECREASING_COLOR = &#39;#FF0000&#39;
+
+        data=[dict(type=&#39;candlestick&#39;,
+                x=df[&#39;Date&#39;],
+                open=df[&#39;Open&#39;],
+                high=df[&#39;High&#39;],
+                low=df[&#39;Low&#39;],
+                close=df[&#39;Close&#39;],
+                yaxis = &#39;y2&#39;,
+                name = self.symbol)]
+        layout = dict()
+        fig = dict(data = data,layout=layout)
+
+        fig[&#39;layout&#39;][&#39;plot_bgcolor&#39;] = &#39;rgb(250, 250, 250)&#39;
+        fig[&#39;layout&#39;][&#39;xaxis&#39;] = dict( rangeselector = dict( visible = True ) )
+        fig[&#39;layout&#39;][&#39;yaxis&#39;] = dict( domain = [0, 0.2], showticklabels = False )
+        fig[&#39;layout&#39;][&#39;yaxis2&#39;] = dict( domain = [0.2, 0.8] )
+        fig[&#39;layout&#39;][&#39;legend&#39;] = dict( orientation = &#39;h&#39;, y=0.9, x=0.3, yanchor=&#39;bottom&#39; )
+        fig[&#39;layout&#39;][&#39;margin&#39;] = dict( t=40, b=40, r=40, l=40 )
+
+        
+        for i in range(len(df[&#39;Close&#39;])):
+            if i != 0:
+                if df[&#39;Close&#39;][i] &gt; df[&#39;Close&#39;][i-1]:
+                    colors.append(INCREASING_COLOR)
+                else:
+                    colors.append(DECREASING_COLOR)
+            else:
+                colors.append(DECREASING_COLOR)
+                
+        fig[&#39;data&#39;].append( dict( x=df[&#39;Date&#39;], y=df[&#39;Volume&#39;],                         
+                                marker=dict( color=colors ),
+                                type=&#39;bar&#39;, yaxis=&#39;y&#39;, name=&#39;Volume&#39; ) )
+
+        ret = go.Figure(fig,*args, **kwargs)
+        ret.update_xaxes(
+            rangebreaks=[
+                dict(bounds=[&#34;sat&#34;, &#34;mon&#34;]), 
+                dict(values=[&#34;2015-12-25&#34;, &#34;2016-01-01&#34;])
+            ]
+        )
+
+        ret.show()
+
+
+class Portfolio(object):
+    def __init__(self,stockList):
+        &#34;&#34;&#34;
+        The class initialize data as a Portfolio object, which stores multiple Stock data
+        
+        Parameters
+        ----------
+        stockList : list[Stock]
+            list of Stock data
+        &#34;&#34;&#34;
+        self.stockDict = self._get_stock_dict(stockList)
+
+    def _get_stock_dict(self,stockList):
+        &#34;&#34;&#34;
+        _get_stock_dict transform the stock list into dictionary
+        
+        Parameters
+        ----------
+        stockList : list[Stock] 
+            list of Stock data
+        &#34;&#34;&#34;
+        stockDict = {}
+        for i in stockList:
+            key = i.symbol
+            stockDict[key] = i
+        return stockDict
+
+    def make_technical_indicator(self,colName,labelName,indicator,n_jobs =1,verbose = 0,*args,**kwargs):
+        &#34;&#34;&#34;
+        make_technical_indicator applies the indicator to the given column
+        
+        Parameters
+        ----------
+        colName : str 
+            column of the data used for the indicator functions
+        labelName : str
+            label name to show on the dataframe
+        indicator : function
+            function of the indicator
+        n_jobs : int
+            The maximum number of concurrently running jobs, by default 1
+        verbose : int
+            The verbosity level: if non zero, progress messages are printed, by default 0
+        &#34;&#34;&#34;
+        dctList =  Parallel(n_jobs,verbose = verbose)(delayed(self._stock_technical_indicator)(
+            self.stockDict[i],
+            i,colName,
+            labelName,
+            indicator,
+            *args,
+            **kwargs) for i in self.stockDict)
+        self.stockDict = dict(ChainMap(*dctList))
+
+
+    def _stock_technical_indicator(self,stock,symbol,colName,labelName,indicator,*args,**kwargs):
+        return {symbol:stock.make_technical_indicator(colName,labelName,indicator,*args,**kwargs)}
+
+
+    def get_portfolio_dataFrame(self):
+        &#34;&#34;&#34;
+        get_portfolio_dataFrame return the portfolio overview
+        
+        Returns
+        -------
+        portfolio
+            portfolio dataset including all of the applied indicators
+        &#34;&#34;&#34;
+        portfolio = None
+        for ix,v in enumerate(self.stockDict):
+            if ix == 0:
+                portfolio = self.stockDict[v].dataFrame
+            else:
+                portfolio = portfolio.append(self.stockDict[v].dataFrame)
+        return portfolio
+
+
+    def remove_different_date(self):
+        timeCol = {}
+        for i in self.stockDict:
+            for v in self.stockDict[i].dateRange:
+                if v not in timeCol:
+                    timeCol[v] = 1
+                else:
+                    timeCol[v]+=1
+        timeCol = [k for k,v in timeCol.items() if v == len(self.stockDict)]
+        for i in self.stockDict:
+            self.stockDict[i].dateRange = timeCol
+            timeSeriesCol = self.stockDict[i].timeSeriesCol
+            self.stockDict[i].df = self.stockDict[i].df[self.stockDict[i].df[timeSeriesCol].isin(timeCol)]
+
+
+
+    def plot(self,stockIndicators, keyCol = &#39;Default&#39; ,samePlot=False,*args,**kwargs):
+        &#34;&#34;&#34;
+        plot the given stock indicator in the portfolio
+        
+        Parameters
+        ----------
+        stockIndicators : dict 
+            dictionary of the stock indicator used for plotting 
+        keyCol : str
+            xaxis of the plot, by default &#34;Default&#34;
+            valid value: columns of the data
+        samePlot : boolean
+            whether to show the stock in the same plot
+        &#34;&#34;&#34;
+        df = None
+        keyArr = None
+        for ix,i in enumerate(stockIndicators):
+            if keyCol == &#39;Default&#39;:
+                keyArr = [i for i in range(self.stockDict[i].df.shape[0])]
+            else:
+                keyArr = self.stockDict[i].df[keyCol].tolist()
+            
+            if samePlot:
+                tmp = self.stockDict[i].df[stockIndicators[i]]
+                tmp.insert(0,keyCol,keyArr)
+                colName = [keyCol]
+                colName.extend([f&#39;{i}_{d}&#39; for d in stockIndicators[i]])
+                tmp.columns = colName
+
+                if ix == 0:
+                    df = tmp
+                else:
+                    df = pd.merge(df,tmp, on = [keyCol], how = &#39;outer&#39;)
+
+            else:
+                self.stockDict[i].plot(stockIndicators[i], *args,**kwargs)
+        
+        if samePlot:
+            df = df.set_index(keyCol)
+            df.plot(*args, **kwargs)
+            
+        plt.show()
+
+
+def macd(arr, return_diff = False):
+    &#34;&#34;&#34;
+    Return the moving average convergence/divergence 
+    
+    Parameters
+    ----------
+    arr : array 
+        data used to calculate the macd
+
+    Returns
+    -------
+    df : dict
+        macd of the given data, including EMA_12, EMA_26, DIF, DEM, OSC
+    &#34;&#34;&#34;
+    df = {}
+    df[&#39;EMA_12&#39;] = ema(arr, span=12)
+    df[&#39;EMA_26&#39;] = ema(arr, span=26)
+
+    df[&#39;DIF&#39;] = df[&#39;EMA_12&#39;] - df[&#39;EMA_26&#39;]
+    df[&#39;DEM&#39;] = ema(pd.DataFrame(df[&#39;DIF&#39;]), span=9).reshape(df[&#39;DIF&#39;].shape[0])
+    df[&#39;OSC&#39;] = df[&#39;DIF&#39;] - df[&#39;DEM&#39;]
+    if return_diff:
+        return df[&#39;OSC&#39;]
+    else:
+        return df
+
+def stochastic_oscillator(arr):
+    &#34;&#34;&#34;
+    Return the stochastic oscillator 
+    
+    Parameters
+    ----------
+    arr : array 
+        data used to calculate the stochastic oscillator
+
+    Returns
+    -------
+    ret : dict
+        stochastic oscillator of the given data, including k and d values
+    &#34;&#34;&#34;
+    rsv_day = 9
+    ret = {}
+    df = pd.DataFrame(arr)
+
+    rsv_rolling = df.rolling(rsv_day)
+    rsv_val = 100*(df - rsv_rolling.min())/(rsv_rolling.max() - rsv_rolling.min())
+    ret[&#39;k_val&#39;] = rsv_val
+    ret[&#39;d_val&#39;] = np.array(ret[&#39;k_val&#39;].rolling(3).mean())
+    ret[&#39;k_val&#39;] = np.array(rsv_val)
+    
+    return ret
+
+def rsi(arr):
+    &#34;&#34;&#34;
+    Return the Relative Strength Index 
+    
+    Parameters
+    ----------
+    arr : array 
+        data used to calculate the Relative Strength Index
+
+    Returns
+    -------
+    rsi : array
+        Relative Strength Index of the given array
+    &#34;&#34;&#34;
+    dif = [arr[i+1]-arr[i] for i in range(len(arr)-1)]
+    u_val = np.array([val if val&gt;0 else 0 for val in dif])
+    d_val = np.array([-1*val if val&lt;0 else 0 for val in dif])
+
+    u_ema = ema(u_val, span = 14)
+    d_ema = ema(d_val,span=14)
+    rs = u_ema/d_ema
+    rsi = 100*(1-1/(1+rs))
+
+    return rsi
+
+def williams_r(arr, n_day=14):
+    &#34;&#34;&#34;
+    Return the Williams %R index
+    
+    Parameters
+    ----------
+    arr : array 
+        data used to calculate the Williams %R
+    n_day : int
+        window of the indicator
+
+    Returns
+    -------
+    r_val : array
+        Relative Strength Index of the given array
+    &#34;&#34;&#34;
+    df = pd.DataFrame(arr)
+    r_rolling = df.rolling(n_day)
+    r_val = 100*(r_rolling.max()-df)/(r_rolling.max() - r_rolling.min())
+    return r_val.to_numpy()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="time_series_transform.stock_transform.base.macd"><code class="name flex">
+<span>def <span class="ident">macd</span></span>(<span>arr, return_diff=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the moving average convergence/divergence </p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>arr</code></strong> :&ensp;<code>array </code></dt>
+<dd>data used to calculate the macd</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>df</code></strong> :&ensp;<code>dict</code></dt>
+<dd>macd of the given data, including EMA_12, EMA_26, DIF, DEM, OSC</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def macd(arr, return_diff = False):
+    &#34;&#34;&#34;
+    Return the moving average convergence/divergence 
+    
+    Parameters
+    ----------
+    arr : array 
+        data used to calculate the macd
+
+    Returns
+    -------
+    df : dict
+        macd of the given data, including EMA_12, EMA_26, DIF, DEM, OSC
+    &#34;&#34;&#34;
+    df = {}
+    df[&#39;EMA_12&#39;] = ema(arr, span=12)
+    df[&#39;EMA_26&#39;] = ema(arr, span=26)
+
+    df[&#39;DIF&#39;] = df[&#39;EMA_12&#39;] - df[&#39;EMA_26&#39;]
+    df[&#39;DEM&#39;] = ema(pd.DataFrame(df[&#39;DIF&#39;]), span=9).reshape(df[&#39;DIF&#39;].shape[0])
+    df[&#39;OSC&#39;] = df[&#39;DIF&#39;] - df[&#39;DEM&#39;]
+    if return_diff:
+        return df[&#39;OSC&#39;]
+    else:
+        return df</code></pre>
+</details>
+</dd>
+<dt id="time_series_transform.stock_transform.base.rsi"><code class="name flex">
+<span>def <span class="ident">rsi</span></span>(<span>arr)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the Relative Strength Index </p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>arr</code></strong> :&ensp;<code>array </code></dt>
+<dd>data used to calculate the Relative Strength Index</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>rsi</code></strong> :&ensp;<code>array</code></dt>
+<dd>Relative Strength Index of the given array</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rsi(arr):
+    &#34;&#34;&#34;
+    Return the Relative Strength Index 
+    
+    Parameters
+    ----------
+    arr : array 
+        data used to calculate the Relative Strength Index
+
+    Returns
+    -------
+    rsi : array
+        Relative Strength Index of the given array
+    &#34;&#34;&#34;
+    dif = [arr[i+1]-arr[i] for i in range(len(arr)-1)]
+    u_val = np.array([val if val&gt;0 else 0 for val in dif])
+    d_val = np.array([-1*val if val&lt;0 else 0 for val in dif])
+
+    u_ema = ema(u_val, span = 14)
+    d_ema = ema(d_val,span=14)
+    rs = u_ema/d_ema
+    rsi = 100*(1-1/(1+rs))
+
+    return rsi</code></pre>
+</details>
+</dd>
+<dt id="time_series_transform.stock_transform.base.stochastic_oscillator"><code class="name flex">
+<span>def <span class="ident">stochastic_oscillator</span></span>(<span>arr)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the stochastic oscillator </p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>arr</code></strong> :&ensp;<code>array </code></dt>
+<dd>data used to calculate the stochastic oscillator</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>ret</code></strong> :&ensp;<code>dict</code></dt>
+<dd>stochastic oscillator of the given data, including k and d values</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def stochastic_oscillator(arr):
+    &#34;&#34;&#34;
+    Return the stochastic oscillator 
+    
+    Parameters
+    ----------
+    arr : array 
+        data used to calculate the stochastic oscillator
+
+    Returns
+    -------
+    ret : dict
+        stochastic oscillator of the given data, including k and d values
+    &#34;&#34;&#34;
+    rsv_day = 9
+    ret = {}
+    df = pd.DataFrame(arr)
+
+    rsv_rolling = df.rolling(rsv_day)
+    rsv_val = 100*(df - rsv_rolling.min())/(rsv_rolling.max() - rsv_rolling.min())
+    ret[&#39;k_val&#39;] = rsv_val
+    ret[&#39;d_val&#39;] = np.array(ret[&#39;k_val&#39;].rolling(3).mean())
+    ret[&#39;k_val&#39;] = np.array(rsv_val)
+    
+    return ret</code></pre>
+</details>
+</dd>
+<dt id="time_series_transform.stock_transform.base.williams_r"><code class="name flex">
+<span>def <span class="ident">williams_r</span></span>(<span>arr, n_day=14)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the Williams %R index</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>arr</code></strong> :&ensp;<code>array </code></dt>
+<dd>data used to calculate the Williams %R</dd>
+<dt><strong><code>n_day</code></strong> :&ensp;<code>int</code></dt>
+<dd>window of the indicator</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>r_val</code></strong> :&ensp;<code>array</code></dt>
+<dd>Relative Strength Index of the given array</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def williams_r(arr, n_day=14):
+    &#34;&#34;&#34;
+    Return the Williams %R index
+    
+    Parameters
+    ----------
+    arr : array 
+        data used to calculate the Williams %R
+    n_day : int
+        window of the indicator
+
+    Returns
+    -------
+    r_val : array
+        Relative Strength Index of the given array
+    &#34;&#34;&#34;
+    df = pd.DataFrame(arr)
+    r_rolling = df.rolling(n_day)
+    r_val = 100*(r_rolling.max()-df)/(r_rolling.max() - r_rolling.min())
+    return r_val.to_numpy()</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="time_series_transform.stock_transform.base.Portfolio"><code class="flex name class">
+<span>class <span class="ident">Portfolio</span></span>
+<span>(</span><span>stockList)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The class initialize data as a Portfolio object, which stores multiple Stock data</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>stockList</code></strong> :&ensp;<code>list[<a title="time_series_transform.stock_transform.base.Stock" href="#time_series_transform.stock_transform.base.Stock">Stock</a>]</code></dt>
+<dd>list of Stock data</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Portfolio(object):
+    def __init__(self,stockList):
+        &#34;&#34;&#34;
+        The class initialize data as a Portfolio object, which stores multiple Stock data
+        
+        Parameters
+        ----------
+        stockList : list[Stock]
+            list of Stock data
+        &#34;&#34;&#34;
+        self.stockDict = self._get_stock_dict(stockList)
+
+    def _get_stock_dict(self,stockList):
+        &#34;&#34;&#34;
+        _get_stock_dict transform the stock list into dictionary
+        
+        Parameters
+        ----------
+        stockList : list[Stock] 
+            list of Stock data
+        &#34;&#34;&#34;
+        stockDict = {}
+        for i in stockList:
+            key = i.symbol
+            stockDict[key] = i
+        return stockDict
+
+    def make_technical_indicator(self,colName,labelName,indicator,n_jobs =1,verbose = 0,*args,**kwargs):
+        &#34;&#34;&#34;
+        make_technical_indicator applies the indicator to the given column
+        
+        Parameters
+        ----------
+        colName : str 
+            column of the data used for the indicator functions
+        labelName : str
+            label name to show on the dataframe
+        indicator : function
+            function of the indicator
+        n_jobs : int
+            The maximum number of concurrently running jobs, by default 1
+        verbose : int
+            The verbosity level: if non zero, progress messages are printed, by default 0
+        &#34;&#34;&#34;
+        dctList =  Parallel(n_jobs,verbose = verbose)(delayed(self._stock_technical_indicator)(
+            self.stockDict[i],
+            i,colName,
+            labelName,
+            indicator,
+            *args,
+            **kwargs) for i in self.stockDict)
+        self.stockDict = dict(ChainMap(*dctList))
+
+
+    def _stock_technical_indicator(self,stock,symbol,colName,labelName,indicator,*args,**kwargs):
+        return {symbol:stock.make_technical_indicator(colName,labelName,indicator,*args,**kwargs)}
+
+
+    def get_portfolio_dataFrame(self):
+        &#34;&#34;&#34;
+        get_portfolio_dataFrame return the portfolio overview
+        
+        Returns
+        -------
+        portfolio
+            portfolio dataset including all of the applied indicators
+        &#34;&#34;&#34;
+        portfolio = None
+        for ix,v in enumerate(self.stockDict):
+            if ix == 0:
+                portfolio = self.stockDict[v].dataFrame
+            else:
+                portfolio = portfolio.append(self.stockDict[v].dataFrame)
+        return portfolio
+
+
+    def remove_different_date(self):
+        timeCol = {}
+        for i in self.stockDict:
+            for v in self.stockDict[i].dateRange:
+                if v not in timeCol:
+                    timeCol[v] = 1
+                else:
+                    timeCol[v]+=1
+        timeCol = [k for k,v in timeCol.items() if v == len(self.stockDict)]
+        for i in self.stockDict:
+            self.stockDict[i].dateRange = timeCol
+            timeSeriesCol = self.stockDict[i].timeSeriesCol
+            self.stockDict[i].df = self.stockDict[i].df[self.stockDict[i].df[timeSeriesCol].isin(timeCol)]
+
+
+
+    def plot(self,stockIndicators, keyCol = &#39;Default&#39; ,samePlot=False,*args,**kwargs):
+        &#34;&#34;&#34;
+        plot the given stock indicator in the portfolio
+        
+        Parameters
+        ----------
+        stockIndicators : dict 
+            dictionary of the stock indicator used for plotting 
+        keyCol : str
+            xaxis of the plot, by default &#34;Default&#34;
+            valid value: columns of the data
+        samePlot : boolean
+            whether to show the stock in the same plot
+        &#34;&#34;&#34;
+        df = None
+        keyArr = None
+        for ix,i in enumerate(stockIndicators):
+            if keyCol == &#39;Default&#39;:
+                keyArr = [i for i in range(self.stockDict[i].df.shape[0])]
+            else:
+                keyArr = self.stockDict[i].df[keyCol].tolist()
+            
+            if samePlot:
+                tmp = self.stockDict[i].df[stockIndicators[i]]
+                tmp.insert(0,keyCol,keyArr)
+                colName = [keyCol]
+                colName.extend([f&#39;{i}_{d}&#39; for d in stockIndicators[i]])
+                tmp.columns = colName
+
+                if ix == 0:
+                    df = tmp
+                else:
+                    df = pd.merge(df,tmp, on = [keyCol], how = &#39;outer&#39;)
+
+            else:
+                self.stockDict[i].plot(stockIndicators[i], *args,**kwargs)
+        
+        if samePlot:
+            df = df.set_index(keyCol)
+            df.plot(*args, **kwargs)
+            
+        plt.show()</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="time_series_transform.stock_transform.base.Portfolio.get_portfolio_dataFrame"><code class="name flex">
+<span>def <span class="ident">get_portfolio_dataFrame</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>get_portfolio_dataFrame return the portfolio overview</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>portfolio</code></dt>
+<dd>portfolio dataset including all of the applied indicators</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_portfolio_dataFrame(self):
+    &#34;&#34;&#34;
+    get_portfolio_dataFrame return the portfolio overview
+    
+    Returns
+    -------
+    portfolio
+        portfolio dataset including all of the applied indicators
+    &#34;&#34;&#34;
+    portfolio = None
+    for ix,v in enumerate(self.stockDict):
+        if ix == 0:
+            portfolio = self.stockDict[v].dataFrame
+        else:
+            portfolio = portfolio.append(self.stockDict[v].dataFrame)
+    return portfolio</code></pre>
+</details>
+</dd>
+<dt id="time_series_transform.stock_transform.base.Portfolio.make_technical_indicator"><code class="name flex">
+<span>def <span class="ident">make_technical_indicator</span></span>(<span>self, colName, labelName, indicator, n_jobs=1, verbose=0, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>make_technical_indicator applies the indicator to the given column</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>colName</code></strong> :&ensp;<code>str </code></dt>
+<dd>column of the data used for the indicator functions</dd>
+<dt><strong><code>labelName</code></strong> :&ensp;<code>str</code></dt>
+<dd>label name to show on the dataframe</dd>
+<dt><strong><code>indicator</code></strong> :&ensp;<code>function</code></dt>
+<dd>function of the indicator</dd>
+<dt><strong><code>n_jobs</code></strong> :&ensp;<code>int</code></dt>
+<dd>The maximum number of concurrently running jobs, by default 1</dd>
+<dt><strong><code>verbose</code></strong> :&ensp;<code>int</code></dt>
+<dd>The verbosity level: if non zero, progress messages are printed, by default 0</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def make_technical_indicator(self,colName,labelName,indicator,n_jobs =1,verbose = 0,*args,**kwargs):
+    &#34;&#34;&#34;
+    make_technical_indicator applies the indicator to the given column
+    
+    Parameters
+    ----------
+    colName : str 
+        column of the data used for the indicator functions
+    labelName : str
+        label name to show on the dataframe
+    indicator : function
+        function of the indicator
+    n_jobs : int
+        The maximum number of concurrently running jobs, by default 1
+    verbose : int
+        The verbosity level: if non zero, progress messages are printed, by default 0
+    &#34;&#34;&#34;
+    dctList =  Parallel(n_jobs,verbose = verbose)(delayed(self._stock_technical_indicator)(
+        self.stockDict[i],
+        i,colName,
+        labelName,
+        indicator,
+        *args,
+        **kwargs) for i in self.stockDict)
+    self.stockDict = dict(ChainMap(*dctList))</code></pre>
+</details>
+</dd>
+<dt id="time_series_transform.stock_transform.base.Portfolio.plot"><code class="name flex">
+<span>def <span class="ident">plot</span></span>(<span>self, stockIndicators, keyCol='Default', samePlot=False, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>plot the given stock indicator in the portfolio</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>stockIndicators</code></strong> :&ensp;<code>dict </code></dt>
+<dd>dictionary of the stock indicator used for plotting</dd>
+<dt><strong><code>keyCol</code></strong> :&ensp;<code>str</code></dt>
+<dd>xaxis of the plot, by default "Default"
+valid value: columns of the data</dd>
+<dt><strong><code>samePlot</code></strong> :&ensp;<code>boolean</code></dt>
+<dd>whether to show the stock in the same plot</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot(self,stockIndicators, keyCol = &#39;Default&#39; ,samePlot=False,*args,**kwargs):
+    &#34;&#34;&#34;
+    plot the given stock indicator in the portfolio
+    
+    Parameters
+    ----------
+    stockIndicators : dict 
+        dictionary of the stock indicator used for plotting 
+    keyCol : str
+        xaxis of the plot, by default &#34;Default&#34;
+        valid value: columns of the data
+    samePlot : boolean
+        whether to show the stock in the same plot
+    &#34;&#34;&#34;
+    df = None
+    keyArr = None
+    for ix,i in enumerate(stockIndicators):
+        if keyCol == &#39;Default&#39;:
+            keyArr = [i for i in range(self.stockDict[i].df.shape[0])]
+        else:
+            keyArr = self.stockDict[i].df[keyCol].tolist()
+        
+        if samePlot:
+            tmp = self.stockDict[i].df[stockIndicators[i]]
+            tmp.insert(0,keyCol,keyArr)
+            colName = [keyCol]
+            colName.extend([f&#39;{i}_{d}&#39; for d in stockIndicators[i]])
+            tmp.columns = colName
+
+            if ix == 0:
+                df = tmp
+            else:
+                df = pd.merge(df,tmp, on = [keyCol], how = &#39;outer&#39;)
+
+        else:
+            self.stockDict[i].plot(stockIndicators[i], *args,**kwargs)
+    
+    if samePlot:
+        df = df.set_index(keyCol)
+        df.plot(*args, **kwargs)
+        
+    plt.show()</code></pre>
+</details>
+</dd>
+<dt id="time_series_transform.stock_transform.base.Portfolio.remove_different_date"><code class="name flex">
+<span>def <span class="ident">remove_different_date</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_different_date(self):
+    timeCol = {}
+    for i in self.stockDict:
+        for v in self.stockDict[i].dateRange:
+            if v not in timeCol:
+                timeCol[v] = 1
+            else:
+                timeCol[v]+=1
+    timeCol = [k for k,v in timeCol.items() if v == len(self.stockDict)]
+    for i in self.stockDict:
+        self.stockDict[i].dateRange = timeCol
+        timeSeriesCol = self.stockDict[i].timeSeriesCol
+        self.stockDict[i].df = self.stockDict[i].df[self.stockDict[i].df[timeSeriesCol].isin(timeCol)]</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="time_series_transform.stock_transform.base.Stock"><code class="flex name class">
+<span>class <span class="ident">Stock</span></span>
+<span>(</span><span>symbol, data, additionalInfo=None, timeSeriesCol='Date')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The class initialize data as a Stock object </p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>symbol</code></strong> :&ensp;<code>str </code></dt>
+<dd>symbol of the stock</dd>
+<dt><strong><code>data</code></strong> :&ensp;<code>pandas dataframe</code></dt>
+<dd>main data of the stock, for example, Date, High, Low, Open, Close, Volume</dd>
+<dt><strong><code>additionalInfo</code></strong> :&ensp;<code>dict</code>, optional</dt>
+<dd>supplemental information beside the data, by default None</dd>
+<dt><strong><code>timeSeriesCol</code></strong> :&ensp;<code>str</code>, optional</dt>
+<dd>time series column name for sorting data</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Stock (object):
+    def __init__(self,symbol,data,additionalInfo=None,timeSeriesCol = &#39;Date&#39;):
+        &#34;&#34;&#34;
+        The class initialize data as a Stock object 
+        
+        Parameters
+        ----------
+        symbol : str 
+            symbol of the stock
+        data : pandas dataframe
+            main data of the stock, for example, Date, High, Low, Open, Close, Volume
+        additionalInfo: dict, optional
+            supplemental information beside the data, by default None
+        timeSeriesCol: str, optional
+            time series column name for sorting data
+        &#34;&#34;&#34;
+        self.df = data
+        self.symbol = symbol
+        self.additionalInfo = additionalInfo
+        self.timeSeriesCol = timeSeriesCol
+        self.df = self.df.sort_values(timeSeriesCol,ascending = True)
+        self.dateRange = self.df[timeSeriesCol].unique().tolist()
+
+    @property
+    def dataFrame(self):
+        self.df[&#39;symbol&#39;] = self.symbol
+        return self.df
+
+    def plot(self,colName,*args,**kwargs):
+        &#34;&#34;&#34;
+        plot the stock data of the given column using matplot
+        
+        Parameters
+        ----------
+        colName : str 
+            column of the data used for plotting
+        &#34;&#34;&#34;
+        self.df[colName].plot(*args,**kwargs)
+
+    def save(self, path, format = &#34;csv&#34;,compression = None):
+        &#34;&#34;&#34;
+        save the main data locally using pandas
+        
+        Parameters
+        ----------
+        path : str 
+            path of local directory
+        format : str, optional
+            format of the file
+            valid values: csv, parquet
+        compression: str, optional
+            compression method, by default None
+        &#34;&#34;&#34;
+        data = self.df
+        download_path = path + &#34;/&#34; + self.symbol + &#34;_stock_extract.&#34; + format
+        if format == &#39;csv&#39;:
+            data.to_csv(download_path,compression = compression)
+        elif format == &#39;parquet&#39;:
+            data.to_parquet(download_path,compression = compression)
+        else:
+            raise ValueError(&#34;invalid format value&#34;)
+
+    def make_technical_indicator(self,colNames,labelName,indicatorFunction,*args,**kwargs):
+        &#34;&#34;&#34;
+        make_technical_indicator applies the indicatorFunctions to the given column
+        
+        Parameters
+        ----------
+        colName : str 
+            column of the data used for the indicator functions
+        labelName : str
+            label name to show on the dataframe
+        indicatorFunction: dict
+            dict of the indicator functions
+        &#34;&#34;&#34;
+        if isinstance(colNames,list):
+            arr = self.df[colNames]
+        else:
+            arr = self.df[colNames].values
+        indicator = indicatorFunction(arr,*args,**kwargs)
+        if isinstance(indicator,dict) or isinstance(indicator,pd.DataFrame):
+            for k in indicator:
+                self.df[f&#39;{labelName}_{k}&#39;] = indicator[k]
+        else:
+            self.df[f&#39;{labelName}&#39;] = indicator
+        return self
+
+    def macd_plot(self, colName):
+        &#34;&#34;&#34;
+        macd_plot plot the macd using the given column
+        
+        Parameters
+        ----------
+        colName : str 
+            column of the data used for macd plotting
+        &#34;&#34;&#34;
+        df = macd(self.df[colName])
+        df[colName] = self.df[colName].values
+        df = pd.DataFrame(df)
+
+        fig,ax = plt.subplots(2,1,figsize=(10,10))
+        plt.subplots_adjust(hspace=0.8)
+
+        self.df[colName].plot(ax = ax[0])
+        df[&#39;EMA_12&#39;].plot(ax=ax[0])
+        df[&#39;EMA_26&#39;].plot(ax=ax[0])
+
+        ax[0].legend()
+        df[&#39;DIF&#39;].plot(ax=ax[1])
+        df[&#39;DEM&#39;].plot(ax=ax[1])
+        ax[1].fill_between(df.index,0,df[&#39;OSC&#39;])
+        ax[1].legend()
+        plt.show()
+
+    def candle_plot(self, *args, **kwargs):
+        &#34;&#34;&#34;
+        candle_plot plot the candle plot using plotly
+        
+        &#34;&#34;&#34;
+        df = self.df
+        colors = []
+        INCREASING_COLOR = &#39;#008000&#39;
+        DECREASING_COLOR = &#39;#FF0000&#39;
+
+        data=[dict(type=&#39;candlestick&#39;,
+                x=df[&#39;Date&#39;],
+                open=df[&#39;Open&#39;],
+                high=df[&#39;High&#39;],
+                low=df[&#39;Low&#39;],
+                close=df[&#39;Close&#39;],
+                yaxis = &#39;y2&#39;,
+                name = self.symbol)]
+        layout = dict()
+        fig = dict(data = data,layout=layout)
+
+        fig[&#39;layout&#39;][&#39;plot_bgcolor&#39;] = &#39;rgb(250, 250, 250)&#39;
+        fig[&#39;layout&#39;][&#39;xaxis&#39;] = dict( rangeselector = dict( visible = True ) )
+        fig[&#39;layout&#39;][&#39;yaxis&#39;] = dict( domain = [0, 0.2], showticklabels = False )
+        fig[&#39;layout&#39;][&#39;yaxis2&#39;] = dict( domain = [0.2, 0.8] )
+        fig[&#39;layout&#39;][&#39;legend&#39;] = dict( orientation = &#39;h&#39;, y=0.9, x=0.3, yanchor=&#39;bottom&#39; )
+        fig[&#39;layout&#39;][&#39;margin&#39;] = dict( t=40, b=40, r=40, l=40 )
+
+        
+        for i in range(len(df[&#39;Close&#39;])):
+            if i != 0:
+                if df[&#39;Close&#39;][i] &gt; df[&#39;Close&#39;][i-1]:
+                    colors.append(INCREASING_COLOR)
+                else:
+                    colors.append(DECREASING_COLOR)
+            else:
+                colors.append(DECREASING_COLOR)
+                
+        fig[&#39;data&#39;].append( dict( x=df[&#39;Date&#39;], y=df[&#39;Volume&#39;],                         
+                                marker=dict( color=colors ),
+                                type=&#39;bar&#39;, yaxis=&#39;y&#39;, name=&#39;Volume&#39; ) )
+
+        ret = go.Figure(fig,*args, **kwargs)
+        ret.update_xaxes(
+            rangebreaks=[
+                dict(bounds=[&#34;sat&#34;, &#34;mon&#34;]), 
+                dict(values=[&#34;2015-12-25&#34;, &#34;2016-01-01&#34;])
+            ]
+        )
+
+        ret.show()</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="time_series_transform.stock_transform.base.Stock.dataFrame"><code class="name">var <span class="ident">dataFrame</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def dataFrame(self):
+    self.df[&#39;symbol&#39;] = self.symbol
+    return self.df</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="time_series_transform.stock_transform.base.Stock.candle_plot"><code class="name flex">
+<span>def <span class="ident">candle_plot</span></span>(<span>self, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>candle_plot plot the candle plot using plotly</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def candle_plot(self, *args, **kwargs):
+    &#34;&#34;&#34;
+    candle_plot plot the candle plot using plotly
+    
+    &#34;&#34;&#34;
+    df = self.df
+    colors = []
+    INCREASING_COLOR = &#39;#008000&#39;
+    DECREASING_COLOR = &#39;#FF0000&#39;
+
+    data=[dict(type=&#39;candlestick&#39;,
+            x=df[&#39;Date&#39;],
+            open=df[&#39;Open&#39;],
+            high=df[&#39;High&#39;],
+            low=df[&#39;Low&#39;],
+            close=df[&#39;Close&#39;],
+            yaxis = &#39;y2&#39;,
+            name = self.symbol)]
+    layout = dict()
+    fig = dict(data = data,layout=layout)
+
+    fig[&#39;layout&#39;][&#39;plot_bgcolor&#39;] = &#39;rgb(250, 250, 250)&#39;
+    fig[&#39;layout&#39;][&#39;xaxis&#39;] = dict( rangeselector = dict( visible = True ) )
+    fig[&#39;layout&#39;][&#39;yaxis&#39;] = dict( domain = [0, 0.2], showticklabels = False )
+    fig[&#39;layout&#39;][&#39;yaxis2&#39;] = dict( domain = [0.2, 0.8] )
+    fig[&#39;layout&#39;][&#39;legend&#39;] = dict( orientation = &#39;h&#39;, y=0.9, x=0.3, yanchor=&#39;bottom&#39; )
+    fig[&#39;layout&#39;][&#39;margin&#39;] = dict( t=40, b=40, r=40, l=40 )
+
+    
+    for i in range(len(df[&#39;Close&#39;])):
+        if i != 0:
+            if df[&#39;Close&#39;][i] &gt; df[&#39;Close&#39;][i-1]:
+                colors.append(INCREASING_COLOR)
+            else:
+                colors.append(DECREASING_COLOR)
+        else:
+            colors.append(DECREASING_COLOR)
+            
+    fig[&#39;data&#39;].append( dict( x=df[&#39;Date&#39;], y=df[&#39;Volume&#39;],                         
+                            marker=dict( color=colors ),
+                            type=&#39;bar&#39;, yaxis=&#39;y&#39;, name=&#39;Volume&#39; ) )
+
+    ret = go.Figure(fig,*args, **kwargs)
+    ret.update_xaxes(
+        rangebreaks=[
+            dict(bounds=[&#34;sat&#34;, &#34;mon&#34;]), 
+            dict(values=[&#34;2015-12-25&#34;, &#34;2016-01-01&#34;])
+        ]
+    )
+
+    ret.show()</code></pre>
+</details>
+</dd>
+<dt id="time_series_transform.stock_transform.base.Stock.macd_plot"><code class="name flex">
+<span>def <span class="ident">macd_plot</span></span>(<span>self, colName)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>macd_plot plot the macd using the given column</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>colName</code></strong> :&ensp;<code>str </code></dt>
+<dd>column of the data used for macd plotting</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def macd_plot(self, colName):
+    &#34;&#34;&#34;
+    macd_plot plot the macd using the given column
+    
+    Parameters
+    ----------
+    colName : str 
+        column of the data used for macd plotting
+    &#34;&#34;&#34;
+    df = macd(self.df[colName])
+    df[colName] = self.df[colName].values
+    df = pd.DataFrame(df)
+
+    fig,ax = plt.subplots(2,1,figsize=(10,10))
+    plt.subplots_adjust(hspace=0.8)
+
+    self.df[colName].plot(ax = ax[0])
+    df[&#39;EMA_12&#39;].plot(ax=ax[0])
+    df[&#39;EMA_26&#39;].plot(ax=ax[0])
+
+    ax[0].legend()
+    df[&#39;DIF&#39;].plot(ax=ax[1])
+    df[&#39;DEM&#39;].plot(ax=ax[1])
+    ax[1].fill_between(df.index,0,df[&#39;OSC&#39;])
+    ax[1].legend()
+    plt.show()</code></pre>
+</details>
+</dd>
+<dt id="time_series_transform.stock_transform.base.Stock.make_technical_indicator"><code class="name flex">
+<span>def <span class="ident">make_technical_indicator</span></span>(<span>self, colNames, labelName, indicatorFunction, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>make_technical_indicator applies the indicatorFunctions to the given column</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>colName</code></strong> :&ensp;<code>str </code></dt>
+<dd>column of the data used for the indicator functions</dd>
+<dt><strong><code>labelName</code></strong> :&ensp;<code>str</code></dt>
+<dd>label name to show on the dataframe</dd>
+<dt><strong><code>indicatorFunction</code></strong> :&ensp;<code>dict</code></dt>
+<dd>dict of the indicator functions</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def make_technical_indicator(self,colNames,labelName,indicatorFunction,*args,**kwargs):
+    &#34;&#34;&#34;
+    make_technical_indicator applies the indicatorFunctions to the given column
+    
+    Parameters
+    ----------
+    colName : str 
+        column of the data used for the indicator functions
+    labelName : str
+        label name to show on the dataframe
+    indicatorFunction: dict
+        dict of the indicator functions
+    &#34;&#34;&#34;
+    if isinstance(colNames,list):
+        arr = self.df[colNames]
+    else:
+        arr = self.df[colNames].values
+    indicator = indicatorFunction(arr,*args,**kwargs)
+    if isinstance(indicator,dict) or isinstance(indicator,pd.DataFrame):
+        for k in indicator:
+            self.df[f&#39;{labelName}_{k}&#39;] = indicator[k]
+    else:
+        self.df[f&#39;{labelName}&#39;] = indicator
+    return self</code></pre>
+</details>
+</dd>
+<dt id="time_series_transform.stock_transform.base.Stock.plot"><code class="name flex">
+<span>def <span class="ident">plot</span></span>(<span>self, colName, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>plot the stock data of the given column using matplot</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>colName</code></strong> :&ensp;<code>str </code></dt>
+<dd>column of the data used for plotting</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot(self,colName,*args,**kwargs):
+    &#34;&#34;&#34;
+    plot the stock data of the given column using matplot
+    
+    Parameters
+    ----------
+    colName : str 
+        column of the data used for plotting
+    &#34;&#34;&#34;
+    self.df[colName].plot(*args,**kwargs)</code></pre>
+</details>
+</dd>
+<dt id="time_series_transform.stock_transform.base.Stock.save"><code class="name flex">
+<span>def <span class="ident">save</span></span>(<span>self, path, format='csv', compression=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>save the main data locally using pandas</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>path</code></strong> :&ensp;<code>str </code></dt>
+<dd>path of local directory</dd>
+<dt><strong><code>format</code></strong> :&ensp;<code>str</code>, optional</dt>
+<dd>format of the file
+valid values: csv, parquet</dd>
+<dt><strong><code>compression</code></strong> :&ensp;<code>str</code>, optional</dt>
+<dd>compression method, by default None</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save(self, path, format = &#34;csv&#34;,compression = None):
+    &#34;&#34;&#34;
+    save the main data locally using pandas
+    
+    Parameters
+    ----------
+    path : str 
+        path of local directory
+    format : str, optional
+        format of the file
+        valid values: csv, parquet
+    compression: str, optional
+        compression method, by default None
+    &#34;&#34;&#34;
+    data = self.df
+    download_path = path + &#34;/&#34; + self.symbol + &#34;_stock_extract.&#34; + format
+    if format == &#39;csv&#39;:
+        data.to_csv(download_path,compression = compression)
+    elif format == &#39;parquet&#39;:
+        data.to_parquet(download_path,compression = compression)
+    else:
+        raise ValueError(&#34;invalid format value&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="time_series_transform.stock_transform" href="index.html">time_series_transform.stock_transform</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="time_series_transform.stock_transform.base.macd" href="#time_series_transform.stock_transform.base.macd">macd</a></code></li>
+<li><code><a title="time_series_transform.stock_transform.base.rsi" href="#time_series_transform.stock_transform.base.rsi">rsi</a></code></li>
+<li><code><a title="time_series_transform.stock_transform.base.stochastic_oscillator" href="#time_series_transform.stock_transform.base.stochastic_oscillator">stochastic_oscillator</a></code></li>
+<li><code><a title="time_series_transform.stock_transform.base.williams_r" href="#time_series_transform.stock_transform.base.williams_r">williams_r</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="time_series_transform.stock_transform.base.Portfolio" href="#time_series_transform.stock_transform.base.Portfolio">Portfolio</a></code></h4>
+<ul class="">
+<li><code><a title="time_series_transform.stock_transform.base.Portfolio.get_portfolio_dataFrame" href="#time_series_transform.stock_transform.base.Portfolio.get_portfolio_dataFrame">get_portfolio_dataFrame</a></code></li>
+<li><code><a title="time_series_transform.stock_transform.base.Portfolio.make_technical_indicator" href="#time_series_transform.stock_transform.base.Portfolio.make_technical_indicator">make_technical_indicator</a></code></li>
+<li><code><a title="time_series_transform.stock_transform.base.Portfolio.plot" href="#time_series_transform.stock_transform.base.Portfolio.plot">plot</a></code></li>
+<li><code><a title="time_series_transform.stock_transform.base.Portfolio.remove_different_date" href="#time_series_transform.stock_transform.base.Portfolio.remove_different_date">remove_different_date</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="time_series_transform.stock_transform.base.Stock" href="#time_series_transform.stock_transform.base.Stock">Stock</a></code></h4>
+<ul class="">
+<li><code><a title="time_series_transform.stock_transform.base.Stock.candle_plot" href="#time_series_transform.stock_transform.base.Stock.candle_plot">candle_plot</a></code></li>
+<li><code><a title="time_series_transform.stock_transform.base.Stock.dataFrame" href="#time_series_transform.stock_transform.base.Stock.dataFrame">dataFrame</a></code></li>
+<li><code><a title="time_series_transform.stock_transform.base.Stock.macd_plot" href="#time_series_transform.stock_transform.base.Stock.macd_plot">macd_plot</a></code></li>
+<li><code><a title="time_series_transform.stock_transform.base.Stock.make_technical_indicator" href="#time_series_transform.stock_transform.base.Stock.make_technical_indicator">make_technical_indicator</a></code></li>
+<li><code><a title="time_series_transform.stock_transform.base.Stock.plot" href="#time_series_transform.stock_transform.base.Stock.plot">plot</a></code></li>
+<li><code><a title="time_series_transform.stock_transform.base.Stock.save" href="#time_series_transform.stock_transform.base.Stock.save">save</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.4</a>.</p>
+</footer>
+</body>
+</html>

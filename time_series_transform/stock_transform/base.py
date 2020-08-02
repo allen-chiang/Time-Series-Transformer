@@ -1,12 +1,12 @@
 import scipy
 import numpy as np
 import pandas as pd
+from numpy.fft import *
 import matplotlib.pyplot as plt
 from collections import ChainMap
 from joblib import Parallel, delayed
-from numpy.fft import *
-from time_series_transform.util import *
 import plotly.graph_objects as go
+from time_series_transform.transform_core_api.util import *
 
 class Stock (object):
     def __init__(self,symbol,data,additionalInfo=None,timeSeriesCol = 'Date'):
