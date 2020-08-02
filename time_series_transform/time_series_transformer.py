@@ -289,8 +289,8 @@ class Pandas_Time_Series_Panel_Dataset(object):
 
         """
         if colList is None:
-            colList = self.df.columns.tolist()
             self.df = self.df.sort_values(indexCol,ascending = True)
+            colList = self.df.columns.drop(indexCol,axis =1).tolist()
         for col in colList:
             for i in range(1,windowSize+1):
                 if groupby is None:

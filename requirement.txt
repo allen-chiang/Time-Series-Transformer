@@ -6,3 +6,4 @@ ystock
 scipy
 functools
 PyWavelets
+plotly

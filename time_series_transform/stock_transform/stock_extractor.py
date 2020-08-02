@@ -1,11 +1,22 @@
 import yfinance as yf
 from datetime import datetime
 from time_series_transform.stock_transform.base import *
-
+import pandas as pd
 
 class Stock_Extractor(object):
     def __init__(self,symbol,engine):
-        self.client = self._get_extractor(engine)
+        """
+        Stock_Extractor extracts data of the given symbol 
+        using the selected engine   
+
+        Parameters
+        ----------
+        symbol : str
+            symbol of the stock
+        engine : str
+            engine used for data extraction
+        """
+        self.client = self._get_extractor(engine)(symbol)
         self.symbol = symbol
         self.stock = None
 
@@ -16,19 +27,72 @@ class Stock_Extractor(object):
         return engineDict[engine]
 
     def get_stock_period(self,period):
+        """
+        get_stock_period extracts the stock data of the selected
+        period
+
+        Parameters
+        ----------
+        period : str
+            period of the data
+            for example, 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max 
+
+        Returns
+        -------
+        stock data
+            The stock data of selected period
+        """
         data = self.client.getHistoricalByPeriod(period)
+        data = pd.DataFrame(data.to_records())
+        data['Date'] = data.Date.astype(str)
         additionalInfo = self.client.getAdditionalInfo()
-        self.stock = Stock(self.symbol,data,additionalInfo)
+        self.stock = Stock(self.symbol,data,additionalInfo,'Date')
         return self.stock
 
     def get_stock_date(self,start_date,end_date):
+        """
+        get_stock_period extracts the stock data of the selected
+        period
+
+        Parameters
+        ----------
+        start_date : str
+            start of the data
+            format: "%Y-%m-%d", eg "2020-02-20"
+
+        end_date : str
+            end of the data
+         
+        Returns
+        -------
+        stock data
+            The stock data of selected period
+        """
         data = self.client.getHistoricalByRange(start_date,end_date)
-        self.stock = Stock(self.symbol,data)
+        data = pd.DataFrame(data.to_records())
+        data['Date'] = data.Date.astype(str)
+        additionalInfo = self.client.getAdditionalInfo()
+        self.stock = Stock(self.symbol,data,additionalInfo,'Date')
         return self.stock
 
     # I/O
     @classmethod
     def get_stock_from_csv(cls, symbol, path, *args, **kwargs):
+        """
+        get_stock_from_csv extracts data from a local csv file
+
+        Parameters
+        ----------
+        symbol : str
+            symbol of the given stock data
+        path : str
+            path of the csv file
+
+        Returns
+        -------
+        Stock
+            The stock data extracted from the csv file
+        """
         data = pd.read_csv(path)
         stock_data = Stock(symbol, data, *args, **kwargs)
         return stock_data
@@ -36,17 +100,58 @@ class Stock_Extractor(object):
 
     @classmethod
     def get_stock_from_parquet(cls, symbol, path, *args, **kwargs):
+        """
+        get_stock_from_parquet extracts data from a local parquet file
+
+        Parameters
+        ----------
+        symbol : str
+            symbol of the given stock data
+        path : str
+            path of the parquet file
+
+        Returns
+        -------
+        Stock
+            The stock data extracted from the parquet file
+        """
         data = pd.read_parquet(path, engin = 'pyarrow')
         stock_data = Stock(symbol, data, *args, **kwargs)
         return stock_data
 
 class Portfolio_Extractor(object):
     def __init__(self,symbolList,engine):
+        """
+        Portfolio_Extractor extracts data of the given symbolList
+        using the selected engine   
+
+        Parameters
+        ----------
+        symbolList : list
+            list of symbol 
+        engine : str
+            engine used for data extraction
+        """
         self.engine = engine
         self.symbolList = symbolList
         self.portfolio = None
 
     def get_portfolio_period(self,period):
+        """
+        get_portfolio_period extracts the list of stock
+        by the given period
+
+        Parameters
+        ----------
+        period : str
+            period of the data
+            for example, 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max 
+
+        Returns
+        -------
+        portfolio
+            portfolio data of the given stock list 
+        """
         stockList = []
         for symbol in self.symbolList:
             stock_data = Stock_Extractor(symbol, self.engine).get_stock_period(period)
@@ -56,6 +161,24 @@ class Portfolio_Extractor(object):
         return self.portfolio
 
     def get_portfolio_date(self,start_date, end_date):
+        """
+        get_portfolio_date extracts the list of stock
+        by the date period
+
+        Parameters
+        ----------
+        start_date : str
+            start of the data
+            format: "%Y-%m-%d", eg "2020-02-20"
+
+        end_date : str
+            end of the data
+
+        Returns
+        -------
+        portfolio
+            portfolio data of the given stock list 
+        """
         stockList = []
         for symbol in self.symbolList:
             stock_data = Stock_Extractor(symbol, self.engine).get_stock_date(start_date, end_date)
@@ -63,6 +186,8 @@ class Portfolio_Extractor(object):
 
         self.portfolio = Portfolio(stockList)
         return self.portfolio
+
+
 
 
 class yahoo_stock(object):
@@ -79,6 +204,18 @@ class yahoo_stock(object):
 
     """
     def __init__(self,symbol):
+        """
+        Historical Data
+        ---
+        Input:
+        symbol: string
+        period: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max
+        (default is '1mo')
+        start_date, end_date: String, "%Y-%m-%d", eg "2020-02-20"
+        ---
+        Return:
+        date, open, high, low, close, volume, dividends, stock splits
+        """
         self._symbol = symbol
         self._ticker = self._getStock(symbol)
     
@@ -102,20 +239,11 @@ class yahoo_stock(object):
         return ticker
 
     def getCompanyInfo(self):
-        return self.ticker.info
+        try:
+            return self.ticker.info
+        except:
+            return None
 
-    """
-    Historical Data
-    ---
-    Input:
-    symbol: string
-    period: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max
-    (default is '1mo')
-    start_date, end_date: String, "%Y-%m-%d", eg "2020-02-20"
-    ---
-    Return:
-    date, open, high, low, close, volume, dividends, stock splits
-    """
 
     def getHistoricalByPeriod(self, period = '1mo'):
         return self.ticker.history(period)
@@ -124,22 +252,40 @@ class yahoo_stock(object):
         return self.ticker.history(start = start_date, end = end_date)
 
     def getActions(self):
-        return self.ticker.actions
+        try:
+            return self.ticker.actions
+        except:
+            return None
 
     def getDividends(self):
-        return self.ticker.dividends
+        try:
+            return self.ticker.dividends
+        except:
+            return None
 
     def getSplits(self):
-        return self.ticker.splits
+        try:
+            return self.ticker.splits
+        except:
+            return None
 
     def getSustainability(self):
-        return self.ticker.sustainability
+        try:
+            return self.ticker.sustainability
+        except:
+            return None
 
     def getRecommendations(self):
-        return self.ticker.recommendations
+        try:
+            return self.ticker.recommendations
+        except:
+            return None
 
     def getNextEvent(self):
-        return self.ticker.calendar
+        try:
+            return self.ticker.calendar
+        except:
+            return None
 
     def getAdditionalInfo(self):
         info_dict = {
