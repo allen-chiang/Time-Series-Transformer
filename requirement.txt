@@ -7,3 +7,6 @@ scipy
 functools
 PyWavelets
 plotly
+Sphinx
+rinohtype
+nbsphinx
