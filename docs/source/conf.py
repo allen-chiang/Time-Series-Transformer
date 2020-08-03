@@ -150,7 +150,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'time-series-transform', u'time-series-transform Documentation',
+    (master_doc, 'Time Series Transform', u'Time Series Transform Documentation',
      [author], 1)
 ]
 
@@ -161,8 +161,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'time-series-transform', u'time-series-transform Documentation',
-     author, 'time-series-transform', 'One line description of project.',
+    (master_doc, 'Time Series Transform', u'Time Series Transform Documentation',
+     author, 'Time Series Transform', 'One line description of project.',
      'Miscellaneous'),
 ]
 
