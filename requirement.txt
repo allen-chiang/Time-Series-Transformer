@@ -6,4 +6,4 @@ ystock
 scipy
 functools
 PyWavelets
-plotly
+plotly >= 4.8.0
