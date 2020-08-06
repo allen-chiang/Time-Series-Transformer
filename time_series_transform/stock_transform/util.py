@@ -117,4 +117,4 @@ def williams_r(arr, n_day=14):
     r_val = 100*(r_rolling.max()-df)/(r_rolling.max() - r_rolling.min())
     res = np.empty((int(orgLen-len(r_val))))
     res[:] = np.nan
-    return np.append(res,rsi) 
+    return np.append(res,r_val) 

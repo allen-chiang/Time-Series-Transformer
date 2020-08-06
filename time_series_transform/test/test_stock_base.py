@@ -78,33 +78,62 @@ class Test_stock_util:
 
     def test_stochastic_oscillator(self, arr):
         for ar in arr:
+            so_res = []
             oriLen = len(ar)
-            so_res = stochastic_oscillator(ar)
-            col = list(so_res.keys())
-            outKeys = ['k_val', 'd_val']
-            assert np.array_equal(col, outKeys)
-            for key in outKeys:
-                assert len(so_res[key].shape) == 1
-                assert so_res[key].shape[0] == oriLen
+            if oriLen == 0:
+                with pytest.raises(ValueError):
+                    so_res = stochastic_oscillator(ar)
+            else:
+                so_res = stochastic_oscillator(ar)
+                col = list(so_res.keys())
+                outKeys = ['k_val', 'd_val']
+                assert np.array_equal(col, outKeys)
+                for key in outKeys:
+                    assert len(so_res[key].shape) == 1
+                    assert so_res[key].shape[0] == oriLen
 
     def test_rsi(self, arr):
         for ar in arr:
+            rsi_res = []
             oriLen = len(ar)
-            rsi_res = rsi(ar)
-            assert len(rsi_res.shape) == 1
-            assert rsi_res.shape[0] == oriLen
+            if oriLen == 0:
+                with pytest.raises(ValueError):
+                    rsi_res = rsi(ar)
+            else:
+                rsi_res = rsi(ar)
+                assert len(rsi_res.shape) == 1
+                assert rsi_res.shape[0] == oriLen
 
     def test_williams_r(self, arr):
         for ar in arr:
+            w_res = []
             oriLen = len(ar)
-            w_res = williams_r(ar)
-            assert len(w_res.shape) == 1
-            assert w_res.shape[0] == oriLen
+            if oriLen == 0:
+                with pytest.raises(ValueError):
+                    w_res = williams_r(ar)
+            else:
+                w_res = williams_r(ar)
+                assert len(w_res.shape) == 1
+                assert w_res.shape[0] == oriLen
 
 @pytest.mark.base
 class Test_base:
+    @pytest.fixture(scope = 'class')
+    def stock_test_sample(self):
+        se = Stock_Extractor('aapl','yahoo').get_stock_period('1y')
+        # data = list([[], [100], [100,20,30], se])
+        return se
+    
     def test_stock_make_technical_indicator(self,stock_test_sample):
-        pass
+        colNames = ['Close']
+        funcList = [macd, stochastic_oscillator, rsi, williams_r]
+        labels = ['macd', 'so', 'rsi', 'williams']
+
+        for col in colNames:
+            for i in len(funcList):
+                stock_test_sample.make_technical_indicator(col, labels[i],funcList[i])
+        assert stock_test_sample.df.shape[1] == 17
+        
 
     def test_portfolio_make_technical_indicator(self,portfolio_test_sample):
         pass
@@ -115,34 +144,3 @@ class Test_base:
     def test_portfolio_remove_different_date(self,portfolio_test_sample):
         pass
 
-def sel_sort(data):
-
-  if not isinstance(data, list):
-      vals = list(data)
-  else:
-      vals = data
-
-  size = len(vals)
-
-  for i in range(0, size):
-
-      for j in range(i+1, size):
-
-          if vals[j] < vals[i]:
-              _min = vals[j]
-              vals[j] = vals[i]
-              vals[i] = _min
-  return vals
-
-
-@pytest.fixture
-def data():
-
-    return [[3, 2, 1, 5, -3, 2, 0, -2, 11, 9],[3, 2, 1, 5, -3, 2, 0, -2, 11, 9]]
-
-@pytest.mark.omg
-# @pytest.mark.parametrize("arr", data)
-def test_sel_sort(data):
-    for i in data:
-        sorted_vals = sel_sort([3, 2, 1, 5, -3, 2, 0, -2, 11, 9])
-        assert sorted_vals == sorted(i)
