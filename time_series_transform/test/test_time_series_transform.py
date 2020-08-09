@@ -117,51 +117,43 @@ class Test_pandas_to_tensor:
             assert i[0]['stackLag'].shape == (2,2,len(colList))
         
 
-    # def test_time_series_tensor_stack_leads(self,expanded_transformer):
-    #     tst,byCategory = expanded_transformer
-    #     if byCategory == True:
-    #         colList = ["positive_float","negative_float","nan"]
-    #     else:
-    #         colList = ["1_positive_float","1_negative_float","1_nan"]
-    #     for ix,v in enumerate(colList):
-    #         if ix == 0:
-    #             tst.set_config(
-    #                 'stackLag',
-    #                 [f"{v}_{i}"for i in range(1,5)],
-    #                 'sequence',
-    #                 None,
-    #                 False,
-    #                 2,
-    #                 0,
-    #                 np.float32
-    #                 )
-    #         else:
-    #             tst.set_config(
-    #                 f'stackLag_{v}',
-    #                 [f"{v}_{i}"for i in range(1,5)],
-    #                 'sequence',
-    #                 "stackLag",
-    #                 False,
-    #                 2,
-    #                 0,
-    #                 np.float32
-    #                 )
-    #     gen = tst.make_data_generator()
-    #     for i in gen:
-    #         print(i[0])
-    #         assert i[0]['stackLag'].shape == (2,2,len(colList))
+    def test_time_series_tensor_stack_leads(self,expanded_transformer):
+        tst,byCategory = expanded_transformer
+        if byCategory == True:
+            colList = ["positive_float","negative_float","nan"]
+        else:
+            colList = ["1_positive_float","1_negative_float","1_nan"]
+        for ix,v in enumerate(colList):
+            if ix == 0:
+                tst.set_config(
+                    'stackLead',
+                    [f"{v}_{i}"for i in range(1,5)],
+                    'label',
+                    None,
+                    False,
+                    2,
+                    0,
+                    np.float32
+                    )
+            else:
+                tst.set_config(
+                    f'stackLead_{v}',
+                    [f"{v}_{i}"for i in range(1,5)],
+                    'label',
+                    "stackLead",
+                    False,
+                    2,
+                    0,
+                    np.float32
+                    )
+        gen = tst.make_data_generator()
+        for i in gen:
+            print(i[0])
+            assert i[0]['stackLead'].shape == (2,len(colList))
 
-    # @pytest.mark.dependency(depends=["test_pandas_to_tensor_expand_date"])
-    # def test_time_series_tensor_category(self):
+    # def test_time_series_tensor_category(self,expanded_transformer):
     #     pass
 
-    # @pytest.mark.dependency(depends=["test_pandas_to_tensor_expand_date"])
-    # def test_time_series_dataset_make_dataset(self):
-    #     pass
-
-    # @pytest.mark.dependency(depends=["test_pandas_to_tensor_expand_date"])
-    # def test_pandas_to_tensor_make_generator(self):
-    #     pass
 
 # class Test_pandas_to_time_panel:
 #     def test_pandas_panel_expand_category(self):
@@ -179,18 +171,36 @@ class Test_pandas_to_tensor:
 #         pass
 
 
+
 class Test_time_series_util:
     def test_rollilng_window(self):
-        pass
+        arr = np.array([1,2,3,4,5,6])
+        np.testing.assert_array_equal(rolling_window(arr,2), [[1,2],[2,3],[3,4],[4,5],[5,6]])
+        arr = np.array([1,2,3,np.nan,-1])
+        np.testing.assert_array_equal(rolling_window(arr,2) , [[1,2],[2,3],[3,np.nan],[np.nan,-1]])
 
     def test_rolling_identity(self):
-        pass
+        arr = np.array([1,2,3])
+        np.testing.assert_array_equal(identity_window(arr,2),[[1,2,3],[1,2,3]])
+        arr = np.array([1.0,-2,np.nan])
+        np.testing.assert_array_equal(identity_window(arr,2),[[1.0,-2,np.nan],[1.0,-2,np.nan]])
 
     def test_moving_average(self):
-        pass
+        arr = np.array([1,2,3,4,5])
+        np.testing.assert_array_almost_equal(moving_average(arr,3),[np.nan,np.nan,2.0,3.0,4.0])
 
     def teest_rfft_transform(self):
-        pass
+        arr = np.array([1,2,3,4,5])
+        rft = rfft_transform(arr)
+        assert len(arr) == len(rft)
+        arr = np.array([1,2,3,4,5,-9])
+        rft = rfft_transform(arr)
+        assert len(arr) == len(rft)
 
     def test_wavelet_denoising(self):
-        pass
+        arr = np.array([1,2,3,4,5])
+        wave = wavelet_denoising(arr)
+        assert len(arr) == len(wave)
+        arr = np.array([1,2,3,4,5,-6])
+        wave = wavelet_denoising(arr)
+        assert len(arr) == len(wave)
