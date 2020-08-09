@@ -21,29 +21,31 @@ def category_dataframe():
 
 @pytest.fixture(
     scope='class',
-    params=[]
+    params=[
+        {'newIX':True,'byCategory':False},
+        {'newIX':True,'byCategory':True}
+        ]
     )
 def expanded_transformer(request):
     data = {
-        'time':[1,2,3,4],
-        'positive_float': [1.0,2.0,3.0,4.0], 
-        'negative_float': [-1.0,-2.0,-3.0,-4.0], 
-        'positive_int':[1,2,3,4], 
-        'negative_int':[-1,-2,-3,-4], 
-        'nan':[np.nan,np.nan,np.nan,np.nan],
-        'category':[1,1,2,2]
+        'time':[1,2,3,4,4],
+        'positive_float': [1.0,2.0,3.0,4.0,4.0], 
+        'negative_float': [-1.0,-2.0,-3.0,-4.0,-4.0], 
+        'positive_int':[1,2,3,4,4], 
+        'negative_int':[-1,-2,-3,-4,-4], 
+        'nan':[np.nan,np.nan,np.nan,np.nan,np.nan],
+        'category':[1,1,1,2,1]
     }
     df = pd.DataFrame(data)
     tst = Pandas_Time_Series_Tensor_Dataset(df)
     tst.expand_dataFrame_by_date(
         'category',
         'time',
-        newIX = cases['newIX'],
-        byCategory= cases['byCategory'],
+        newIX = request.param['newIX'],
+        byCategory= request.param['byCategory'],
         dropna=False
         )    
-    return tst
-
+    return tst,request.param['byCategory']
 
 class Test_pandas_to_tensor:
     
@@ -51,11 +53,9 @@ class Test_pandas_to_tensor:
         "cases", 
         [
             {'newIX':True,'byCategory':True,'dropna':False},
-            {'newIX':False,'byCategory':False,'dropna':False},
             {'newIX':True,'byCategory':False,'dropna':False},
-            {'newIX':False,'byCategory':True,'dropna':False},
             {'newIX':True,'byCategory':True,'dropna':True},
-            {'newIX':True,'byCategory':True,'dropna':False},
+            {'newIX':True,'byCategory':False,'dropna':True},
             ]
         )
     def test_pandas_to_tensor_expand_date(self,cases,category_dataframe):
@@ -82,14 +82,74 @@ class Test_pandas_to_tensor:
                 )  
             assert tst.df.isna().sum().sum() == 0
                       
+    def test_time_series_tensor_stack_lags(self,expanded_transformer):
+        tst,byCategory = expanded_transformer
+        if byCategory == True:
+            colList = ["positive_float","negative_float","nan"]
+        else:
+            colList = ["1_positive_float","1_negative_float","1_nan"]
+        for ix,v in enumerate(colList):
+            if ix == 0:
+                tst.set_config(
+                    'stackLag',
+                    [f"{v}_{i}"for i in range(1,5)],
+                    'sequence',
+                    None,
+                    False,
+                    2,
+                    0,
+                    np.float32
+                    )
+            else:
+                tst.set_config(
+                    f'stackLag_{v}',
+                    [f"{v}_{i}"for i in range(1,5)],
+                    'sequence',
+                    "stackLag",
+                    False,
+                    2,
+                    0,
+                    np.float32
+                    )
+        gen = tst.make_data_generator()
+        for i in gen:
+            print(i[0])
+            assert i[0]['stackLag'].shape == (2,2,len(colList))
+        
 
-    @pytest.mark.dependency(depends=["test_pandas_to_tensor_expand_date"])
-    def test_time_series_tensor_stack_lags(self,category_dataframe):
-        pass
-
-    # @pytest.mark.dependency(depends=["test_pandas_to_tensor_expand_date"])
-    # def test_time_series_tensor_stack_leads(self):
-    #     pass
+    # def test_time_series_tensor_stack_leads(self,expanded_transformer):
+    #     tst,byCategory = expanded_transformer
+    #     if byCategory == True:
+    #         colList = ["positive_float","negative_float","nan"]
+    #     else:
+    #         colList = ["1_positive_float","1_negative_float","1_nan"]
+    #     for ix,v in enumerate(colList):
+    #         if ix == 0:
+    #             tst.set_config(
+    #                 'stackLag',
+    #                 [f"{v}_{i}"for i in range(1,5)],
+    #                 'sequence',
+    #                 None,
+    #                 False,
+    #                 2,
+    #                 0,
+    #                 np.float32
+    #                 )
+    #         else:
+    #             tst.set_config(
+    #                 f'stackLag_{v}',
+    #                 [f"{v}_{i}"for i in range(1,5)],
+    #                 'sequence',
+    #                 "stackLag",
+    #                 False,
+    #                 2,
+    #                 0,
+    #                 np.float32
+    #                 )
+    #     gen = tst.make_data_generator()
+    #     for i in gen:
+    #         print(i[0])
+    #         assert i[0]['stackLag'].shape == (2,2,len(colList))
 
     # @pytest.mark.dependency(depends=["test_pandas_to_tensor_expand_date"])
     # def test_time_series_tensor_category(self):
@@ -117,3 +177,20 @@ class Test_pandas_to_tensor:
 
 #     def test_make_transformation(self):
 #         pass
+
+
+class Test_time_series_util:
+    def test_rollilng_window(self):
+        pass
+
+    def test_rolling_identity(self):
+        pass
+
+    def test_moving_average(self):
+        pass
+
+    def teest_rfft_transform(self):
+        pass
+
+    def test_wavelet_denoising(self):
+        pass

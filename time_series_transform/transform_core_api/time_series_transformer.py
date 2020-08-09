@@ -11,7 +11,7 @@ from time_series_transform.transform_core_api.base import *
 
 
 class Pandas_Time_Series_Tensor_Dataset(object):
-    def __init__(self, pandasFrame, config={}):
+    def __init__(self, pandasFrame, config=None):
         """
         Pandas_Time_Series_Tensor_Dataset prepared pandas data into sequence data type
         
@@ -34,9 +34,11 @@ class Pandas_Time_Series_Tensor_Dataset(object):
         config : dict, optional
             the configuration to trainsform pandas dataFrame, by default {}
         """
-        super().__init__()
         self.df = pandasFrame
-        self.config = config
+        if config is None:
+            self.config = {}
+        else:
+            self.config = config
 
 
     def set_config(self, name, colNames, tensorType, sequence_stack, isResponseVar, windowSize, seqSize, outType):
