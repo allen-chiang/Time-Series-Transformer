@@ -121,26 +121,73 @@ class Test_base:
     @pytest.fixture(scope = 'class')
     def stock_test_sample(self):
         se = Stock_Extractor('aapl','yahoo').get_stock_period('1y')
-        # data = list([[], [100], [100,20,30], se])
         return se
+
+    @pytest.fixture(scope = 'class')
+    def portfolio_test_sample(self):
+        stockList = ["aapl", "0050.TW", "GC=F"]
+        pe = Portfolio_Extractor(stockList,'yahoo').get_portfolio_period('1y')
+        return pe
     
     def test_stock_make_technical_indicator(self,stock_test_sample):
         colNames = ['Close']
         funcList = [macd, stochastic_oscillator, rsi, williams_r]
         labels = ['macd', 'so', 'rsi', 'williams']
 
+        outkeyList = list(stock_test_sample.df.keys())
+
         for col in colNames:
-            for i in len(funcList):
+            for i in range(len(funcList)):
                 stock_test_sample.make_technical_indicator(col, labels[i],funcList[i])
-        assert stock_test_sample.df.shape[1] == 17
+                if labels[i]=="macd":
+                    outkeyList.extend(['macd_EMA_12',
+                        'macd_EMA_26',
+                        'macd_DIF',
+                        'macd_DEM',
+                        'macd_OSC'])
+                elif labels[i] == 'so':
+                    outkeyList.extend(['so_k_val','so_d_val'])
+                else: 
+                    outkeyList.append(labels[i])
         
+        assert np.array_equal(list(stock_test_sample.df.keys()), outkeyList)
+        
+    def test_portfolio_get_portfolio_dataFrame(self,portfolio_test_sample):
+        df = portfolio_test_sample.get_portfolio_dataFrame()
+        outkeyList = ['Date','Open','High','Low','Close','Volume','Dividends','Stock Splits','symbol']
+        assert np.array_equal(list(df.keys()), outkeyList)
 
     def test_portfolio_make_technical_indicator(self,portfolio_test_sample):
-        pass
+        colNames = ['Close']
+        funcList = [macd, stochastic_oscillator, rsi, williams_r]
+        labels = ['macd', 'so', 'rsi', 'williams']
 
-    def test_portfolio_get_portfolio_dataFrame(self,portfolio_test_sample):
-        pass
+        outkeyList = list(portfolio_test_sample.get_portfolio_dataFrame().keys())
 
-    def test_portfolio_remove_different_date(self,portfolio_test_sample):
-        pass
+        for col in colNames:
+            for i in range(len(funcList)):
+                portfolio_test_sample.make_technical_indicator(col, labels[i],funcList[i],1,50)
+                if labels[i]=="macd":
+                    outkeyList.extend(['macd_EMA_12',
+                        'macd_EMA_26',
+                        'macd_DIF',
+                        'macd_DEM',
+                        'macd_OSC'])
+                elif labels[i] == 'so':
+                    outkeyList.extend(['so_k_val','so_d_val'])
+                else: 
+                    outkeyList.append(labels[i])
+        assert np.array_equal(list(portfolio_test_sample.get_portfolio_dataFrame().keys()), outkeyList)
 
+
+    def test_portfolio_remove_different_date(self):
+        se = Stock_Extractor('GC=F', 'yahoo')
+        stock = se.get_stock_date('2015-06-24', '2020-07-23')
+        se2 = Stock_Extractor('aapl', 'yahoo')
+        stock2 = se2.get_stock_date('2019-06-24', '2020-07-23')
+
+        pt = Portfolio([stock,stock2])
+        pt.remove_different_date()
+
+        assert pt.get_portfolio_dataFrame().Date.min() == '2019-06-24'
+        assert pt.get_portfolio_dataFrame().Date.max() == '2020-07-23'

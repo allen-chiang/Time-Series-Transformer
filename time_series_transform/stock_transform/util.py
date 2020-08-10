@@ -77,6 +77,7 @@ def rsi(arr, n_day = 14):
         Relative Strength Index of the given array
     """
     _arr_check(arr)
+    arr = np.array(arr)
     orgLen = len(arr)
     arr = arr[~np.isnan(arr)]
 
@@ -109,7 +110,9 @@ def williams_r(arr, n_day=14):
     r_val : array
         Relative Strength Index of the given array
     """
+    
     _arr_check(arr)
+    arr = np.array(arr)
     orgLen = len(arr)
     arr = arr[~np.isnan(arr)]
     df = pd.DataFrame(arr)
