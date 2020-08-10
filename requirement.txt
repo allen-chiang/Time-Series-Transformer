@@ -1,6 +1,6 @@
 numpy
 pandas
-tensorflow
+tensorflow==2.1.0
 pyarrow
 ystock
 scipy
@@ -11,3 +11,4 @@ rinohtype
 nbsphinx
 plotly >= 4.8.0
 pytest-dependency
+scipy
