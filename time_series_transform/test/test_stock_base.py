@@ -190,4 +190,4 @@ class Test_base:
         pt.remove_different_date()
 
         assert pt.get_portfolio_dataFrame().Date.min() == '2019-06-24'
-        assert pt.get_portfolio_dataFrame().Date.max() == '2020-07-23'
+        assert pt.get_portfolio_dataFrame().Date.max() == '2020-07-22'
