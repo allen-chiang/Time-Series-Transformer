@@ -1,6 +1,6 @@
 # Time Series Transformer
 
-![Build](https://github.com/allen-chiang/Time-Series-Transformer/workflows/Python%20application/badge.svg)
+![Build](https://github.com/allen-chiang/Time-Series-Transformer/workflows/Build/badge.svg)
 
 
 
