@@ -10,3 +10,4 @@ Sphinx
 rinohtype
 nbsphinx
 plotly >= 4.8.0
+pytest-dependency

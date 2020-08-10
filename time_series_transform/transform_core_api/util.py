@@ -51,8 +51,6 @@ def wavelet_denoising(arr, wavelet='db4',coeff_mode = "per",threshold_mode='hard
     else:
         return wav
 
-
-
 def differencing(arr,order =1):
     for i in range(order):
         if i == 0:
@@ -67,7 +65,6 @@ def differencing(arr,order =1):
 def ema(arr, com = None, span = None, halflife = None, alpha = None, adjust = True, min_periods = 0, ignore_na = False, axis = 0):
     df = pd.DataFrame(arr)
     return df.ewm(com = com, span = span, halflife = halflife, alpha = alpha, min_periods = min_periods, adjust = adjust, ignore_na = ignore_na, axis = axis).mean().to_numpy()
-
 
 
 def geometric_ma(arr,windowSize):
