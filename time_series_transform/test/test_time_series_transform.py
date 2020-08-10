@@ -1,3 +1,4 @@
+import copy
 import pytest
 import numpy as np
 import pandas as pd
@@ -46,6 +47,23 @@ def expanded_transformer(request):
         dropna=False
         )    
     return tst,request.param['byCategory']
+
+@pytest.fixture(scope = 'class')
+def expended_panel_transformer():
+    data = {
+        'time':[1,2,3,4],
+        'positive_float': [1.0,2.0,3.0,4.0], 
+        'negative_float': [-1.0,-2.0,-3.0,-4.0], 
+        'positive_int':[1,2,3,4], 
+        'negative_int':[-1,-2,-3,-4], 
+        'nan':[np.nan,np.nan,np.nan,np.nan],
+        'category':[1,1,2,2]
+    }
+    df = pd.DataFrame(data)
+    ptsp = Pandas_Time_Series_Panel_Dataset(df)
+    ptsp.expand_dataFrame_by_category('time','category')
+    return ptsp
+
 
 class Test_pandas_to_tensor:
     
@@ -97,7 +115,7 @@ class Test_pandas_to_tensor:
                     None,
                     False,
                     2,
-                    0,
+                    4,
                     np.float32
                     )
             else:
@@ -148,28 +166,53 @@ class Test_pandas_to_tensor:
                     )
         gen = tst.make_data_generator()
         for i in gen:
-            print(i[0])
             assert i[0]['stackLead'].shape == (2,len(colList))
 
-    # def test_time_series_tensor_category(self,expanded_transformer):
-    #     pass
+    def test_time_series_tensor_category(self,expanded_transformer):
+        tst,byCategory = expanded_transformer
+        if byCategory == True:
+            colList = ["positive_float"]
+        else:
+            colList = ["1_positive_float"]
+        for ix,v in enumerate(colList):
+            tst.set_config(
+                'category',
+                [f"{v}_{i}"for i in range(1,2)],
+                'category',
+                None,
+                False,
+                2,
+                4,
+                np.float32
+                )
+        gen = tst.make_data_generator()
+        for i in gen:
+            print(i)
+            assert i[0]['category'].shape == (2,len(colList))
 
 
-# class Test_pandas_to_time_panel:
-#     def test_pandas_panel_expand_category(self):
-#         pass
+class Test_pandas_to_time_panel:
+    def test_pandas_panel_expand_category(self,category_dataframe):
+        df = category_dataframe
+        ptsp = Pandas_Time_Series_Panel_Dataset(df)
+        ptsp.expand_dataFrame_by_category('time','category')
+        assert ptsp.df.shape == (len(df),1+len(df.category.unique())*(len(df.columns)-2))
 
-#     def test_pandas_panel_make_lags(self):
-#         pass
+    def test_pandas_panel_make_lags(self,expended_panel_transformer):
+        ptsp = copy.deepcopy(expended_panel_transformer)
+        orgLen = len(ptsp.df.columns)
+        ptsp.make_slide_window('time',2)
+        assert len(ptsp.df.columns) == (orgLen-1)*3+1
+        ptsp = copy.deepcopy(expended_panel_transformer)
+        orgLen = len(ptsp.df.columns)
+        ptsp.make_slide_window('time',2,['positive_float_1'])
+        assert len(ptsp.df.columns) == (orgLen-1)+3
 
-
-#     def test_pandas_panel_make_leads(self):
-#         pass
-
-
-#     def test_make_transformation(self):
-#         pass
-
+    def test_pandas_panel_make_leads(self,expended_panel_transformer):
+        ptsp = copy.deepcopy(expended_panel_transformer)
+        orgLen = len(ptsp.df.columns)
+        ptsp.make_lead_column('time','positive_float_1',2)
+        assert len(ptsp.df.columns) == orgLen+1
 
 
 class Test_time_series_util:
