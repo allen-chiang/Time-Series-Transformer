@@ -12,7 +12,7 @@ from time_series_transform.stock_transform.util import *
 
 @pytest.mark.stock_extractor
 @pytest.mark.parametrize("source", ["yahoo"])
-@pytest.mark.parametrize("stockSymbol", ["aapl", "0050.TW", "GC=F"])
+@pytest.mark.parametrize("stockSymbol", ["aapl", "0050.TW", "googl"])
 class Test_stock_extractor:
     @pytest.mark.parametrize("periods", ["1y", "max", "1d"])
     def test_extractor_get_stock_period(self, stockSymbol, periods,source):
@@ -28,7 +28,7 @@ class Test_stock_extractor:
 
 @pytest.mark.portoflio_extractor
 @pytest.mark.parametrize("source", ["yahoo"])
-@pytest.mark.parametrize("stockList", [["aapl", "0050.TW", "GC=F"],[],["aapl"]])
+@pytest.mark.parametrize("stockList", [["aapl", "0050.TW", "googl"],[],["aapl"]])
 class Test_portfolio_extractor:
     @pytest.mark.parametrize("periods", ["1y", "max", "1d"])
     def test_extractor_get_portfolio_period(self, stockList, periods,source):
@@ -36,7 +36,7 @@ class Test_portfolio_extractor:
         data = se.get_portfolio_period(periods)
         assert isinstance(data, Portfolio)
 
-    @pytest.mark.parametrize("dates", [["2019-01-01", "2020-07-01"], ["2015-01-01", "2020-01-01"],["2020-01-01", "2020-01-01"]])
+    @pytest.mark.parametrize("dates", [["2020-06-01", "2020-07-01"], ["2020-01-01", "2020-02-01"],["2020-01-01", "2020-01-01"]])
     def test_extractor_get_portfolio_date(self,stockList, dates, source):
         pe = Portfolio_Extractor(stockList,source)
         data = pe.get_portfolio_date(dates[0], dates[1])
@@ -182,12 +182,12 @@ class Test_base:
 
     def test_portfolio_remove_different_date(self):
         se = Stock_Extractor('GC=F', 'yahoo')
-        stock = se.get_stock_date('2015-06-24', '2020-07-23')
+        stock = se.get_stock_date('2020-06-24', '2020-07-23')
         se2 = Stock_Extractor('aapl', 'yahoo')
-        stock2 = se2.get_stock_date('2019-06-24', '2020-07-23')
+        stock2 = se2.get_stock_date('2020-07-01', '2020-07-23')
 
         pt = Portfolio([stock,stock2])
         pt.remove_different_date()
 
-        assert pt.get_portfolio_dataFrame().Date.min() == '2019-06-24'
+        assert pt.get_portfolio_dataFrame().Date.min() == '2020-07-01'
         assert pt.get_portfolio_dataFrame().Date.max() == '2020-07-22'
