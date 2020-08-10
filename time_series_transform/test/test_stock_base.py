@@ -125,7 +125,7 @@ class Test_base:
 
     @pytest.fixture(scope = 'class')
     def portfolio_test_sample(self):
-        stockList = ["aapl", "0050.TW", "GC=F"]
+        stockList = ["aapl", "0050.TW", "googl"]
         pe = Portfolio_Extractor(stockList,'yahoo').get_portfolio_period('1y')
         return pe
     
@@ -181,7 +181,7 @@ class Test_base:
 
 
     def test_portfolio_remove_different_date(self):
-        se = Stock_Extractor('GC=F', 'yahoo')
+        se = Stock_Extractor('googl', 'yahoo')
         stock = se.get_stock_date('2020-06-24', '2020-07-23')
         se2 = Stock_Extractor('aapl', 'yahoo')
         stock2 = se2.get_stock_date('2020-07-01', '2020-07-23')
