@@ -12,3 +12,5 @@ plotly >= 4.8.0
 pytest-dependency
 scipy
 matplotlib
+sklearn
+joblib
