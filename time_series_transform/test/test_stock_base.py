@@ -12,7 +12,7 @@ from time_series_transform.stock_transform.util import *
 
 @pytest.mark.stock_extractor
 @pytest.mark.parametrize("source", ["yahoo"])
-@pytest.mark.parametrize("stockSymbol", ["aapl", "0050.TW", "googl"])
+@pytest.mark.parametrize("stockSymbol", ["aapl", "0050.TW", "MSFT"])
 class Test_stock_extractor:
     @pytest.mark.parametrize("periods", ["1y", "max", "1d"])
     def test_extractor_get_stock_period(self, stockSymbol, periods,source):
@@ -20,7 +20,7 @@ class Test_stock_extractor:
         data = se.get_stock_period(periods)
         assert isinstance(data, Stock)
 
-    @pytest.mark.parametrize("dates", [["2019-01-01", "2020-07-01"], ["2015-01-01", "2020-01-01"],["2020-01-01", "2020-01-01"]])
+    @pytest.mark.parametrize("dates", [["2020-01-01", "2020-07-01"], ["2020-01-01", "2020-03-01"],["2020-01-01", "2020-02-01"]])
     def test_extractor_get_stock_date(self,stockSymbol, dates, source):
         se = Stock_Extractor(stockSymbol,source)
         data = se.get_stock_date(dates[0], dates[1])
@@ -28,7 +28,7 @@ class Test_stock_extractor:
 
 @pytest.mark.portoflio_extractor
 @pytest.mark.parametrize("source", ["yahoo"])
-@pytest.mark.parametrize("stockList", [["aapl", "0050.TW", "googl"],[],["aapl"]])
+@pytest.mark.parametrize("stockList", [["aapl", "0050.TW", "MSFT"],[],["aapl"]])
 class Test_portfolio_extractor:
     @pytest.mark.parametrize("periods", ["1y", "max", "1d"])
     def test_extractor_get_portfolio_period(self, stockList, periods,source):
@@ -125,7 +125,7 @@ class Test_base:
 
     @pytest.fixture(scope = 'class')
     def portfolio_test_sample(self):
-        stockList = ["aapl", "0050.TW", "googl"]
+        stockList = ["aapl", "0050.TW", "MSFT"]
         pe = Portfolio_Extractor(stockList,'yahoo').get_portfolio_period('1y')
         return pe
     
@@ -181,7 +181,7 @@ class Test_base:
 
 
     def test_portfolio_remove_different_date(self):
-        se = Stock_Extractor('googl', 'yahoo')
+        se = Stock_Extractor('MSFT', 'yahoo')
         stock = se.get_stock_date('2020-06-24', '2020-07-23')
         se2 = Stock_Extractor('aapl', 'yahoo')
         stock2 = se2.get_stock_date('2020-07-01', '2020-07-23')
