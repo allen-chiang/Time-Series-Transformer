@@ -1,6 +1,6 @@
 numpy
 pandas
-tensorflow==2.1.0
+tensorflow
 pyarrow
 ystock
 scipy
