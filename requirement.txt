@@ -2,7 +2,7 @@ numpy
 pandas
 tensorflow
 pyarrow
-ystock
+yfinance
 scipy
 functools
 PyWavelets
