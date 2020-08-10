@@ -76,7 +76,7 @@ class Stock (object):
         
         Parameters
         ----------
-        colName : str 
+        colNames : str 
             column of the data used for the indicator functions
         labelName : str
             label name to show on the dataframe

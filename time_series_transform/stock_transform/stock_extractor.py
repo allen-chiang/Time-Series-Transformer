@@ -22,7 +22,7 @@ class Stock_Extractor(object):
 
     def _get_extractor(self,engine):
         engineDict = {
-            'yahoo':yahoo_stock
+            'yahoo':_yahoo_stock
         }
         return engineDict[engine]
 
@@ -191,7 +191,7 @@ class Portfolio_Extractor(object):
 
 
 
-class yahoo_stock(object):
+class _yahoo_stock(object):
 
     """
     Fetching stock data from yahoo finance
