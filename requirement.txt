@@ -2,11 +2,15 @@ numpy
 pandas
 tensorflow
 pyarrow
-ystock
+yfinance
 scipy
-functools
 PyWavelets
 Sphinx
 rinohtype
 nbsphinx
 plotly >= 4.8.0
+pytest-dependency
+scipy
+matplotlib
+sklearn
+joblib
