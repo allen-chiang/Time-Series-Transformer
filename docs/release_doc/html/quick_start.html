@@ -1,0 +1,489 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Quick Start &mdash; Time-Series-Transform 0.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Api Documentation" href="api_documentation.html" />
+    <link rel="prev" title="Welcome to Time Series Transformer documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Time-Series-Transform
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quick Start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pre-processing-for-machine-learning">Pre-Processing for Machine Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deep-learning">Deep Learning</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_documentation.html">Api Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallery.html">Gallery</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Time-Series-Transform</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Quick Start</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/quick_start.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="quick-start">
+<h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h1>
+<div class="figure align-default">
+<img alt="Build" src="https://github.com/allen-chiang/Time-Series-Transformer/workflows/Build/badge.svg" /></div>
+<p>Time Series Transformer is designed to handle time series data
+pre-processing for machine learning and deep learning. The general use
+case includes making lag/lead features, denoising data, and making
+various moving average (geometric and arithmetic ). Furthermore, this
+package provides extra features to different time series data area,
+including:</p>
+<ol class="arabic simple">
+<li><p>stock</p>
+<ul class="simple">
+<li><p>extract data from different engine (only support yahoo finance in
+the current version)</p></li>
+<li><p>plot interative charts for stock analsys</p></li>
+<li><p>various technical indicator transformation i.e. MACD, stochastic
+oscillator, William %, relative strength index</p></li>
+</ul>
+</li>
+</ol>
+<div class="section" id="pre-processing-for-machine-learning">
+<h2>Pre-Processing for Machine Learning<a class="headerlink" href="#pre-processing-for-machine-learning" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">time_series_transform</span> <span class="k">as</span> <span class="nn">tst</span>
+<span class="kn">from</span> <span class="nn">time_series_transform.transform_core_api.time_series_transformer</span> <span class="kn">import</span> <span class="n">Pandas_Time_Series_Panel_Dataset</span>
+</pre></div>
+</div>
+<p>This example uses the stock api to extract stock googl for one year.
+Subsequently, it shows how to create multiple lags data as predictors
+and lead data as target variable.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stock_ext</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">Stock_Extractor</span><span class="p">(</span><span class="s1">&#39;googl&#39;</span><span class="p">,</span><span class="s1">&#39;yahoo&#39;</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">stock_ext</span><span class="o">.</span><span class="n">get_stock_period</span><span class="p">(</span><span class="n">period</span><span class="o">=</span><span class="s1">&#39;1y&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">df</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+<pre class="literal-block">         Date     Open     High      Low    Close   Volume  Dividends  0  2019-08-12  1180.00  1185.61  1168.72  1174.50  1103200          0
+1  2019-08-13  1174.35  1205.43  1172.99  1196.73  1421700          0
+2  2019-08-14  1176.07  1182.79  1161.07  1164.25  1771500          0
+3  2019-08-15  1168.43  1176.42  1163.00  1169.32  1425300          0
+4  2019-08-16  1180.79  1183.84  1173.00  1179.21  1245800          0
+
+   Stock Splits
+0             0
+1             0
+2             0
+3             0
+4             0</pre>
+<p>Pandas_Time_Series_Panel_Dataset takes dataframe as input.
+make_slide_window is the function used for making multiple lagging data,
+and make_lead_column is to create lead data for specific column.
+indexCol is the time series column, and this column is used for sorting
+the dataframe before lag/lead feature generations.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">panel_transform</span> <span class="o">=</span> <span class="n">Pandas_Time_Series_Panel_Dataset</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">panel_transform</span><span class="o">.</span><span class="n">make_slide_window</span><span class="p">(</span>
+    <span class="n">indexCol</span><span class="o">=</span> <span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="n">windowSize</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span><span class="n">colList</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Open&#39;</span><span class="p">,</span><span class="s1">&#39;High&#39;</span><span class="p">,</span><span class="s1">&#39;Low&#39;</span><span class="p">,</span><span class="s1">&#39;Close&#39;</span><span class="p">]</span>
+<span class="p">)</span><span class="o">.</span><span class="n">make_lead_column</span><span class="p">(</span><span class="n">indexCol</span> <span class="o">=</span> <span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="n">baseCol</span> <span class="o">=</span> <span class="s1">&#39;Open&#39;</span><span class="p">,</span><span class="n">leadNum</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">panel_transform</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+Int64Index: 252 entries, 251 to 0
+Data columns (total 17 columns):
+ #   Column        Non-Null Count  Dtype
+---  ------        --------------  -----
+ 0   Date          252 non-null    object
+ 1   Open          252 non-null    float64
+ 2   High          252 non-null    float64
+ 3   Low           252 non-null    float64
+ 4   Close         252 non-null    float64
+ 5   Volume        252 non-null    int64
+ 6   Dividends     252 non-null    int64
+ 7   Stock Splits  252 non-null    int64
+ 8   Open_lag1     251 non-null    float64
+ 9   Open_lag2     250 non-null    float64
+ 10  High_lag1     251 non-null    float64
+ 11  High_lag2     250 non-null    float64
+ 12  Low_lag1      251 non-null    float64
+ 13  Low_lag2      250 non-null    float64
+ 14  Close_lag1    251 non-null    float64
+ 15  Close_lag2    250 non-null    float64
+ 16  Open_lead1    251 non-null    float64
+dtypes: float64(13), int64(3), object(1)
+memory usage: 35.4+ KB
+</pre></div>
+</div>
+<p>To obtain the data, the df attribute of Pandas_Time_Series_Panel_Dataset
+can be retrieved.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lead_lag_stock</span> <span class="o">=</span> <span class="n">panel_transform</span><span class="o">.</span><span class="n">df</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">lead_lag_stock</span><span class="p">[[</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="s1">&#39;symbol&#39;</span><span class="p">,</span><span class="s1">&#39;Open&#39;</span><span class="p">,</span><span class="s1">&#39;Open_lag1&#39;</span><span class="p">,</span><span class="s1">&#39;Open_lead1&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>         <span class="n">Date</span> <span class="n">symbol</span>     <span class="n">Open</span>  <span class="n">Open_lag1</span>  <span class="n">Open_lead1</span>
+<span class="mi">0</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">12</span>   <span class="n">aapl</span>   <span class="mf">197.66</span>        <span class="n">NaN</span>      <span class="mf">199.05</span>
+<span class="mi">0</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">12</span>  <span class="n">googl</span>  <span class="mf">1180.00</span>        <span class="n">NaN</span>     <span class="mf">1174.35</span>
+<span class="mi">1</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">13</span>   <span class="n">aapl</span>   <span class="mf">199.05</span>     <span class="mf">197.66</span>      <span class="mf">201.16</span>
+<span class="mi">1</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">13</span>  <span class="n">googl</span>  <span class="mf">1174.35</span>    <span class="mf">1180.00</span>     <span class="mf">1176.07</span>
+<span class="mi">2</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">14</span>  <span class="n">googl</span>  <span class="mf">1176.07</span>    <span class="mf">1174.35</span>     <span class="mf">1168.43</span>
+</pre></div>
+</div>
+<p>Sometimes, there cuold be different categories or item in the dataset.
+Pandas_Time_Series_Panel_Dataset the groupby parameter can serve the
+advanced data manipulation for lead and lag data making. The following
+example is going to construct a dataframe with multiple stocks, and each
+stock can be represented as one item.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">Portfolio_Extractor</span><span class="p">([</span><span class="s1">&#39;googl&#39;</span><span class="p">,</span><span class="s1">&#39;aapl&#39;</span><span class="p">],</span><span class="s1">&#39;yahoo&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get_portfolio_period</span><span class="p">(</span><span class="s1">&#39;1y&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get_portfolio_dataFrame</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+<pre class="literal-block">         Date     Open     High      Low    Close   Volume  Dividends  0  2019-08-12  1180.00  1185.61  1168.72  1174.50  1103200        0.0
+1  2019-08-13  1174.35  1205.43  1172.99  1196.73  1421700        0.0
+2  2019-08-14  1176.07  1182.79  1161.07  1164.25  1771500        0.0
+3  2019-08-15  1168.43  1176.42  1163.00  1169.32  1425300        0.0
+4  2019-08-16  1180.79  1183.84  1173.00  1179.21  1245800        0.0
+
+   Stock Splits symbol
+0             0  googl
+1             0  googl
+2             0  googl
+3             0  googl
+4             0  googl</pre>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">panel_transform</span> <span class="o">=</span> <span class="n">Pandas_Time_Series_Panel_Dataset</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">panel_transform</span><span class="o">.</span><span class="n">make_slide_window</span><span class="p">(</span>
+    <span class="n">indexCol</span><span class="o">=</span> <span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="n">windowSize</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span><span class="n">colList</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Open&#39;</span><span class="p">,</span><span class="s1">&#39;High&#39;</span><span class="p">,</span><span class="s1">&#39;Low&#39;</span><span class="p">,</span><span class="s1">&#39;Close&#39;</span><span class="p">],</span><span class="n">groupby</span><span class="o">=</span><span class="s1">&#39;symbol&#39;</span>
+<span class="p">)</span><span class="o">.</span><span class="n">make_lead_column</span><span class="p">(</span><span class="n">indexCol</span> <span class="o">=</span> <span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="n">baseCol</span> <span class="o">=</span> <span class="s1">&#39;Open&#39;</span><span class="p">,</span><span class="n">leadNum</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">groupby</span><span class="o">=</span><span class="s1">&#39;symbol&#39;</span><span class="p">)</span>
+<span class="n">panel_transform</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+Int64Index: 504 entries, 251 to 0
+Data columns (total 18 columns):
+ #   Column        Non-Null Count  Dtype
+---  ------        --------------  -----
+ 0   Date          504 non-null    object
+ 1   Open          504 non-null    float64
+ 2   High          504 non-null    float64
+ 3   Low           504 non-null    float64
+ 4   Close         504 non-null    float64
+ 5   Volume        504 non-null    int64
+ 6   Dividends     504 non-null    float64
+ 7   Stock Splits  504 non-null    int64
+ 8   symbol        504 non-null    object
+ 9   Open_lag1     502 non-null    float64
+ 10  Open_lag2     500 non-null    float64
+ 11  High_lag1     502 non-null    float64
+ 12  High_lag2     500 non-null    float64
+ 13  Low_lag1      502 non-null    float64
+ 14  Low_lag2      500 non-null    float64
+ 15  Close_lag1    502 non-null    float64
+ 16  Close_lag2    500 non-null    float64
+ 17  Open_lead1    502 non-null    float64
+dtypes: float64(14), int64(2), object(2)
+memory usage: 74.8+ KB
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lead_lag_stock</span> <span class="o">=</span> <span class="n">panel_transform</span><span class="o">.</span><span class="n">df</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">lead_lag_stock</span><span class="p">[[</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="s1">&#39;symbol&#39;</span><span class="p">,</span><span class="s1">&#39;Open&#39;</span><span class="p">,</span><span class="s1">&#39;Open_lag1&#39;</span><span class="p">,</span><span class="s1">&#39;Open_lead1&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>         <span class="n">Date</span> <span class="n">symbol</span>     <span class="n">Open</span>  <span class="n">Open_lag1</span>  <span class="n">Open_lead1</span>
+<span class="mi">0</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">12</span>   <span class="n">aapl</span>   <span class="mf">197.66</span>        <span class="n">NaN</span>      <span class="mf">199.05</span>
+<span class="mi">0</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">12</span>  <span class="n">googl</span>  <span class="mf">1180.00</span>        <span class="n">NaN</span>     <span class="mf">1174.35</span>
+<span class="mi">1</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">13</span>   <span class="n">aapl</span>   <span class="mf">199.05</span>     <span class="mf">197.66</span>      <span class="mf">201.16</span>
+<span class="mi">1</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">13</span>  <span class="n">googl</span>  <span class="mf">1174.35</span>    <span class="mf">1180.00</span>     <span class="mf">1176.07</span>
+<span class="mi">2</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">14</span>  <span class="n">googl</span>  <span class="mf">1176.07</span>    <span class="mf">1174.35</span>     <span class="mf">1168.43</span>
+</pre></div>
+</div>
+<p>Note: Some other use cases could be inventory. Inventory data is usually
+associate with multiple categories such as item name or locations. To
+use groupby parameter, it has to be combined into on column, for
+example, item, location –&gt; item_location. The currently api only
+supports one column groupby.</p>
+</div>
+<div class="section" id="deep-learning">
+<h2>Deep Learning<a class="headerlink" href="#deep-learning" title="Permalink to this headline">¶</a></h2>
+<p>Transforming panel data into tensor data for deep learning model might
+wirte server lines of code. Using Pandas_Time_Series_Tensor_Dataset can
+easily complete those tidious tasks. This class will take your pandas
+frame as input and following the configuration to manipulate the data
+and make the generator for training.</p>
+<p>The configuration can be simply setup by set_config function. There are
+three type of manipulation sequence –&gt; making lagging data, category –&gt;
+making a sequence of same data, and label –&gt; making 1 step lead data.
+The following example uses a simple dataframe for demonstration.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">time_series_transform.transform_core_api.time_series_transformer</span> <span class="kn">import</span> <span class="n">Pandas_Time_Series_Tensor_Dataset</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;time&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span><span class="s1">&#39;demand&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span><span class="s1">&#39;category&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="n">time</span>  <span class="n">demand</span>  <span class="n">category</span>
+<span class="mi">0</span>     <span class="mi">1</span>       <span class="mi">1</span>         <span class="mi">1</span>
+<span class="mi">1</span>     <span class="mi">2</span>       <span class="mi">2</span>         <span class="mi">1</span>
+<span class="mi">2</span>     <span class="mi">3</span>       <span class="mi">3</span>         <span class="mi">2</span>
+<span class="mi">3</span>     <span class="mi">4</span>       <span class="mi">4</span>         <span class="mi">2</span>
+</pre></div>
+</div>
+<p>To make the generator, there are two steps: 1. expand data from time,
+demand, category to category_demand_time (use expand_dataFrame_by_date
+to achieve this step) 2. setup configuration</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tensor_generator</span> <span class="o">=</span> <span class="n">Pandas_Time_Series_Tensor_Dataset</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">tensor_generator</span><span class="o">.</span><span class="n">expand_dataFrame_by_date</span><span class="p">(</span>
+    <span class="n">categoryCol</span> <span class="o">=</span> <span class="s1">&#39;category&#39;</span><span class="p">,</span><span class="n">timeSeriesCol</span> <span class="o">=</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="n">byCategory</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tensor_generator</span><span class="o">.</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="mi">1</span><span class="n">_demand_1</span>  <span class="mi">1</span><span class="n">_demand_2</span>  <span class="mi">2</span><span class="n">_demand_3</span>  <span class="mi">2</span><span class="n">_demand_4</span>
+<span class="mi">0</span>           <span class="mi">1</span>           <span class="mi">2</span>           <span class="mi">3</span>           <span class="mi">4</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tensor_generator</span><span class="o">.</span><span class="n">set_config</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;demand_lag&#39;</span><span class="p">,</span>
+    <span class="n">colNames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;1_demand_1&quot;</span>  <span class="p">,</span><span class="s2">&quot;1_demand_2&quot;</span> <span class="p">,</span> <span class="s2">&quot;2_demand_3&quot;</span> <span class="p">,</span> <span class="s2">&quot;2_demand_4&quot;</span><span class="p">],</span>
+    <span class="n">tensorType</span><span class="o">=</span> <span class="s1">&#39;sequence&#39;</span><span class="p">,</span>
+    <span class="n">windowSize</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">sequence_stack</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">isResponseVar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">seqSize</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">outType</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+<span class="p">)</span>
+<span class="n">tensor_generator</span><span class="o">.</span><span class="n">set_config</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;demand_lead&#39;</span><span class="p">,</span>
+    <span class="n">colNames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;1_demand_1&quot;</span>  <span class="p">,</span><span class="s2">&quot;1_demand_2&quot;</span> <span class="p">,</span> <span class="s2">&quot;2_demand_3&quot;</span> <span class="p">,</span> <span class="s2">&quot;2_demand_4&quot;</span><span class="p">],</span>
+    <span class="n">tensorType</span><span class="o">=</span> <span class="s1">&#39;label&#39;</span><span class="p">,</span>
+    <span class="n">windowSize</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">sequence_stack</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">isResponseVar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">seqSize</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">outType</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gen</span> <span class="o">=</span> <span class="n">tensor_generator</span><span class="o">.</span><span class="n">make_data_generator</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">gen</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">({</span><span class="s1">&#39;demand_lag&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([[[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">2</span><span class="p">]],</span>
+
+       <span class="p">[[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">3</span><span class="p">]]])},</span> <span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]))</span>
+</pre></div>
+</div>
+<p>Note: More Advance manipulation including stacking different sequence
+and multi-steps prediction can refer gallery.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="api_documentation.html" class="btn btn-neutral float-right" title="Api Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Time Series Transformer documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Chiang
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
