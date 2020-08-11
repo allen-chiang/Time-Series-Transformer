@@ -4,6 +4,7 @@ Quick Start
 .. figure:: https://github.com/allen-chiang/Time-Series-Transformer/workflows/Build/badge.svg
    :alt: Build
 
+
 Time Series Transformer is designed to handle time series data
 pre-processing for machine learning and deep learning. The general use
 case includes making lag/lead features, denoising data, and making
