@@ -1,17 +1,16 @@
-Welcome to time-series-transform's documentation!
+Welcome to Time Series Transformer documentation!
 =================================================
 
 .. toctree::
-   :maxdepth: 4
-   :caption: Contents:
-      
+   :maxdepth: 5
+
+   quick_start
+   api_documentation
    gallery
 
 
-
-
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
