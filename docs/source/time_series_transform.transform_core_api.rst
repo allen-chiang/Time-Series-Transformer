@@ -1,9 +1,6 @@
 time\_series\_transform.transform\_core\_api package
 ====================================================
 
-Submodules
-----------
-
 time\_series\_transform.transform\_core\_api.base module
 --------------------------------------------------------
 
