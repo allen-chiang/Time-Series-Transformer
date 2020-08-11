@@ -178,6 +178,7 @@ class Portfolio(object):
 
 
     def remove_different_date(self):
+        # todo one day short
         timeCol = {}
         for i in self.stockDict:
             for v in self.stockDict[i].dateRange:
