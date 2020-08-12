@@ -1,0 +1,600 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Stock Forecast Using Single Denoised Data &mdash; Time-Series-Transform 0.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Time-Series-Transform
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_documentation.html">Api Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallery.html">Gallery</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Time-Series-Transform</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Stock Forecast Using Single Denoised Data</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/stock_prediction_with_sklearn.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="stock-forecast-using-single-denoised-data">
+<h1>Stock Forecast Using Single Denoised Data<a class="headerlink" href="#stock-forecast-using-single-denoised-data" title="Permalink to this headline">¶</a></h1>
+<p>This example is going to demonstrate how to use time_seris_transform to
+denoise data prepare lag/lead features. In this exmple, there are four
+steps 1. prepare raw and denoise data 2. make lag/lead feature 3.
+Sklearn Model &amp; Visualize Test</p>
+<div class="section" id="prepare-raw-data">
+<h2>Prepare raw data<a class="headerlink" href="#prepare-raw-data" title="Permalink to this headline">¶</a></h2>
+<p>In this example, we use Stock_Extractor to get an single stock data from
+yahoo finance. Subsequently, we directly denoise the data using
+make_techinical_indicator funciton. This function is a wrapper which can
+take function object and transform the traget column.In
+time_series_transform.transform_core_api.util, there are different
+pre-made fucntion for feature engineering such as geometric moving
+average, wavelet transformation, or fast fourier transformation.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">time_series_transform</span> <span class="k">as</span> <span class="nn">tst</span>
+<span class="kn">from</span> <span class="nn">time_series_transform.transform_core_api.util</span> <span class="kn">import</span> <span class="n">wavelet_denoising</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stock</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">Stock_Extractor</span><span class="p">(</span><span class="s1">&#39;googl&#39;</span><span class="p">,</span><span class="s1">&#39;yahoo&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get_stock_period</span><span class="p">(</span><span class="s1">&#39;5y&#39;</span><span class="p">)</span> <span class="c1"># get period of stock</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">stock</span><span class="o">.</span><span class="n">make_technical_indicator</span><span class="p">(</span><span class="s2">&quot;Close&quot;</span><span class="p">,</span><span class="s2">&quot;Close_Wavelet&quot;</span><span class="p">,</span><span class="n">wavelet_denoising</span><span class="p">,</span><span class="n">wavelet</span><span class="o">=</span><span class="s1">&#39;haar&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dataFrame</span> <span class="c1"># denoise data</span>
+<span class="n">stock</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="s2">&quot;Close&quot;</span><span class="p">,</span><span class="s2">&quot;Close_Wavelet&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<img alt="_images/output_3_0.png" src="_images/output_3_0.png" />
+</div>
+<div class="section" id="make-lag-lead-features">
+<h2>Make lag/lead features<a class="headerlink" href="#make-lag-lead-features" title="Permalink to this headline">¶</a></h2>
+<p>After we prepared the data, we can use Pandas_Time_Series_Panel_Dataset
+to make lag or lead data as feature or target values for machine
+learning models. In this example, we only make 30-day lags data for
+Close data with Wavelet transformation, and only 1 step forward data as
+label.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">panel_trans</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">Pandas_Time_Series_Panel_Dataset</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">panel_trans</span> <span class="o">=</span> <span class="n">panel_trans</span><span class="o">.</span><span class="n">make_slide_window</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="mi">30</span><span class="p">,[</span><span class="s1">&#39;Close_Wavelet&#39;</span><span class="p">])</span>
+<span class="n">panel_trans</span> <span class="o">=</span> <span class="n">panel_trans</span><span class="o">.</span><span class="n">make_lead_column</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="s1">&#39;Close&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">panel_trans</span><span class="o">.</span><span class="n">df</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;Open&#39;</span><span class="p">,</span> <span class="s1">&#39;High&#39;</span><span class="p">,</span> <span class="s1">&#39;Low&#39;</span><span class="p">,</span> <span class="s1">&#39;Close&#39;</span><span class="p">,</span> <span class="s1">&#39;Volume&#39;</span><span class="p">,</span> <span class="s1">&#39;Dividends&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;Stock Splits&#39;</span><span class="p">,</span> <span class="s1">&#39;Close_Wavelet&#39;</span><span class="p">,</span> <span class="s1">&#39;symbol&#39;</span><span class="p">],</span><span class="n">axis</span> <span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+<pre class="literal-block">         Date  Close_Wavelet_lag1  Close_Wavelet_lag2  Close_Wavelet_lag3  0  2015-08-12          678.338125          678.338125          678.338125
+1  2015-08-13          678.338125          678.338125          678.338125
+2  2015-08-14          678.338125          678.338125          678.338125
+3  2015-08-17          678.338125          678.338125          678.338125
+4  2015-08-18          678.338125          678.338125          678.338125
+
+   Close_Wavelet_lag4  Close_Wavelet_lag5  Close_Wavelet_lag6  0          678.338125          678.338125          678.338125
+1          678.338125          678.338125          678.338125
+2          678.338125          678.338125          613.123125
+3          678.338125          613.123125          613.123125
+4          613.123125          613.123125          661.683125
+
+   Close_Wavelet_lag7  Close_Wavelet_lag8  Close_Wavelet_lag9  ...  0          678.338125          613.123125          613.123125  ...
+1          613.123125          613.123125          661.683125  ...
+2          613.123125          661.683125          661.683125  ...
+3          661.683125          661.683125          637.403125  ...
+4          661.683125          637.403125          637.403125  ...
+
+   Close_Wavelet_lag22  Close_Wavelet_lag23  Close_Wavelet_lag24  0           657.870625           657.870625           657.870625
+1           657.870625           657.870625           657.870625
+2           657.870625           657.870625           657.870625
+3           657.870625           657.870625           657.870625
+4           657.870625           657.870625           657.870625
+
+   Close_Wavelet_lag25  Close_Wavelet_lag26  Close_Wavelet_lag27  0           657.870625           657.870625           657.870625
+1           657.870625           657.870625           657.870625
+2           657.870625           657.870625           657.870625
+3           657.870625           657.870625           657.870625
+4           657.870625           657.870625           657.870625
+
+   Close_Wavelet_lag28  Close_Wavelet_lag29  Close_Wavelet_lag30  Close_lead1
+0           657.870625           657.870625           657.870625       686.51
+1           657.870625           657.870625           657.870625       689.37
+2           657.870625           657.870625           631.807500       694.11
+3           657.870625           631.807500           631.807500       688.73
+4           631.807500           631.807500           631.807500       694.04
+
+[5 rows x 32 columns]</pre>
+</div>
+<div class="section" id="machine-learning-model-visualize-test-results">
+<h2>Machine learning model &amp; visualize test results<a class="headerlink" href="#machine-learning-model-visualize-test-results" title="Permalink to this headline">¶</a></h2>
+<p>After we pre-process the data, we can use sklearn to predict the value.
+In this example, we use Random Forest with Random Search Tuner to
+prepare our model.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">TimeSeriesSplit</span><span class="p">,</span><span class="n">RandomizedSearchCV</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span>
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestRegressor</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">Date</span><span class="o">&lt;</span><span class="s1">&#39;2020-07-01&#39;</span><span class="p">]</span>
+<span class="n">test</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">Date</span> <span class="o">&gt;=</span> <span class="s1">&#39;2020-07-01&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_jobs</span> <span class="o">=</span><span class="mi">1</span><span class="p">,)</span>
+<span class="n">haparms</span> <span class="o">=</span> <span class="p">[{</span>
+    <span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+    <span class="s2">&quot;min_samples_split&quot;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+    <span class="s2">&quot;min_samples_leaf&quot;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+<span class="p">}]</span>
+
+<span class="n">randomSearch</span> <span class="o">=</span> <span class="n">RandomizedSearchCV</span><span class="p">(</span>
+    <span class="n">rf</span><span class="p">,</span>
+    <span class="n">haparms</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">cv</span> <span class="o">=</span> <span class="n">TimeSeriesSplit</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+    <span class="n">n_jobs</span> <span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trainX</span><span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="s1">&#39;Close_lead1&#39;</span><span class="p">],</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">trainY</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">Close_lead1</span>
+<span class="n">randomSearch</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">trainX</span><span class="p">,</span><span class="n">trainY</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">RandomizedSearchCV</span><span class="p">(</span><span class="n">cv</span><span class="o">=</span><span class="n">TimeSeriesSplit</span><span class="p">(</span><span class="n">max_train_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_splits</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+                   <span class="n">error_score</span><span class="o">=</span><span class="n">nan</span><span class="p">,</span>
+                   <span class="n">estimator</span><span class="o">=</span><span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">bootstrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                                   <span class="n">ccp_alpha</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                                                   <span class="n">criterion</span><span class="o">=</span><span class="s1">&#39;mse&#39;</span><span class="p">,</span>
+                                                   <span class="n">max_depth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                                   <span class="n">max_features</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span>
+                                                   <span class="n">max_leaf_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                                   <span class="n">max_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                                   <span class="n">min_impurity_decrease</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                                                   <span class="n">min_impurity_split</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                                   <span class="n">min_samples_leaf</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                                   <span class="n">min_samples_split</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                                                   <span class="n">min_weight_fraction_leaf</span><span class="o">=</span><span class="mf">0.</span><span class="o">..</span>
+       <span class="mi">19</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span>
+       <span class="mi">36</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span> <span class="mi">38</span><span class="p">,</span> <span class="mi">39</span><span class="p">]),</span>
+                                         <span class="s1">&#39;min_samples_split&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span> <span class="mi">2</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>  <span class="mi">7</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span>
+       <span class="mi">19</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span>
+       <span class="mi">36</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span> <span class="mi">38</span><span class="p">,</span> <span class="mi">39</span><span class="p">]),</span>
+                                         <span class="s1">&#39;n_estimators&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">130</span><span class="p">,</span> <span class="mi">140</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">160</span><span class="p">,</span> <span class="mi">170</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">190</span><span class="p">])}],</span>
+                   <span class="n">pre_dispatch</span><span class="o">=</span><span class="s1">&#39;2*n_jobs&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">refit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                   <span class="n">return_train_score</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test</span><span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+<span class="n">testX</span><span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="s1">&#39;Close_lead1&#39;</span><span class="p">],</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">testY</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">Close_lead1</span>
+<span class="n">test_prd</span> <span class="o">=</span> <span class="n">randomSearch</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">testX</span><span class="p">)</span>
+<span class="n">train_prd</span> <span class="o">=</span> <span class="n">randomSearch</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">trainX</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">compareFrame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;train_prd&#39;</span><span class="p">:</span><span class="n">train_prd</span><span class="p">,</span><span class="s1">&#39;train_real&#39;</span><span class="p">:</span><span class="n">train</span><span class="o">.</span><span class="n">Close_lead1</span><span class="o">.</span><span class="n">tolist</span><span class="p">()},</span><span class="n">index</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">Date</span><span class="p">)</span>
+<span class="n">compareFrame_test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;test_prd&#39;</span><span class="p">:</span><span class="n">test_prd</span><span class="p">,</span><span class="s1">&#39;test_real&#39;</span><span class="p">:</span><span class="n">test</span><span class="o">.</span><span class="n">Close_lead1</span><span class="o">.</span><span class="n">tolist</span><span class="p">()},</span><span class="n">index</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">Date</span><span class="p">)</span>
+<span class="n">compareFrame</span> <span class="o">=</span> <span class="n">compareFrame</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">compareFrame_test</span><span class="p">)</span>
+<span class="n">compareFrame</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">compareFrame</span><span class="o">.</span><span class="n">index</span>
+<span class="n">compareFrame</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">compareFrame</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span> <span class="p">[</span>
+    <span class="n">compareFrame</span><span class="p">[</span><span class="n">compareFrame</span><span class="o">.</span><span class="n">Date</span> <span class="o">&gt;</span><span class="s1">&#39;2020-04-01&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">train_real</span><span class="p">,</span>
+    <span class="n">compareFrame</span><span class="p">[</span><span class="n">compareFrame</span><span class="o">.</span><span class="n">Date</span> <span class="o">&gt;=</span><span class="s1">&#39;2020-07-01&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">test_real</span><span class="p">,</span>
+    <span class="n">compareFrame</span><span class="p">[</span><span class="n">compareFrame</span><span class="o">.</span><span class="n">Date</span> <span class="o">&gt;</span><span class="s1">&#39;2020-04-01&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">train_prd</span><span class="p">,</span>
+    <span class="n">compareFrame</span><span class="p">[</span><span class="n">compareFrame</span><span class="o">.</span><span class="n">Date</span> <span class="o">&gt;=</span><span class="s1">&#39;2020-07-01&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">test_prd</span><span class="p">,</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">_subplots</span><span class="o">.</span><span class="n">AxesSubplot</span> <span class="n">at</span> <span class="mh">0x120e78f0048</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/output_14_1.png" src="_images/output_14_1.png" />
+</div>
+</div>
+<div class="section" id="stock-forecast-using-multiple-stock-features">
+<h1>Stock Forecast Using Multiple Stock Features<a class="headerlink" href="#stock-forecast-using-multiple-stock-features" title="Permalink to this headline">¶</a></h1>
+<p>This example is going to use a set of stocks to predict one stock. This
+example also implments different algorithms for feature engineering.
+Furthermore, this example will show how to implment functional object in
+Pandas_Time_Series_Panel_Dataset class. There are three steps in this
+example 1. prepare stocks data through Portfolio_Extractor api and
+transform data 2. making lag/lead data and other feature engineering
+function using Pandas_Time_Series_Panel_Dataset 3. sklearn model and
+visualize test results</p>
+<div class="section" id="prepare-stocks-data-and-transformation">
+<h2>Prepare stocks data and transformation<a class="headerlink" href="#prepare-stocks-data-and-transformation" title="Permalink to this headline">¶</a></h2>
+<p>Portfolio_Extractor takes a list of stock ticks, and return an Portfolio
+objects. In this example, we prepare 5 year of data. Subsequently, we
+transform Close, Open, High, Low values using wavelet, fast fourier, and
+geometric moving average.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time_series_transform</span> <span class="k">as</span> <span class="nn">tst</span>
+<span class="kn">from</span> <span class="nn">time_series_transform.transform_core_api.util</span> <span class="kn">import</span> <span class="n">wavelet_denoising</span><span class="p">,</span><span class="n">rfft_transform</span><span class="p">,</span><span class="n">geometric_ma</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">port</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">Portfolio_Extractor</span><span class="p">([</span><span class="s1">&#39;googl&#39;</span><span class="p">,</span><span class="s1">&#39;aapl&#39;</span><span class="p">,</span><span class="s1">&#39;fb&#39;</span><span class="p">],</span><span class="s1">&#39;yahoo&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get_portfolio_period</span><span class="p">(</span><span class="s1">&#39;5y&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">colList</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">,</span><span class="s1">&#39;Open&#39;</span><span class="p">,</span><span class="s1">&#39;High&#39;</span><span class="p">,</span><span class="s1">&#39;Low&#39;</span><span class="p">]</span>
+<span class="n">denoiseCol</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">colList</span><span class="p">:</span>
+    <span class="n">port</span><span class="o">.</span><span class="n">make_technical_indicator</span><span class="p">(</span><span class="n">col</span><span class="p">,</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">_wavelet&#39;</span><span class="p">,</span><span class="n">wavelet_denoising</span><span class="p">,</span><span class="n">wavelet</span><span class="o">=</span><span class="s1">&#39;haar&#39;</span><span class="p">)</span>
+    <span class="n">port</span><span class="o">.</span><span class="n">make_technical_indicator</span><span class="p">(</span><span class="n">col</span><span class="p">,</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">_fft&#39;</span><span class="p">,</span><span class="n">rfft_transform</span><span class="p">,</span><span class="n">threshold</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+    <span class="n">port</span><span class="o">.</span><span class="n">make_technical_indicator</span><span class="p">(</span><span class="n">col</span><span class="p">,</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">_gma20&#39;</span><span class="p">,</span><span class="n">geometric_ma</span><span class="p">,</span><span class="n">windowSize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">port</span><span class="o">.</span><span class="n">make_technical_indicator</span><span class="p">(</span><span class="n">col</span><span class="p">,</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">_gma200&#39;</span><span class="p">,</span><span class="n">geometric_ma</span><span class="p">,</span><span class="n">windowSize</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+    <span class="n">denoiseCol</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">_wavelet&#39;</span><span class="p">,</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">_fft&#39;</span><span class="p">,</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">_gma200&#39;</span><span class="p">,</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">_gma20&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">port</span><span class="o">.</span><span class="n">get_portfolio_dataFrame</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+<pre class="literal-block">         Date    Open    High     Low   Close   Volume  Dividends  0  2015-08-12  694.49  696.00  680.51  691.47  2924900        0.0
+1  2015-08-13  689.20  694.03  682.18  686.51  1817700        0.0
+2  2015-08-14  684.04  692.26  682.90  689.37  1379900        0.0
+3  2015-08-17  688.04  694.74  683.06  694.11  1234000        0.0
+4  2015-08-18  691.07  695.76  685.32  688.73  1385500        0.0
+
+   Stock Splits  Close_wavelet    Close_fft  ...  Open_gma200  High_wavelet  0             0     678.338125  1027.446516  ...          NaN       692.755
+1             0     678.338125  1027.446516  ...          NaN       692.755
+2             0     678.338125  1027.446516  ...          NaN       692.755
+3             0     678.338125  1027.446516  ...          NaN       692.755
+4             0     678.338125  1027.446516  ...          NaN       692.755
+
+      High_fft  High_gma20  High_gma200  Low_wavelet      Low_fft  Low_gma20  0  1036.619071         NaN          NaN   673.884375  1017.281849        NaN
+1  1036.619071         NaN          NaN   673.884375  1017.281849        NaN
+2  1036.619071         NaN          NaN   673.884375  1017.281849        NaN
+3  1036.619071         NaN          NaN   673.884375  1017.281849        NaN
+4  1036.619071         NaN          NaN   673.884375  1017.281849        NaN
+
+   Low_gma200  symbol
+0         NaN   googl
+1         NaN   googl
+2         NaN   googl
+3         NaN   googl
+4         NaN   googl
+
+[5 rows x 25 columns]</pre>
+</div>
+<div class="section" id="lag-lead-data-and-other-feature-engineering">
+<h2>Lag/lead data and other feature engineering<a class="headerlink" href="#lag-lead-data-and-other-feature-engineering" title="Permalink to this headline">¶</a></h2>
+<p>Here, we create an moving standard deviation feature and make 20-day-lag
+with denoised data from previous step. In order to create the proper
+feature, we have to be aware of its category. That means that we have to
+group by each stocks. After making new feature, we can create lag data
+and expand it by its category.</p>
+<p>To manipulate the data using transform_dataFrame function, the first
+argument of the function must be the data array/list, and the output
+must be numpy array or list.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;Volume&#39;</span><span class="p">,</span><span class="s1">&#39;Dividends&#39;</span><span class="p">,</span><span class="s1">&#39;Stock Splits&#39;</span><span class="p">],</span><span class="n">axis</span> <span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">panel_transform</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">Pandas_Time_Series_Panel_Dataset</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="k">def</span> <span class="nf">moving_std</span> <span class="p">(</span><span class="n">arr</span><span class="p">,</span><span class="n">windowSize</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">windowSize</span><span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">res</span>
+<span class="n">panel_transform</span> <span class="o">=</span> <span class="n">panel_transform</span><span class="o">.</span><span class="n">transform_dataFrame</span><span class="p">(</span><span class="s1">&#39;Close&#39;</span><span class="p">,</span><span class="s1">&#39;Close_std&#39;</span><span class="p">,</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="s1">&#39;symbol&#39;</span><span class="p">,</span><span class="n">moving_std</span><span class="p">,</span><span class="n">windowSize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">panel_transform</span> <span class="o">=</span> <span class="n">panel_transform</span><span class="o">.</span><span class="n">make_slide_window</span><span class="p">(</span>
+    <span class="n">indexCol</span> <span class="o">=</span> <span class="s1">&#39;Date&#39;</span><span class="p">,</span>
+    <span class="n">windowSize</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="n">colList</span> <span class="o">=</span> <span class="n">denoiseCol</span><span class="o">+</span><span class="p">[</span><span class="s1">&#39;Close_std&#39;</span><span class="p">],</span>
+    <span class="n">groupby</span> <span class="o">=</span> <span class="s1">&#39;symbol&#39;</span><span class="p">)</span>
+<span class="n">panel_transform</span> <span class="o">=</span> <span class="n">panel_transform</span><span class="o">.</span><span class="n">expand_dataFrame_by_category</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="s1">&#39;symbol&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">panel_transform</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+<pre class="literal-block">         Date  Open_aapl  High_aapl  Low_aapl  Close_aapl  Close_wavelet_aapl  0  2015-08-12     103.99     106.66    101.31      106.49          105.099219
+1  2015-08-13     107.23     107.57    105.85      106.41          105.099219
+2  2015-08-14     105.64     107.48    105.36      107.16          105.099219
+3  2015-08-17     107.23     108.72    106.74      108.27          105.099219
+4  2015-08-18     107.59     108.53    107.21      107.66          105.099219
+
+   Close_fft_aapl  Close_gma20_aapl  Close_gma200_aapl  Open_wavelet_aapl  0       173.68827               NaN                NaN         107.643125
+1       173.68827               NaN                NaN         107.643125
+2       173.68827               NaN                NaN         107.643125
+3       173.68827               NaN                NaN         107.643125
+4       173.68827               NaN                NaN         107.643125
+
+   ...  Close_std_lag11_googl  Close_std_lag12_googl  Close_std_lag13_googl  0  ...                    NaN                    NaN                    NaN
+1  ...                    NaN                    NaN                    NaN
+2  ...                    NaN                    NaN                    NaN
+3  ...                    NaN                    NaN                    NaN
+4  ...                    NaN                    NaN                    NaN
+
+   Close_std_lag14_googl  Close_std_lag15_googl  Close_std_lag16_googl  0                    NaN                    NaN                    NaN
+1                    NaN                    NaN                    NaN
+2                    NaN                    NaN                    NaN
+3                    NaN                    NaN                    NaN
+4                    NaN                    NaN                    NaN
+
+   Close_std_lag17_googl  Close_std_lag18_googl  Close_std_lag19_googl  0                    NaN                    NaN                    NaN
+1                    NaN                    NaN                    NaN
+2                    NaN                    NaN                    NaN
+3                    NaN                    NaN                    NaN
+4                    NaN                    NaN                    NaN
+
+   Close_std_lag20_googl
+0                    NaN
+1                    NaN
+2                    NaN
+3                    NaN
+4                    NaN
+
+[5 rows x 1084 columns]</pre>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">panel_transform</span> <span class="o">=</span> <span class="n">panel_transform</span><span class="o">.</span><span class="n">make_lead_column</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="s1">&#39;Close_googl&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">panel_transform</span><span class="o">.</span><span class="n">df</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">TimeSeriesSplit</span><span class="p">,</span><span class="n">RandomizedSearchCV</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span>
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestRegressor</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">Date</span><span class="o">&lt;</span><span class="s1">&#39;2020-07-01&#39;</span><span class="p">]</span>
+<span class="n">test</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">Date</span> <span class="o">&gt;=</span> <span class="s1">&#39;2020-07-01&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_jobs</span> <span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">haparms</span> <span class="o">=</span> <span class="p">[{</span>
+    <span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+    <span class="s2">&quot;min_samples_split&quot;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+    <span class="s2">&quot;min_samples_leaf&quot;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+<span class="p">}]</span>
+
+<span class="n">randomSearch</span> <span class="o">=</span> <span class="n">RandomizedSearchCV</span><span class="p">(</span>
+    <span class="n">rf</span><span class="p">,</span>
+    <span class="n">haparms</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">cv</span> <span class="o">=</span> <span class="n">TimeSeriesSplit</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+    <span class="n">n_jobs</span> <span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+<span class="n">trainX</span><span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="s1">&#39;Close_googl_lead1&#39;</span><span class="p">],</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">trainY</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">Close_googl_lead1</span>
+<span class="n">randomSearch</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">trainX</span><span class="p">,</span><span class="n">trainY</span><span class="p">)</span>
+<span class="n">train_prd</span> <span class="o">=</span> <span class="n">randomSearch</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">trainX</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test</span><span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+<span class="n">testX</span><span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="s1">&#39;Close_googl_lead1&#39;</span><span class="p">],</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">testY</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">Close_googl_lead1</span>
+<span class="n">test_prd</span> <span class="o">=</span> <span class="n">randomSearch</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">testX</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">compareFrame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;train_prd&#39;</span><span class="p">:</span><span class="n">train_prd</span><span class="p">,</span><span class="s1">&#39;train_real&#39;</span><span class="p">:</span><span class="n">train</span><span class="o">.</span><span class="n">Close_googl_lead1</span><span class="o">.</span><span class="n">tolist</span><span class="p">()},</span><span class="n">index</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">Date</span><span class="p">)</span>
+<span class="n">compareFrame_test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;test_prd&#39;</span><span class="p">:</span><span class="n">test_prd</span><span class="p">,</span><span class="s1">&#39;test_real&#39;</span><span class="p">:</span><span class="n">test</span><span class="o">.</span><span class="n">Close_googl_lead1</span><span class="o">.</span><span class="n">tolist</span><span class="p">()},</span><span class="n">index</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">Date</span><span class="p">)</span>
+<span class="n">compareFrame</span> <span class="o">=</span> <span class="n">compareFrame</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">compareFrame_test</span><span class="p">)</span>
+<span class="n">compareFrame</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">compareFrame</span><span class="o">.</span><span class="n">index</span>
+<span class="n">compareFrame</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">compareFrame</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span> <span class="p">[</span>
+    <span class="n">compareFrame</span><span class="p">[</span><span class="n">compareFrame</span><span class="o">.</span><span class="n">Date</span> <span class="o">&gt;</span><span class="s1">&#39;2020-04-01&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">train_real</span><span class="p">,</span>
+    <span class="n">compareFrame</span><span class="p">[</span><span class="n">compareFrame</span><span class="o">.</span><span class="n">Date</span> <span class="o">&gt;=</span><span class="s1">&#39;2020-07-01&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">test_real</span><span class="p">,</span>
+    <span class="n">compareFrame</span><span class="p">[</span><span class="n">compareFrame</span><span class="o">.</span><span class="n">Date</span> <span class="o">&gt;</span><span class="s1">&#39;2020-04-01&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">train_prd</span><span class="p">,</span>
+    <span class="n">compareFrame</span><span class="p">[</span><span class="n">compareFrame</span><span class="o">.</span><span class="n">Date</span> <span class="o">&gt;=</span><span class="s1">&#39;2020-07-01&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">test_prd</span><span class="p">,</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">_subplots</span><span class="o">.</span><span class="n">AxesSubplot</span> <span class="n">at</span> <span class="mh">0x1fa4b72c048</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<img alt="_images/output_32_1.png" src="_images/output_32_1.png" />
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Chiang
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

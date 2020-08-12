@@ -38,7 +38,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="time_series_transform.transform_core_api package" href="time_series_transform.transform_core_api.html" />
-    <link rel="prev" title="time_series_transform package" href="time_series_transform.html" /> 
+    <link rel="prev" title="Api Documentation" href="api_documentation.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -84,12 +84,18 @@
             
             
               <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="api_documentation.html">Api Documentation</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="api_documentation.html#time-series-transformer">Time Series Transformer</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="time_series_transform.html">time_series_transform package</a><ul class="current">
-<li class="toctree-l4 current"><a class="reference internal" href="time_series_transform.html#module-contents">Module contents</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">time_series_transform.stock_transform package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-time_series_transform.stock_transform.base">time_series_transform.stock_transform.base module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-time_series_transform.stock_transform.plot">time_series_transform.stock_transform.plot module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-time_series_transform.stock_transform.stock_extractor">time_series_transform.stock_transform.stock_extractor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-time_series_transform.stock_transform.util">time_series_transform.stock_transform.util module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-time_series_transform.stock_transform">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="time_series_transform.transform_core_api.html">time_series_transform.transform_core_api package</a></li>
 </ul>
 </li>
 </ul>
@@ -142,8 +148,6 @@
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="api_documentation.html">Api Documentation</a> &raquo;</li>
-        
-          <li><a href="time_series_transform.html">time_series_transform package</a> &raquo;</li>
         
       <li>time_series_transform.stock_transform package</li>
     
@@ -266,7 +270,7 @@ valid value: columns of the data</p></li>
 
 <dl class="py method">
 <dt id="time_series_transform.stock_transform.base.Stock.make_technical_indicator">
-<code class="sig-name descname">make_technical_indicator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">colNames</span></em>, <em class="sig-param"><span class="n">labelName</span></em>, <em class="sig-param"><span class="n">indicatorFunction</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/stock_transform/base.html#Stock.make_technical_indicator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.stock_transform.base.Stock.make_technical_indicator" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">make_technical_indicator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">colName</span></em>, <em class="sig-param"><span class="n">labelName</span></em>, <em class="sig-param"><span class="n">indicatorFunction</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/stock_transform/base.html#Stock.make_technical_indicator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.stock_transform.base.Stock.make_technical_indicator" title="Permalink to this definition">¶</a></dt>
 <dd><p>make_technical_indicator applies the indicatorFunctions to the given column</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -281,11 +285,11 @@ valid value: columns of the data</p></li>
 
 <dl class="py method">
 <dt id="time_series_transform.stock_transform.base.Stock.plot">
-<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">colName</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/stock_transform/base.html#Stock.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.stock_transform.base.Stock.plot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">colNames</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/stock_transform/base.html#Stock.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.stock_transform.base.Stock.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>plot the stock data of the given column using matplot</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>colName</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – column of the data used for plotting</p>
+<dd class="field-odd"><p><strong>colName</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – column of the data used for plotting</p>
 </dd>
 </dl>
 </dd></dl>
@@ -889,7 +893,7 @@ for example, 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max</p>
 
 <dl class="py method">
 <dt id="time_series_transform.stock_transform.Stock.make_technical_indicator">
-<code class="sig-name descname">make_technical_indicator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">colNames</span></em>, <em class="sig-param"><span class="n">labelName</span></em>, <em class="sig-param"><span class="n">indicatorFunction</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/stock_transform/base.html#Stock.make_technical_indicator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.stock_transform.Stock.make_technical_indicator" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">make_technical_indicator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">colName</span></em>, <em class="sig-param"><span class="n">labelName</span></em>, <em class="sig-param"><span class="n">indicatorFunction</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/stock_transform/base.html#Stock.make_technical_indicator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.stock_transform.Stock.make_technical_indicator" title="Permalink to this definition">¶</a></dt>
 <dd><p>make_technical_indicator applies the indicatorFunctions to the given column</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -904,11 +908,11 @@ for example, 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max</p>
 
 <dl class="py method">
 <dt id="time_series_transform.stock_transform.Stock.plot">
-<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">colName</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/stock_transform/base.html#Stock.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.stock_transform.Stock.plot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">colNames</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/stock_transform/base.html#Stock.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.stock_transform.Stock.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>plot the stock data of the given column using matplot</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>colName</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – column of the data used for plotting</p>
+<dd class="field-odd"><p><strong>colName</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – column of the data used for plotting</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1032,7 +1036,7 @@ for example, 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max</p>
         <a href="time_series_transform.transform_core_api.html" class="btn btn-neutral float-right" title="time_series_transform.transform_core_api package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="time_series_transform.html" class="btn btn-neutral float-left" title="time_series_transform package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="api_documentation.html" class="btn btn-neutral float-left" title="Api Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

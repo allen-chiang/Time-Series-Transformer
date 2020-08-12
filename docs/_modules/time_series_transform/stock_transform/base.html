@@ -187,16 +187,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;symbol&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span>
 
-<div class="viewcode-block" id="Stock.plot"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.base.Stock.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">colName</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Stock.plot"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.base.Stock.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">colNames</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        plot the stock data of the given column using matplot</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        colName : str </span>
+<span class="sd">        colName : str or list </span>
 <span class="sd">            column of the data used for plotting</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">colName</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">colNames</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Stock.save"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.base.Stock.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;csv&quot;</span><span class="p">,</span><span class="n">compression</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -221,7 +221,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;invalid format value&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Stock.make_technical_indicator"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.base.Stock.make_technical_indicator">[docs]</a>    <span class="k">def</span> <span class="nf">make_technical_indicator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">colNames</span><span class="p">,</span><span class="n">labelName</span><span class="p">,</span><span class="n">indicatorFunction</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Stock.make_technical_indicator"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.base.Stock.make_technical_indicator">[docs]</a>    <span class="k">def</span> <span class="nf">make_technical_indicator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">colName</span><span class="p">,</span><span class="n">labelName</span><span class="p">,</span><span class="n">indicatorFunction</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        make_technical_indicator applies the indicatorFunctions to the given column</span>
 <span class="sd">        </span>
@@ -234,10 +234,10 @@
 <span class="sd">        indicatorFunction: dict</span>
 <span class="sd">            dict of the indicator functions</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colNames</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
-            <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">colNames</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colName</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">colName</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">colNames</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">colName</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
         <span class="n">indicator</span> <span class="o">=</span> <span class="n">indicatorFunction</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indicator</span><span class="p">,</span><span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indicator</span><span class="p">,</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">indicator</span><span class="p">:</span>

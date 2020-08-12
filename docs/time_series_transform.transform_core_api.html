@@ -84,10 +84,16 @@
             
             
               <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="api_documentation.html">Api Documentation</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="api_documentation.html#time-series-transformer">Time Series Transformer</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="time_series_transform.html">time_series_transform package</a><ul class="current">
-<li class="toctree-l4 current"><a class="reference internal" href="time_series_transform.html#module-contents">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="time_series_transform.stock_transform.html">time_series_transform.stock_transform package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">time_series_transform.transform_core_api package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-time_series_transform.transform_core_api.base">time_series_transform.transform_core_api.base module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-time_series_transform.transform_core_api.tensorflow_adopter">time_series_transform.transform_core_api.tensorflow_adopter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-time_series_transform.transform_core_api.time_series_transformer">time_series_transform.transform_core_api.time_series_transformer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-time_series_transform.transform_core_api.util">time_series_transform.transform_core_api.util module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-time_series_transform.transform_core_api">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -142,8 +148,6 @@
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="api_documentation.html">Api Documentation</a> &raquo;</li>
-        
-          <li><a href="time_series_transform.html">time_series_transform package</a> &raquo;</li>
         
       <li>time_series_transform.transform_core_api package</li>
     
@@ -464,14 +468,17 @@ expand by categories.</p>
 
 <dl class="py method">
 <dt id="time_series_transform.transform_core_api.time_series_transformer.Pandas_Time_Series_Panel_Dataset.transform_dataFrame">
-<code class="sig-name descname">transform_dataFrame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">colName</span></em>, <em class="sig-param"><span class="n">targetCol</span></em>, <em class="sig-param"><span class="n">timeSeriesCol</span></em>, <em class="sig-param"><span class="n">transformFunc</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Pandas_Time_Series_Panel_Dataset.transform_dataFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Pandas_Time_Series_Panel_Dataset.transform_dataFrame" title="Permalink to this definition">¶</a></dt>
-<dd><p>transform_dataFrame this function use apply method to transfrom dataFrame</p>
+<code class="sig-name descname">transform_dataFrame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">colName</span></em>, <em class="sig-param"><span class="n">targetCol</span></em>, <em class="sig-param"><span class="n">timeSeriesCol</span></em>, <em class="sig-param"><span class="n">groupby</span></em>, <em class="sig-param"><span class="n">transformFunc</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Pandas_Time_Series_Panel_Dataset.transform_dataFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Pandas_Time_Series_Panel_Dataset.transform_dataFrame" title="Permalink to this definition">¶</a></dt>
+<dd><p>transform_dataFrame this function use apply method to transfrom dataFrame
+Note: the inpupt and output of transformFunc must be list or numpy array</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>colName</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – target column for transformation</p></li>
 <li><p><strong>targetCol</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – the column to store new data</p></li>
 <li><p><strong>timeSeriesCol</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – time series column for sorting before apply function</p></li>
+<li><p><strong>groupby</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – the category column used for grouping data during transformation
+if this column is None, no grouping will be applied</p></li>
 <li><p><strong>transformFunc</strong> (<em>func</em>) – the function implmented in the apply function</p></li>
 <li><p><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – 0 for row 1 for column, by default 1</p></li>
 </ul>
@@ -549,7 +556,8 @@ t represent time series column i.e. Date –&gt; YYYY-MM-DD format is recommende
 <dl class="py method">
 <dt id="time_series_transform.transform_core_api.time_series_transformer.Pandas_Time_Series_Tensor_Dataset.transform_dataFrame">
 <code class="sig-name descname">transform_dataFrame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">colName</span></em>, <em class="sig-param"><span class="n">targetCol</span></em>, <em class="sig-param"><span class="n">timeSeriesCol</span></em>, <em class="sig-param"><span class="n">transformFunc</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Pandas_Time_Series_Tensor_Dataset.transform_dataFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Pandas_Time_Series_Tensor_Dataset.transform_dataFrame" title="Permalink to this definition">¶</a></dt>
-<dd><p>transform_dataFrame this function use apply method to transfrom dataFrame</p>
+<dd><p>transform_dataFrame this function use apply method to transfrom dataFrame
+Note: Only apply to single column, groupby will be support in the next version</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -770,14 +778,17 @@ expand by categories.</p>
 
 <dl class="py method">
 <dt id="time_series_transform.transform_core_api.Pandas_Time_Series_Panel_Dataset.transform_dataFrame">
-<code class="sig-name descname">transform_dataFrame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">colName</span></em>, <em class="sig-param"><span class="n">targetCol</span></em>, <em class="sig-param"><span class="n">timeSeriesCol</span></em>, <em class="sig-param"><span class="n">transformFunc</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Pandas_Time_Series_Panel_Dataset.transform_dataFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.Pandas_Time_Series_Panel_Dataset.transform_dataFrame" title="Permalink to this definition">¶</a></dt>
-<dd><p>transform_dataFrame this function use apply method to transfrom dataFrame</p>
+<code class="sig-name descname">transform_dataFrame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">colName</span></em>, <em class="sig-param"><span class="n">targetCol</span></em>, <em class="sig-param"><span class="n">timeSeriesCol</span></em>, <em class="sig-param"><span class="n">groupby</span></em>, <em class="sig-param"><span class="n">transformFunc</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Pandas_Time_Series_Panel_Dataset.transform_dataFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.Pandas_Time_Series_Panel_Dataset.transform_dataFrame" title="Permalink to this definition">¶</a></dt>
+<dd><p>transform_dataFrame this function use apply method to transfrom dataFrame
+Note: the inpupt and output of transformFunc must be list or numpy array</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>colName</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – target column for transformation</p></li>
 <li><p><strong>targetCol</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – the column to store new data</p></li>
 <li><p><strong>timeSeriesCol</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – time series column for sorting before apply function</p></li>
+<li><p><strong>groupby</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – the category column used for grouping data during transformation
+if this column is None, no grouping will be applied</p></li>
 <li><p><strong>transformFunc</strong> (<em>func</em>) – the function implmented in the apply function</p></li>
 <li><p><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – 0 for row 1 for column, by default 1</p></li>
 </ul>
@@ -855,7 +866,8 @@ t represent time series column i.e. Date –&gt; YYYY-MM-DD format is recommende
 <dl class="py method">
 <dt id="time_series_transform.transform_core_api.Pandas_Time_Series_Tensor_Dataset.transform_dataFrame">
 <code class="sig-name descname">transform_dataFrame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">colName</span></em>, <em class="sig-param"><span class="n">targetCol</span></em>, <em class="sig-param"><span class="n">timeSeriesCol</span></em>, <em class="sig-param"><span class="n">transformFunc</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Pandas_Time_Series_Tensor_Dataset.transform_dataFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.Pandas_Time_Series_Tensor_Dataset.transform_dataFrame" title="Permalink to this definition">¶</a></dt>
-<dd><p>transform_dataFrame this function use apply method to transfrom dataFrame</p>
+<dd><p>transform_dataFrame this function use apply method to transfrom dataFrame
+Note: Only apply to single column, groupby will be support in the next version</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
