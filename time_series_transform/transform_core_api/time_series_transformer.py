@@ -198,6 +198,7 @@ class Pandas_Time_Series_Tensor_Dataset(object):
     def transform_dataFrame(self,colName,targetCol,timeSeriesCol,transformFunc,*args,**kwargs):
         """
         transform_dataFrame this function use apply method to transfrom dataFrame
+        Note: Only apply to single column, groupby will be support in the next version
         
         Parameters
         ----------
@@ -335,9 +336,10 @@ class Pandas_Time_Series_Panel_Dataset(object):
             self.df[f'{baseCol}_lead{str(leadNum)}'] = self.df.groupby(groupby)[baseCol].shift(leadNum)            
         return self
 
-    def transform_dataFrame(self,colName,targetCol,timeSeriesCol,transformFunc,*args,**kwargs):
+    def transform_dataFrame(self,colName,targetCol,timeSeriesCol,groupby,transformFunc,*args,**kwargs):
         """
         transform_dataFrame this function use apply method to transfrom dataFrame
+        Note: the inpupt and output of transformFunc must be list or numpy array
         
         Parameters
         ----------
@@ -347,14 +349,24 @@ class Pandas_Time_Series_Panel_Dataset(object):
             the column to store new data
         timeSeriesCol : str
             time series column for sorting before apply function
+        groupby: str
+            the category column used for grouping data during transformation
+            if this column is None, no grouping will be applied
         transformFunc : func
             the function implmented in the apply function
         axis : int, optional
             0 for row 1 for column, by default 1
 
         """
-        self.df = self.df.sort_values(timeSeriesCol,ascending = True)
-        self.df[targetCol] = transformFunc(self.df[colName].values,*args,**kwargs)
+        if groupby is not None:
+            manipulateList = []
+            self.df = self.df.sort_values([groupby,timeSeriesCol])
+            for i in self.df[groupby].unique():
+                manipulateList.extend(transformFunc(self.df[self.df[groupby]==i][colName].values,*args,**kwargs))
+            self.df[targetCol] = manipulateList
+        else:
+            self.df = self.df.sort_values(timeSeriesCol,ascending = True)
+            self.df[targetCol] = transformFunc(self.df[colName],*args,**kwargs)
         return self
 
     def __repr__(self):
