@@ -159,7 +159,7 @@ class Plot(object):
 
     def add_stochastic_oscillator(self):
         """
-        add the moving average convergence divergence plot
+        add the stochastic_oscillator plot
 
         Raises
         ------
