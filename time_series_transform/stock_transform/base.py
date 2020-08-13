@@ -36,13 +36,13 @@ class Stock (object):
         self.df['symbol'] = self.symbol
         return self.df
 
-    def plot(self,colName,*args,**kwargs):
+    def plot(self,colName = "Close",*args,**kwargs):
         """
         plot the stock data of the given column using matplot
         
         Parameters
         ----------
-        colName : str 
+        colName : str, optional
             column of the data used for plotting
         """
         self.df[colName].plot(*args,**kwargs)
