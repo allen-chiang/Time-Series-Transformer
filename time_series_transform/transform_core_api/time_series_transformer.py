@@ -35,6 +35,7 @@ class Pandas_Time_Series_Tensor_Dataset(object):
             the configuration to trainsform pandas dataFrame, by default {}
         """
         self.df = pandasFrame
+        self.ixDict= None
         if config is None:
             self.config = {}
         else:
@@ -53,7 +54,7 @@ class Pandas_Time_Series_Tensor_Dataset(object):
             the name of the output sequence or output column
         colNames : list of string
             the name of pandas frame used for transformation
-        tensorType : {'sequence','label','category'}
+        tensorType : {'sequence','label','category','same'}
             provide different type of transformation
         sequence_stack : string of name for stacking
             the target name for stacking
@@ -171,7 +172,8 @@ class Pandas_Time_Series_Tensor_Dataset(object):
             self.df = self._pivot_df(self.df,categoryCol,timeSeriesCol,dropna)
         else:
             self.df = self._flatten_df(self.df,categoryCol,timeSeriesCol,dropna)
-        return ixDict
+        self.ixDict = ixDict
+        return self
 
     def _pivot_df(self,df,categoryCol,timeSeriesCol,dropna):
         df = df.pivot(categoryCol,timeSeriesCol,df.columns.drop([categoryCol,timeSeriesCol]))
@@ -193,30 +195,6 @@ class Pandas_Time_Series_Tensor_Dataset(object):
             else:
                 resDf = pd.concat([resDf,subDf],axis =1)
         return resDf
-
-
-    def transform_dataFrame(self,colName,targetCol,timeSeriesCol,transformFunc,*args,**kwargs):
-        """
-        transform_dataFrame this function use apply method to transfrom dataFrame
-        Note: Only apply to single column, groupby will be support in the next version
-        
-        Parameters
-        ----------
-        colName : str
-            target column for transformation
-        targetCol : str
-            the column to store new data
-        timeSeriesCol : str
-            time series column for sorting before apply function
-        transformFunc : func
-            the function implmented in the apply function
-        axis : int, optional
-            0 for row 1 for column, by default 1
-
-        """
-        self.df = self.df.sort_values(timeSeriesCol,ascending = True)
-        self.df[targetCol] = transformFunc(self.df[colName].values,*args,**kwargs)
-        return self
 
 
     def __repr__(self):

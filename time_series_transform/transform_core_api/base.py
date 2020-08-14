@@ -120,6 +120,8 @@ class Time_Series_Tensor_Factory(object):
             batchSize = seqSize - windowSize
             tensor = identity_window(self.data,batchSize)
             return Time_Series_Tensor(tensor,outType,name)
+        elif self.tensorType == 'same':
+            return Time_Series_Tensor(self.data,outType,name)
         else:
             raise ValueError('no value for tensorType')
 
