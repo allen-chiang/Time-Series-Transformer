@@ -1,0 +1,235 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>time_series_transform.test.test_tensorflow_adopter &mdash; Time-Series-Transform 0.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Time-Series-Transform
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_documentation.html">Api Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Time-Series-Transform</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>time_series_transform.test.test_tensorflow_adopter</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for time_series_transform.test.test_tensorflow_adopter</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">time_series_transform.transform_core_api.tensorflow_adopter</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="Test_tfrecord_adopter"><a class="viewcode-back" href="../../../docs/source/time_series_transform.test.html#time_series_transform.test.test_tensorflow_adopter.Test_tfrecord_adopter">[docs]</a><span class="k">class</span> <span class="nc">Test_tfrecord_adopter</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Test_tfrecord_adopter.test_single_int"><a class="viewcode-back" href="../../../docs/source/time_series_transform.test.html#time_series_transform.test.test_tensorflow_adopter.Test_tfrecord_adopter.test_single_int">[docs]</a>    <span class="k">def</span> <span class="nf">test_single_int</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[({</span><span class="s1">&#39;intObject&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">])},</span><span class="mi">1</span><span class="p">),({</span><span class="s1">&#39;intObject&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">])},</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="n">tw</span> <span class="o">=</span> <span class="n">TFRecord_Writer</span><span class="p">(</span><span class="s2">&quot;./int.tfRecord&quot;</span><span class="p">)</span>
+        <span class="n">tw</span><span class="o">.</span><span class="n">write_tfRecord</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">tr</span> <span class="o">=</span> <span class="n">TFRecord_Reader</span><span class="p">(</span><span class="s1">&#39;./int.tfRecord&#39;</span><span class="p">,</span><span class="n">tw</span><span class="o">.</span><span class="n">get_tfRecord_dtype</span><span class="p">())</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">tr</span><span class="o">.</span><span class="n">make_tfDataset</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">as_numpy_iterator</span><span class="p">())[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;intObject&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mf">1.0</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;./int.tfRecord&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Test_tfrecord_adopter.test_tensor"><a class="viewcode-back" href="../../../docs/source/time_series_transform.test.html#time_series_transform.test.test_tensorflow_adopter.Test_tfrecord_adopter.test_tensor">[docs]</a>    <span class="k">def</span> <span class="nf">test_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[({</span><span class="s1">&#39;tensorObject&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[[</span><span class="mi">1</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]]])},</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="n">tw</span> <span class="o">=</span> <span class="n">TFRecord_Writer</span><span class="p">(</span><span class="s2">&quot;./tensor.tfRecord&quot;</span><span class="p">)</span>
+        <span class="n">tw</span><span class="o">.</span><span class="n">write_tfRecord</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">tr</span> <span class="o">=</span> <span class="n">TFRecord_Reader</span><span class="p">(</span><span class="s1">&#39;./tensor.tfRecord&#39;</span><span class="p">,</span><span class="n">tw</span><span class="o">.</span><span class="n">get_tfRecord_dtype</span><span class="p">())</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">tr</span><span class="o">.</span><span class="n">make_tfDataset</span><span class="p">()</span>
+        <span class="n">datasetobj</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">as_numpy_iterator</span><span class="p">())[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;tensorObject&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">datasetobj</span><span class="p">,[[</span><span class="mf">1.0</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]])</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;./tensor.tfRecord&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Test_tfrecord_adopter.test_float"><a class="viewcode-back" href="../../../docs/source/time_series_transform.test.html#time_series_transform.test.test_tensorflow_adopter.Test_tfrecord_adopter.test_float">[docs]</a>    <span class="k">def</span> <span class="nf">test_float</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[({</span><span class="s1">&#39;floatObject&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">])},</span><span class="mi">1</span><span class="p">),({</span><span class="s1">&#39;floatObject&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.0</span><span class="p">])},</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="n">tw</span> <span class="o">=</span> <span class="n">TFRecord_Writer</span><span class="p">(</span><span class="s2">&quot;./float.tfRecord&quot;</span><span class="p">)</span>
+        <span class="n">tw</span><span class="o">.</span><span class="n">write_tfRecord</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">tr</span> <span class="o">=</span> <span class="n">TFRecord_Reader</span><span class="p">(</span><span class="s1">&#39;./float.tfRecord&#39;</span><span class="p">,</span><span class="n">tw</span><span class="o">.</span><span class="n">get_tfRecord_dtype</span><span class="p">())</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">tr</span><span class="o">.</span><span class="n">make_tfDataset</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">as_numpy_iterator</span><span class="p">())[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;floatObject&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mf">1.0</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;./float.tfRecord&#39;</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Chiang
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
