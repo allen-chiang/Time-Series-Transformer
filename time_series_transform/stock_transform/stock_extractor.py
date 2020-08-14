@@ -1,6 +1,6 @@
 import pandas as pd
 import yfinance as yf
-from datetime import datetime
+from datetime import datetime, timedelta
 from time_series_transform.stock_transform.base import *
 
 class Stock_Extractor(object):
@@ -250,6 +250,7 @@ class _yahoo_stock(object):
         return self.ticker.history(period)
 
     def getHistoricalByRange(self, start_date, end_date):
+        end_date = (datetime.strptime(end_date, '%Y-%m-%d') + timedelta(days=1)).strftime('%Y-%m-%d')
         return self.ticker.history(start = start_date, end = end_date)
 
     def getActions(self):
