@@ -45,7 +45,7 @@ class Stock (object):
         colName : str, optional
             column of the data used for plotting
         """
-        self.df[colNames].plot(*args,**kwargs)
+        self.df[colName].plot(*args,**kwargs)
 
     def save(self, path, format = "csv",compression = None):
         """
@@ -95,9 +95,6 @@ class Stock (object):
             self.df[f'{labelName}'] = indicator
         return self
 
-    def get_stock_by_date(self):
-        # todo 
-        pass
 
     
 

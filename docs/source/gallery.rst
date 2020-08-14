@@ -2,20 +2,15 @@ Gallery
 =======
 
 
-Data Pre-Processing for Machine Learning
+Basic Useage
 ----------------------------------------
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
    
-   stock_prediction_with_sklearn
+   Pandas_Transformer_Example
 
-
-Data Pre-Proccessing for Deep Learning
---------------------------------------
-
-None
 
 Stock Analysis
 --------------
@@ -25,3 +20,4 @@ Stock Analysis
    :caption: Contents:
 
    stock_gallery
+   stock_prediction_with_sklearn

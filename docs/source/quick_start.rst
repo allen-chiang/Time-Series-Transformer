@@ -297,6 +297,5 @@ to achieve this step) 2. setup configuration
             [3]]])}, array([3, 4]))
     
 
-Note: More Advance manipulation including stacking different sequence
-and multi-steps prediction can refer gallery.
+Note: To see the full use case, please refer to Gallery section.
 
