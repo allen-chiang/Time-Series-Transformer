@@ -36,13 +36,13 @@ class Stock (object):
         self.df['symbol'] = self.symbol
         return self.df
 
-    def plot(self,colNames,*args,**kwargs):
+    def plot(self,colName = "Close",*args,**kwargs):
         """
         plot the stock data of the given column using matplot
         
         Parameters
         ----------
-        colName : str or list 
+        colName : str, optional
             column of the data used for plotting
         """
         self.df[colNames].plot(*args,**kwargs)
@@ -76,7 +76,7 @@ class Stock (object):
         
         Parameters
         ----------
-        colName : str 
+        colNames : str 
             column of the data used for the indicator functions
         labelName : str
             label name to show on the dataframe
@@ -178,6 +178,7 @@ class Portfolio(object):
 
 
     def remove_different_date(self):
+        # todo one day short
         timeCol = {}
         for i in self.stockDict:
             for v in self.stockDict[i].dateRange:

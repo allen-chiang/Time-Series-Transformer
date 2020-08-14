@@ -1,6 +1,10 @@
 from time_series_transform.transform_core_api.util import *
 
+def _arr_check(arr):
+    if len(arr) == 0:
+        raise ValueError("Data can not have zero length")
 
+    
 def macd(arr, return_diff = False):
     """
     Return the moving average convergence/divergence 
@@ -10,11 +14,15 @@ def macd(arr, return_diff = False):
     arr : array 
         data used to calculate the macd
 
+    return_diff : bool 
+        return difference between DIF and DEM if True
+
     Returns
     -------
     df : dict
         macd of the given data, including EMA_12, EMA_26, DIF, DEM, OSC
     """
+    _arr_check(arr)
     df = {}
     df['EMA_12'] = ema(arr, span=12).flatten()
     df['EMA_26'] = ema(arr, span=26).flatten()
@@ -41,6 +49,7 @@ def stochastic_oscillator(arr):
     ret : dict
         stochastic oscillator of the given data, including k and d values
     """
+    _arr_check(arr)
     rsv_day = 9
     ret = {}
     df = pd.DataFrame(arr)
@@ -48,8 +57,8 @@ def stochastic_oscillator(arr):
     rsv_rolling = df.rolling(rsv_day)
     rsv_val = 100*(df - rsv_rolling.min())/(rsv_rolling.max() - rsv_rolling.min())
     ret['k_val'] = rsv_val
-    ret['d_val'] = np.array(ret['k_val'].rolling(3).mean())
-    ret['k_val'] = np.array(rsv_val)
+    ret['d_val'] = np.array(ret['k_val'].rolling(3).mean()).reshape(-1)
+    ret['k_val'] = np.array(rsv_val).reshape(-1)
     
     return ret
 
@@ -67,6 +76,8 @@ def rsi(arr, n_day = 14):
     rsi : array
         Relative Strength Index of the given array
     """
+    _arr_check(arr)
+    arr = np.array(arr)
     orgLen = len(arr)
     arr = arr[~np.isnan(arr)]
 
@@ -99,6 +110,9 @@ def williams_r(arr, n_day=14):
     r_val : array
         Relative Strength Index of the given array
     """
+    
+    _arr_check(arr)
+    arr = np.array(arr)
     orgLen = len(arr)
     arr = arr[~np.isnan(arr)]
     df = pd.DataFrame(arr)
@@ -106,4 +120,4 @@ def williams_r(arr, n_day=14):
     r_val = 100*(r_rolling.max()-df)/(r_rolling.max() - r_rolling.min())
     res = np.empty((int(orgLen-len(r_val))))
     res[:] = np.nan
-    return np.append(res,rsi) 
+    return np.append(res,r_val) 

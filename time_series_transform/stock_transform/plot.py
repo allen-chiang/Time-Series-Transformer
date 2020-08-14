@@ -157,6 +157,24 @@ class Plot(object):
         self._plots[axis_num].append('osc')
         self._subplots['macd'] = axis_num
 
+    def add_stochastic_oscillator(self):
+        """
+        add the stochastic_oscillator plot
+
+        Raises
+        ------
+        ValueError
+            raise exception when the macd is already in the plot
+        """
+        if 'stochastic_oscillator' in list(self._subplots.keys()):
+            raise ValueError("stochastic_oscillator already exists")
+        so_data = stochastic_oscillator(self.stock.df['Close'])
+        
+        axis_num = self._find_next_layer()
+        self._add_subplot_layer()
+        self._add_multi_trace(so_data, ['red', 'grey'], axis_num)
+        self._subplots['stochastic_oscillator'] = axis_num
+
     def _find_next_layer(self):
         cur_max = 0
         for k in self._plots.keys():
