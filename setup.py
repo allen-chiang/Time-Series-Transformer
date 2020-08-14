@@ -1,7 +1,7 @@
 import os
 from distutils.core import setup
 
-with open('requirements.txt') as f:
+with open('requirement.txt') as f:
     required = f.read().splitlines()
 
 setup(
