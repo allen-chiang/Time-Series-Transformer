@@ -4,9 +4,16 @@ from distutils.core import setup
 with open('requirement.txt') as f:
     required = f.read().splitlines()
 
+DESCRIPTION = """
+A data pre-processing package for time series data. 
+It provides tools for machine learing and deep learning.
+It also has subsection specialized in stock.
+"""
+
 setup(
     name='time_series_transform',
     version='0.0.1',
+    description = DESCRIPTION,
     packages=[
         'time_series_transform',
         'time_series_transform/transform_core_api',
@@ -31,6 +38,5 @@ setup(
     'Programming Language :: Python :: 3',      #Specify which pyhton versions that you want to support
     'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
-    'Programming Language :: Python :: 3.8',
   ],
 )
