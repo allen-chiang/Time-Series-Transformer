@@ -19,5 +19,5 @@ Stock Analysis
    :maxdepth: 2
    :caption: Contents:
 
-   stock_gallery
+   Stock_advanced_example
    stock_prediction_with_sklearn
