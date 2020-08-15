@@ -4,8 +4,8 @@ from distutils.core import setup
 with open('requirement.txt') as f:
     required = f.read().splitlines()
 
-with open('README.md') as f:
-    long_description = f.read()    
+with open("README.md", "r") as fh:
+    long_description = fh.read() 
 
 setup(
     name='time_series_transform',
@@ -24,8 +24,8 @@ setup(
     keywords = ['time series','stock', 'machine learning', 'deep learning'],
     install_requires = required,
     author = 'KuanLun Chiang; KuanYu Chiang',
-    long_description= long_description,
-    long_description_content_type='text/markdown',
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     classifiers=[
     'Intended Audience :: Science/Research',
     'Intended Audience :: Developers',      
