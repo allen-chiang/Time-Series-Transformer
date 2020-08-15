@@ -14,3 +14,4 @@ scipy
 matplotlib
 sklearn
 joblib
+setuptools
