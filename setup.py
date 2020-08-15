@@ -9,7 +9,7 @@ with open('README.md') as f:
 
 setup(
     name='time_series_transform',
-    version='0.0.2',
+    version='0.0.3',
     description = 'A data preprocessing package for time series data. It provides tools for machine learing and deep learning.It also has subsection specialized in stock.',
     packages=[
         'time_series_transform',
@@ -23,7 +23,7 @@ setup(
     download_url ='https://github.com/allen-chiang/Time-Series-Transformer/archive/0.0.2.tar.gz',
     keywords = ['time series','stock', 'machine learning', 'deep learning'],
     install_requires = required,
-    author = 'KuanLun Chiang KuanYu Chiang',
+    author = 'KuanLun Chiang; KuanYu Chiang',
     long_description= long_description,
     long_description_content_type='text/markdown',
     classifiers=[
