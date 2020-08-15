@@ -20,7 +20,7 @@ setup(
     license='MIT',
     author_email = 'kuanlun.chiang@outlook.com',
     url = 'https://github.com/allen-chiang/Time-Series-Transformer',
-    download_url ='https://github.com/allen-chiang/Time-Series-Transformer/archive/0.0.2.tar.gz',
+    download_url ='https://github.com/allen-chiang/Time-Series-Transformer/archive/0.0.3.tar.gz',
     keywords = ['time series','stock', 'machine learning', 'deep learning'],
     install_requires = required,
     author = 'KuanLun Chiang; KuanYu Chiang',
