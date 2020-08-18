@@ -1,5 +1,5 @@
 import os
-from distutils.core import setup
+from setuptools import setup
 
 required = [
     'numpy',
@@ -20,8 +20,8 @@ required = [
     'joblib'
 ]
 
-with open('README.md') as f:
-    long_description = f.read()    
+with open("README.md", "r") as fh:
+    long_description = fh.read() 
 
 setup(
     name='time_series_transform',
