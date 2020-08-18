@@ -25,7 +25,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='time_series_transform',
-    version='0.0.4',
+    version='0.0.5',
     description = 'A data preprocessing package for time series data. It provides tools for machine learing and deep learning.It also has subsection specialized in stock.',
     packages=[
         'time_series_transform',
@@ -36,7 +36,7 @@ setup(
     license='MIT',
     author_email = 'kuanlun.chiang@outlook.com',
     url = 'https://github.com/allen-chiang/Time-Series-Transformer',
-    download_url ='https://github.com/allen-chiang/Time-Series-Transformer/archive/0.0.4.tar.gz',
+    download_url ='https://github.com/allen-chiang/Time-Series-Transformer/archive/0.0.5.tar.gz',
     keywords = ['time series','stock', 'machine learning', 'deep learning'],
     install_requires = required,
     author = 'Kuan-Lun Chiang; Kuan-Yu Chiang',
