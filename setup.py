@@ -23,7 +23,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='time_series_transform',
-    version='0.0.6-stable',
+    version='0.0.6.stable',
     description = 'A data preprocessing package for time series data. It provides tools for machine learing and deep learning.It also has subsection specialized in stock.',
     packages=[
         'time_series_transform',
