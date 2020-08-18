@@ -3,7 +3,6 @@ import uuid
 import numpy as np
 import pandas as pd
 import pyarrow as pa
-import tensorflow as tf
 from pyarrow import parquet as pq
 from collections import defaultdict
 from time_series_transform.transform_core_api.base import *
