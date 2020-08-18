@@ -1,15 +1,31 @@
 import os
 from distutils.core import setup
 
-with open('requirement.txt') as f:
-    required = f.read().splitlines()
+required = [
+    'numpy',
+    'pandas',
+    'tensorflow',
+    'pyarrow',
+    'yfinance',
+    'scipy',
+    'PyWavelets',
+    'Sphinx',
+    'rinohtype',
+    'nbsphinx',
+    'plotly >= 4.8.0',
+    'pytest-dependency',
+    'scipy',
+    'matplotlib',
+    'sklearn',
+    'joblib'
+]
 
 with open('README.md') as f:
     long_description = f.read()    
 
 setup(
     name='time_series_transform',
-    version='0.0.3',
+    version='0.0.4',
     description = 'A data preprocessing package for time series data. It provides tools for machine learing and deep learning.It also has subsection specialized in stock.',
     packages=[
         'time_series_transform',
@@ -20,10 +36,10 @@ setup(
     license='MIT',
     author_email = 'kuanlun.chiang@outlook.com',
     url = 'https://github.com/allen-chiang/Time-Series-Transformer',
-    download_url ='https://github.com/allen-chiang/Time-Series-Transformer/archive/0.0.3.tar.gz',
+    download_url ='https://github.com/allen-chiang/Time-Series-Transformer/archive/0.0.4.tar.gz',
     keywords = ['time series','stock', 'machine learning', 'deep learning'],
     install_requires = required,
-    author = 'KuanLun Chiang; KuanYu Chiang',
+    author = 'Kuan-Lun Chiang; Kuan-Yu Chiang',
     long_description= long_description,
     long_description_content_type='text/markdown',
     classifiers=[

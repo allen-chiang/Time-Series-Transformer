@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Quick Start &mdash; Time-Series-Transform 0.0.0 documentation</title>
+  <title>Time Series Transformer &mdash; Time-Series-Transform 0.0.4 documentation</title>
   
 
   
@@ -61,6 +61,10 @@
           
             
             
+              <div class="version">
+                0.0.4
+              </div>
+            
           
 
           
@@ -84,7 +88,7 @@
             
             
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Quick Start</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Time Series Transformer</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#pre-processing-for-machine-learning">Pre-Processing for Machine Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#deep-learning">Deep Learning</a></li>
 </ul>
@@ -137,7 +141,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Quick Start</li>
+      <li>Time Series Transformer</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -180,10 +184,9 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="quick-start">
-<h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h1>
-<div class="figure align-default">
-<img alt="Build" src="https://github.com/allen-chiang/Time-Series-Transformer/workflows/Build/badge.svg" /></div>
+<div class="section" id="time-series-transformer">
+<h1>Time Series Transformer<a class="headerlink" href="#time-series-transformer" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="https://www.python.org/"><img alt="made-with-python" src="https://img.shields.io/badge/Made%20with-Python-1f425f.svg" /></a> <img alt="Build" src="https://github.com/allen-chiang/Time-Series-Transformer/workflows/Build/badge.svg" /> <a class="reference external" href="https://dev.azure.com/kuanlunchiang/Time%20Series%20Transformer/_build/latest?definitionId=3&amp;branchName=master"><img alt="Build Status" src="https://dev.azure.com/kuanlunchiang/Time%20Series%20Transformer/_apis/build/status/allen-chiang.Time-Series-Transformer?branchName=master" /></a> <a class="reference external" href="https://dev.azure.com/kuanlunchiang/4514fff7-ad24-4603-9373-c28efeaada71/_boards/board/t/b19741c8-3782-44ee-8a92-2805fbeb49f9/Microsoft.RequirementCategory"><img alt="Board Status" src="https://dev.azure.com/kuanlunchiang/4514fff7-ad24-4603-9373-c28efeaada71/b19741c8-3782-44ee-8a92-2805fbeb49f9/_apis/work/boardbadge/e0f238c1-381a-4686-a599-43174bf8237f" /></a></p>
 <p>Time Series Transformer is designed to handle time series data
 pre-processing for machine learning and deep learning. The general use
 case includes making lag/lead features, denoising data, and making
@@ -196,7 +199,7 @@ including:</p>
 <li><p>extract data from different engine (only support yahoo finance in
 the current version)</p></li>
 <li><p>plot interative charts for stock analsys</p></li>
-<li><p>various technical indicator transformation i.e. MACD, stochastic
+<li><p>various technical indicator transformation i.e. MACD, stochastic
 oscillator, William %, relative strength index</p></li>
 </ul>
 </li>
@@ -217,11 +220,11 @@ and lead data as target variable.</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 </pre></div>
 </div>
-<pre class="literal-block">         Date     Open     High      Low    Close   Volume  Dividends  0  2019-08-12  1180.00  1185.61  1168.72  1174.50  1103200          0
-1  2019-08-13  1174.35  1205.43  1172.99  1196.73  1421700          0
-2  2019-08-14  1176.07  1182.79  1161.07  1164.25  1771500          0
-3  2019-08-15  1168.43  1176.42  1163.00  1169.32  1425300          0
-4  2019-08-16  1180.79  1183.84  1173.00  1179.21  1245800          0
+<pre class="literal-block">         Date     Open     High      Low    Close   Volume  Dividends  0  2019-08-19  1191.83  1209.39  1190.40  1200.44  1222500          0
+1  2019-08-20  1195.35  1198.00  1183.05  1183.53  1010300          0
+2  2019-08-21  1195.82  1200.56  1187.92  1191.58   707600          0
+3  2019-08-22  1193.80  1198.78  1178.91  1191.52   867600          0
+4  2019-08-23  1185.17  1195.67  1150.00  1153.58  1812700          0
 
    Stock Splits
 0             0
@@ -230,8 +233,8 @@ and lead data as target variable.</p>
 3             0
 4             0</pre>
 <p>Pandas_Time_Series_Panel_Dataset takes dataframe as input.
-make_slide_window is the function used for making multiple lagging data,
-and make_lead_column is to create lead data for specific column.
+make_slide_window is the function used for making multiple lagging
+data, and make_lead_column is to create lead data for specific column.
 indexCol is the time series column, and this column is used for sorting
 the dataframe before lag/lead feature generations.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">panel_transform</span> <span class="o">=</span> <span class="n">Pandas_Time_Series_Panel_Dataset</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
@@ -267,18 +270,18 @@ dtypes: float64(13), int64(3), object(1)
 memory usage: 35.4+ KB
 </pre></div>
 </div>
-<p>To obtain the data, the df attribute of Pandas_Time_Series_Panel_Dataset
-can be retrieved.</p>
+<p>To obtain the data, the df attribute of
+Pandas_Time_Series_Panel_Dataset can be retrieved.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lead_lag_stock</span> <span class="o">=</span> <span class="n">panel_transform</span><span class="o">.</span><span class="n">df</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">lead_lag_stock</span><span class="p">[[</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="s1">&#39;symbol&#39;</span><span class="p">,</span><span class="s1">&#39;Open&#39;</span><span class="p">,</span><span class="s1">&#39;Open_lag1&#39;</span><span class="p">,</span><span class="s1">&#39;Open_lead1&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">lead_lag_stock</span><span class="p">[[</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="s1">&#39;Open&#39;</span><span class="p">,</span><span class="s1">&#39;Open_lag1&#39;</span><span class="p">,</span><span class="s1">&#39;Open_lead1&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>         <span class="n">Date</span> <span class="n">symbol</span>     <span class="n">Open</span>  <span class="n">Open_lag1</span>  <span class="n">Open_lead1</span>
-<span class="mi">0</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">12</span>   <span class="n">aapl</span>   <span class="mf">197.66</span>        <span class="n">NaN</span>      <span class="mf">199.05</span>
-<span class="mi">0</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">12</span>  <span class="n">googl</span>  <span class="mf">1180.00</span>        <span class="n">NaN</span>     <span class="mf">1174.35</span>
-<span class="mi">1</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">13</span>   <span class="n">aapl</span>   <span class="mf">199.05</span>     <span class="mf">197.66</span>      <span class="mf">201.16</span>
-<span class="mi">1</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">13</span>  <span class="n">googl</span>  <span class="mf">1174.35</span>    <span class="mf">1180.00</span>     <span class="mf">1176.07</span>
-<span class="mi">2</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">14</span>  <span class="n">googl</span>  <span class="mf">1176.07</span>    <span class="mf">1174.35</span>     <span class="mf">1168.43</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>         <span class="n">Date</span>     <span class="n">Open</span>  <span class="n">Open_lag1</span>  <span class="n">Open_lead1</span>
+<span class="mi">0</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">19</span>  <span class="mf">1191.83</span>        <span class="n">NaN</span>     <span class="mf">1195.35</span>
+<span class="mi">1</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">20</span>  <span class="mf">1195.35</span>    <span class="mf">1191.83</span>     <span class="mf">1195.82</span>
+<span class="mi">2</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">21</span>  <span class="mf">1195.82</span>    <span class="mf">1195.35</span>     <span class="mf">1193.80</span>
+<span class="mi">3</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">22</span>  <span class="mf">1193.80</span>    <span class="mf">1195.82</span>     <span class="mf">1185.17</span>
+<span class="mi">4</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">23</span>  <span class="mf">1185.17</span>    <span class="mf">1193.80</span>     <span class="mf">1159.45</span>
 </pre></div>
 </div>
 <p>Sometimes, there cuold be different categories or item in the dataset.
@@ -290,11 +293,11 @@ stock can be represented as one item.</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 </pre></div>
 </div>
-<pre class="literal-block">         Date     Open     High      Low    Close   Volume  Dividends  0  2019-08-12  1180.00  1185.61  1168.72  1174.50  1103200        0.0
-1  2019-08-13  1174.35  1205.43  1172.99  1196.73  1421700        0.0
-2  2019-08-14  1176.07  1182.79  1161.07  1164.25  1771500        0.0
-3  2019-08-15  1168.43  1176.42  1163.00  1169.32  1425300        0.0
-4  2019-08-16  1180.79  1183.84  1173.00  1179.21  1245800        0.0
+<pre class="literal-block">         Date     Open     High      Low    Close   Volume  Dividends  0  2019-08-19  1191.83  1209.39  1190.40  1200.44  1222500        0.0
+1  2019-08-20  1195.35  1198.00  1183.05  1183.53  1010300        0.0
+2  2019-08-21  1195.82  1200.56  1187.92  1191.58   707600        0.0
+3  2019-08-22  1193.80  1198.78  1178.91  1191.52   867600        0.0
+4  2019-08-23  1185.17  1195.67  1150.00  1153.58  1812700        0.0
 
    Stock Splits symbol
 0             0  googl
@@ -341,11 +344,11 @@ memory usage: 74.8+ KB
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>         <span class="n">Date</span> <span class="n">symbol</span>     <span class="n">Open</span>  <span class="n">Open_lag1</span>  <span class="n">Open_lead1</span>
-<span class="mi">0</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">12</span>   <span class="n">aapl</span>   <span class="mf">197.66</span>        <span class="n">NaN</span>      <span class="mf">199.05</span>
-<span class="mi">0</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">12</span>  <span class="n">googl</span>  <span class="mf">1180.00</span>        <span class="n">NaN</span>     <span class="mf">1174.35</span>
-<span class="mi">1</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">13</span>   <span class="n">aapl</span>   <span class="mf">199.05</span>     <span class="mf">197.66</span>      <span class="mf">201.16</span>
-<span class="mi">1</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">13</span>  <span class="n">googl</span>  <span class="mf">1174.35</span>    <span class="mf">1180.00</span>     <span class="mf">1176.07</span>
-<span class="mi">2</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">14</span>  <span class="n">googl</span>  <span class="mf">1176.07</span>    <span class="mf">1174.35</span>     <span class="mf">1168.43</span>
+<span class="mi">0</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">19</span>   <span class="n">aapl</span>   <span class="mf">208.55</span>        <span class="n">NaN</span>      <span class="mf">208.81</span>
+<span class="mi">0</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">19</span>  <span class="n">googl</span>  <span class="mf">1191.83</span>        <span class="n">NaN</span>     <span class="mf">1195.35</span>
+<span class="mi">1</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">20</span>   <span class="n">aapl</span>   <span class="mf">208.81</span>     <span class="mf">208.55</span>      <span class="mf">210.90</span>
+<span class="mi">1</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">20</span>  <span class="n">googl</span>  <span class="mf">1195.35</span>    <span class="mf">1191.83</span>     <span class="mf">1195.82</span>
+<span class="mi">2</span>  <span class="mi">2019</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">21</span>  <span class="n">googl</span>  <span class="mf">1195.82</span>    <span class="mf">1195.35</span>     <span class="mf">1193.80</span>
 </pre></div>
 </div>
 <p>Note: Some other use cases could be inventory. Inventory data is usually
@@ -357,14 +360,14 @@ supports one column groupby.</p>
 <div class="section" id="deep-learning">
 <h2>Deep Learning<a class="headerlink" href="#deep-learning" title="Permalink to this headline">¶</a></h2>
 <p>Transforming panel data into tensor data for deep learning model might
-wirte server lines of code. Using Pandas_Time_Series_Tensor_Dataset can
-easily complete those tidious tasks. This class will take your pandas
-frame as input and following the configuration to manipulate the data
-and make the generator for training.</p>
+wirte server lines of code. Using Pandas_Time_Series_Tensor_Dataset
+can easily complete those tidious tasks. This class will take your
+pandas frame as input and following the configuration to manipulate the
+data and make the generator for training.</p>
 <p>The configuration can be simply setup by set_config function. There are
-three type of manipulation sequence –&gt; making lagging data, category –&gt;
-making a sequence of same data, and label –&gt; making 1 step lead data.
-The following example uses a simple dataframe for demonstration.</p>
+three type of manipulation sequence –&gt; making lagging data, category
+–&gt; making a sequence of same data, and label –&gt; making 1 step lead
+data. The following example uses a simple dataframe for demonstration.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">time_series_transform.transform_core_api.time_series_transformer</span> <span class="kn">import</span> <span class="n">Pandas_Time_Series_Tensor_Dataset</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;time&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span><span class="s1">&#39;demand&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span><span class="s1">&#39;category&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]})</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
@@ -378,8 +381,8 @@ The following example uses a simple dataframe for demonstration.</p>
 </pre></div>
 </div>
 <p>To make the generator, there are two steps: 1. expand data from time,
-demand, category to category_demand_time (use expand_dataFrame_by_date
-to achieve this step) 2. setup configuration</p>
+demand, category to category_demand_time (use
+expand_dataFrame_by_date to achieve this step) 2. setup configuration</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tensor_generator</span> <span class="o">=</span> <span class="n">Pandas_Time_Series_Tensor_Dataset</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 <span class="n">tensor_generator</span><span class="o">.</span><span class="n">expand_dataFrame_by_date</span><span class="p">(</span>
     <span class="n">categoryCol</span> <span class="o">=</span> <span class="s1">&#39;category&#39;</span><span class="p">,</span><span class="n">timeSeriesCol</span> <span class="o">=</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="n">byCategory</span><span class="o">=</span><span class="kc">False</span>
@@ -425,7 +428,8 @@ to achieve this step) 2. setup configuration</p>
         <span class="p">[</span><span class="mi">3</span><span class="p">]]])},</span> <span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]))</span>
 </pre></div>
 </div>
-<p>Note: To see the full use case, please refer to Gallery section.</p>
+<p>Note: More Advance manipulation including stacking different sequence
+and multi-steps prediction can refer gallery.</p>
 </div>
 </div>
 

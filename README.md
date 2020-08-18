@@ -1,5 +1,5 @@
-
 # Time Series Transformer
+
 
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 ![Build](https://github.com/allen-chiang/Time-Series-Transformer/workflows/Build/badge.svg)
@@ -34,11 +34,11 @@ print(df.head())
 ```
 
              Date     Open     High      Low    Close   Volume  Dividends  \
-    0  2019-08-12  1180.00  1185.61  1168.72  1174.50  1103200          0   
-    1  2019-08-13  1174.35  1205.43  1172.99  1196.73  1421700          0   
-    2  2019-08-14  1176.07  1182.79  1161.07  1164.25  1771500          0   
-    3  2019-08-15  1168.43  1176.42  1163.00  1169.32  1425300          0   
-    4  2019-08-16  1180.79  1183.84  1173.00  1179.21  1245800          0   
+    0  2019-08-19  1191.83  1209.39  1190.40  1200.44  1222500          0   
+    1  2019-08-20  1195.35  1198.00  1183.05  1183.53  1010300          0   
+    2  2019-08-21  1195.82  1200.56  1187.92  1191.58   707600          0   
+    3  2019-08-22  1193.80  1198.78  1178.91  1191.52   867600          0   
+    4  2019-08-23  1185.17  1195.67  1150.00  1153.58  1812700          0   
     
        Stock Splits  
     0             0  
@@ -90,15 +90,15 @@ To obtain the data, the df attribute of Pandas_Time_Series_Panel_Dataset can be 
 
 ```python
 lead_lag_stock = panel_transform.df
-print(lead_lag_stock[['Date','symbol','Open','Open_lag1','Open_lead1']].sort_values('Date').head())
+print(lead_lag_stock[['Date','Open','Open_lag1','Open_lead1']].sort_values('Date').head())
 ```
 
-             Date symbol     Open  Open_lag1  Open_lead1
-    0  2019-08-12   aapl   197.66        NaN      199.05
-    0  2019-08-12  googl  1180.00        NaN     1174.35
-    1  2019-08-13   aapl   199.05     197.66      201.16
-    1  2019-08-13  googl  1174.35    1180.00     1176.07
-    2  2019-08-14  googl  1176.07    1174.35     1168.43
+             Date     Open  Open_lag1  Open_lead1
+    0  2019-08-19  1191.83        NaN     1195.35
+    1  2019-08-20  1195.35    1191.83     1195.82
+    2  2019-08-21  1195.82    1195.35     1193.80
+    3  2019-08-22  1193.80    1195.82     1185.17
+    4  2019-08-23  1185.17    1193.80     1159.45
     
 
 Sometimes, there cuold be different categories or item in the dataset. Pandas_Time_Series_Panel_Dataset the groupby parameter can serve the advanced data manipulation for lead and lag data making. The following example is going to construct a dataframe with multiple stocks, and each stock can be represented as one item.
@@ -110,11 +110,11 @@ print(df.head())
 ```
 
              Date     Open     High      Low    Close   Volume  Dividends  \
-    0  2019-08-12  1180.00  1185.61  1168.72  1174.50  1103200        0.0   
-    1  2019-08-13  1174.35  1205.43  1172.99  1196.73  1421700        0.0   
-    2  2019-08-14  1176.07  1182.79  1161.07  1164.25  1771500        0.0   
-    3  2019-08-15  1168.43  1176.42  1163.00  1169.32  1425300        0.0   
-    4  2019-08-16  1180.79  1183.84  1173.00  1179.21  1245800        0.0   
+    0  2019-08-19  1191.83  1209.39  1190.40  1200.44  1222500        0.0   
+    1  2019-08-20  1195.35  1198.00  1183.05  1183.53  1010300        0.0   
+    2  2019-08-21  1195.82  1200.56  1187.92  1191.58   707600        0.0   
+    3  2019-08-22  1193.80  1198.78  1178.91  1191.52   867600        0.0   
+    4  2019-08-23  1185.17  1195.67  1150.00  1153.58  1812700        0.0   
     
        Stock Splits symbol  
     0             0  googl  
@@ -167,11 +167,11 @@ print(lead_lag_stock[['Date','symbol','Open','Open_lag1','Open_lead1']].sort_val
 ```
 
              Date symbol     Open  Open_lag1  Open_lead1
-    0  2019-08-12   aapl   197.66        NaN      199.05
-    0  2019-08-12  googl  1180.00        NaN     1174.35
-    1  2019-08-13   aapl   199.05     197.66      201.16
-    1  2019-08-13  googl  1174.35    1180.00     1176.07
-    2  2019-08-14  googl  1176.07    1174.35     1168.43
+    0  2019-08-19   aapl   208.55        NaN      208.81
+    0  2019-08-19  googl  1191.83        NaN     1195.35
+    1  2019-08-20   aapl   208.81     208.55      210.90
+    1  2019-08-20  googl  1195.35    1191.83     1195.82
+    2  2019-08-21  googl  1195.82    1195.35     1193.80
     
 
 Note: Some other use cases could be inventory. Inventory data is usually associate with multiple categories such as item name or locations. To use groupby parameter, it has to be combined into on column, for example, item, location --> item_location. The currently api only supports one column groupby.
@@ -252,8 +252,3 @@ for i in gen:
     
 
 Note: More Advance manipulation including stacking different sequence and multi-steps prediction can refer gallery.
-
-
-```python
-
-```
