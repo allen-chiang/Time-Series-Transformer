@@ -1,0 +1,441 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>time_series_transform.stock_transform.base &mdash; Time-Series-Transform 0.0.6 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Time-Series-Transform
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Time Series Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_documentation.html">Api Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Time-Series-Transform</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>time_series_transform.stock_transform.base</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for time_series_transform.stock_transform.base</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">scipy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">numpy.fft</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">ChainMap</span>
+<span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+<span class="kn">import</span> <span class="nn">plotly.graph_objects</span> <span class="k">as</span> <span class="nn">go</span>
+<span class="kn">from</span> <span class="nn">time_series_transform.transform_core_api.util</span> <span class="kn">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="Stock"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.base.Stock">[docs]</a><span class="k">class</span> <span class="nc">Stock</span> <span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">symbol</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">additionalInfo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">timeSeriesCol</span> <span class="o">=</span> <span class="s1">&#39;Date&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The class initialize data as a Stock object </span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        symbol : str </span>
+<span class="sd">            symbol of the stock</span>
+<span class="sd">        data : pandas dataframe</span>
+<span class="sd">            main data of the stock, for example, Date, High, Low, Open, Close, Volume</span>
+<span class="sd">        additionalInfo: dict, optional</span>
+<span class="sd">            supplemental information beside the data, by default None</span>
+<span class="sd">        timeSeriesCol: str, optional</span>
+<span class="sd">            time series column name for sorting data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span> <span class="o">=</span> <span class="n">symbol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">additionalInfo</span> <span class="o">=</span> <span class="n">additionalInfo</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timeSeriesCol</span> <span class="o">=</span> <span class="n">timeSeriesCol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">timeSeriesCol</span><span class="p">,</span><span class="n">ascending</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dateRange</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">timeSeriesCol</span><span class="p">,</span><span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="n">timeSeriesCol</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dataFrame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;symbol&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span>
+
+<div class="viewcode-block" id="Stock.plot"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.base.Stock.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">colName</span> <span class="o">=</span> <span class="s2">&quot;Close&quot;</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        plot the stock data of the given column using matplot</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        colName : str, optional</span>
+<span class="sd">            column of the data used for plotting</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">colName</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Stock.save"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.base.Stock.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;csv&quot;</span><span class="p">,</span><span class="n">compression</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        save the main data locally using pandas</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str </span>
+<span class="sd">            path of local directory</span>
+<span class="sd">        format : str, optional</span>
+<span class="sd">            format of the file</span>
+<span class="sd">            valid values: csv, parquet</span>
+<span class="sd">        compression: str, optional</span>
+<span class="sd">            compression method, by default None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span>
+        <span class="n">download_path</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span> <span class="o">+</span> <span class="s2">&quot;_stock_extract.&quot;</span> <span class="o">+</span> <span class="nb">format</span>
+        <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s1">&#39;csv&#39;</span><span class="p">:</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">download_path</span><span class="p">,</span><span class="n">compression</span> <span class="o">=</span> <span class="n">compression</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s1">&#39;parquet&#39;</span><span class="p">:</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">download_path</span><span class="p">,</span><span class="n">compression</span> <span class="o">=</span> <span class="n">compression</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;invalid format value&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Stock.make_technical_indicator"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.base.Stock.make_technical_indicator">[docs]</a>    <span class="k">def</span> <span class="nf">make_technical_indicator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">colName</span><span class="p">,</span><span class="n">labelName</span><span class="p">,</span><span class="n">indicatorFunction</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        make_technical_indicator applies the indicatorFunctions to the given column</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        colNames : str </span>
+<span class="sd">            column of the data used for the indicator functions</span>
+<span class="sd">        labelName : str</span>
+<span class="sd">            label name to show on the dataframe</span>
+<span class="sd">        indicatorFunction: dict</span>
+<span class="sd">            dict of the indicator functions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colName</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">colName</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">colName</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">indicator</span> <span class="o">=</span> <span class="n">indicatorFunction</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indicator</span><span class="p">,</span><span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indicator</span><span class="p">,</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">indicator</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">labelName</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">indicator</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">labelName</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">indicator</span>
+        <span class="k">return</span> <span class="bp">self</span></div></div>
+
+
+    
+
+<div class="viewcode-block" id="Portfolio"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.base.Portfolio">[docs]</a><span class="k">class</span> <span class="nc">Portfolio</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">stockList</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The class initialize data as a Portfolio object, which stores multiple Stock data</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        stockList : list[Stock]</span>
+<span class="sd">            list of Stock data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stockDict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_stock_dict</span><span class="p">(</span><span class="n">stockList</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_stock_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">stockList</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        _get_stock_dict transform the stock list into dictionary</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        stockList : list[Stock] </span>
+<span class="sd">            list of Stock data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">stockDict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">stockList</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">symbol</span>
+            <span class="n">stockDict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="k">return</span> <span class="n">stockDict</span>
+
+<div class="viewcode-block" id="Portfolio.make_technical_indicator"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.base.Portfolio.make_technical_indicator">[docs]</a>    <span class="k">def</span> <span class="nf">make_technical_indicator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">colName</span><span class="p">,</span><span class="n">labelName</span><span class="p">,</span><span class="n">indicator</span><span class="p">,</span><span class="n">n_jobs</span> <span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">verbose</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        make_technical_indicator applies the indicator to the given column</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        colName : str </span>
+<span class="sd">            column of the data used for the indicator functions</span>
+<span class="sd">        labelName : str</span>
+<span class="sd">            label name to show on the dataframe</span>
+<span class="sd">        indicator : function</span>
+<span class="sd">            function of the indicator</span>
+<span class="sd">        n_jobs : int</span>
+<span class="sd">            The maximum number of concurrently running jobs, by default 1</span>
+<span class="sd">        verbose : int</span>
+<span class="sd">            The verbosity level: if non zero, progress messages are printed, by default 0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dctList</span> <span class="o">=</span>  <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="p">,</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stock_technical_indicator</span><span class="p">)(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stockDict</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+            <span class="n">i</span><span class="p">,</span><span class="n">colName</span><span class="p">,</span>
+            <span class="n">labelName</span><span class="p">,</span>
+            <span class="n">indicator</span><span class="p">,</span>
+            <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stockDict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stockDict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ChainMap</span><span class="p">(</span><span class="o">*</span><span class="n">dctList</span><span class="p">))</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_stock_technical_indicator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">stock</span><span class="p">,</span><span class="n">symbol</span><span class="p">,</span><span class="n">colName</span><span class="p">,</span><span class="n">labelName</span><span class="p">,</span><span class="n">indicator</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">symbol</span><span class="p">:</span><span class="n">stock</span><span class="o">.</span><span class="n">make_technical_indicator</span><span class="p">(</span><span class="n">colName</span><span class="p">,</span><span class="n">labelName</span><span class="p">,</span><span class="n">indicator</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)}</span>
+
+
+<div class="viewcode-block" id="Portfolio.get_portfolio_dataFrame"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.base.Portfolio.get_portfolio_dataFrame">[docs]</a>    <span class="k">def</span> <span class="nf">get_portfolio_dataFrame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get_portfolio_dataFrame return the portfolio overview</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        portfolio</span>
+<span class="sd">            portfolio dataset including all of the applied indicators</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">portfolio</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stockDict</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">ix</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">portfolio</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stockDict</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">dataFrame</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">portfolio</span> <span class="o">=</span> <span class="n">portfolio</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stockDict</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">dataFrame</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">portfolio</span></div>
+
+
+<div class="viewcode-block" id="Portfolio.remove_different_date"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.base.Portfolio.remove_different_date">[docs]</a>    <span class="k">def</span> <span class="nf">remove_different_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># todo one day short</span>
+        <span class="n">timeCol</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stockDict</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stockDict</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">dateRange</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">timeCol</span><span class="p">:</span>
+                    <span class="n">timeCol</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">timeCol</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">+=</span><span class="mi">1</span>
+        <span class="n">timeCol</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">timeCol</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stockDict</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stockDict</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stockDict</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">dateRange</span> <span class="o">=</span> <span class="n">timeCol</span>
+            <span class="n">timeSeriesCol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stockDict</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">timeSeriesCol</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stockDict</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stockDict</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">stockDict</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">timeSeriesCol</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">timeCol</span><span class="p">)]</span></div>
+
+
+
+<div class="viewcode-block" id="Portfolio.plot"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.base.Portfolio.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">stockIndicators</span><span class="p">,</span> <span class="n">keyCol</span> <span class="o">=</span> <span class="s1">&#39;Default&#39;</span> <span class="p">,</span><span class="n">samePlot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        plot the given stock indicator in the portfolio</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        stockIndicators : dict </span>
+<span class="sd">            dictionary of the stock indicator used for plotting </span>
+<span class="sd">        keyCol : str</span>
+<span class="sd">            xaxis of the plot, by default &quot;Default&quot;</span>
+<span class="sd">            valid value: columns of the data</span>
+<span class="sd">        samePlot : boolean</span>
+<span class="sd">            whether to show the stock in the same plot</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">keyArr</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span><span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stockIndicators</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">keyCol</span> <span class="o">==</span> <span class="s1">&#39;Default&#39;</span><span class="p">:</span>
+                <span class="n">keyArr</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stockDict</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">keyArr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stockDict</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">keyCol</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            
+            <span class="k">if</span> <span class="n">samePlot</span><span class="p">:</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stockDict</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">stockIndicators</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+                <span class="n">tmp</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">keyCol</span><span class="p">,</span><span class="n">keyArr</span><span class="p">)</span>
+                <span class="n">colName</span> <span class="o">=</span> <span class="p">[</span><span class="n">keyCol</span><span class="p">]</span>
+                <span class="n">colName</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">stockIndicators</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
+                <span class="n">tmp</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">colName</span>
+
+                <span class="k">if</span> <span class="n">ix</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">df</span> <span class="o">=</span> <span class="n">tmp</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">tmp</span><span class="p">,</span> <span class="n">on</span> <span class="o">=</span> <span class="p">[</span><span class="n">keyCol</span><span class="p">],</span> <span class="n">how</span> <span class="o">=</span> <span class="s1">&#39;outer&#39;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stockDict</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">stockIndicators</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">samePlot</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">keyCol</span><span class="p">)</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div></div>
+
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Chiang
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
