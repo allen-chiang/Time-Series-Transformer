@@ -1,0 +1,397 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>time_series_transform.test.test_stock_base &mdash; Time-Series-Transform 0.0.6 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Time-Series-Transform
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Time Series Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_documentation.html">Api Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Time-Series-Transform</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>time_series_transform.test.test_stock_base</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for time_series_transform.test.test_stock_base</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">time_series_transform.stock_transform.base</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">time_series_transform.stock_transform.stock_extractor</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">time_series_transform.stock_transform.util</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1"># test marks</span>
+<span class="c1">#   - stock_extractor</span>
+<span class="c1">#   - portfolio_extractor</span>
+<span class="c1">#   - util</span>
+<span class="c1">#   - base </span>
+<span class="c1"># Quck command to run mark: pytest -v -m &lt;mark&gt;</span>
+
+<div class="viewcode-block" id="Test_stock_extractor"><a class="viewcode-back" href="../../../docs/source/time_series_transform.test.html#time_series_transform.test.test_stock_base.Test_stock_extractor">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">stock_extractor</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;yahoo&quot;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;stockSymbol&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;aapl&quot;</span><span class="p">,</span> <span class="s2">&quot;0050.TW&quot;</span><span class="p">,</span> <span class="s2">&quot;MSFT&quot;</span><span class="p">])</span>
+<span class="k">class</span> <span class="nc">Test_stock_extractor</span><span class="p">:</span>
+<div class="viewcode-block" id="Test_stock_extractor.test_extractor_get_stock_period"><a class="viewcode-back" href="../../../docs/source/time_series_transform.test.html#time_series_transform.test.test_stock_base.Test_stock_extractor.test_extractor_get_stock_period">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;periods&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;1y&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="s2">&quot;1d&quot;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_extractor_get_stock_period</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stockSymbol</span><span class="p">,</span> <span class="n">periods</span><span class="p">,</span><span class="n">source</span><span class="p">):</span>
+        <span class="n">se</span> <span class="o">=</span> <span class="n">Stock_Extractor</span><span class="p">(</span><span class="n">stockSymbol</span><span class="p">,</span><span class="n">source</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">se</span><span class="o">.</span><span class="n">get_stock_period</span><span class="p">(</span><span class="n">periods</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Stock</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Test_stock_extractor.test_extractor_get_stock_date"><a class="viewcode-back" href="../../../docs/source/time_series_transform.test.html#time_series_transform.test.test_stock_base.Test_stock_extractor.test_extractor_get_stock_date">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;dates&quot;</span><span class="p">,</span> <span class="p">[[</span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2020-07-01&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2020-03-01&quot;</span><span class="p">],[</span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2020-02-01&quot;</span><span class="p">]])</span>
+    <span class="k">def</span> <span class="nf">test_extractor_get_stock_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">stockSymbol</span><span class="p">,</span> <span class="n">dates</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+        <span class="n">se</span> <span class="o">=</span> <span class="n">Stock_Extractor</span><span class="p">(</span><span class="n">stockSymbol</span><span class="p">,</span><span class="n">source</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">se</span><span class="o">.</span><span class="n">get_stock_date</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dates</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Stock</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="Test_portfolio_extractor"><a class="viewcode-back" href="../../../docs/source/time_series_transform.test.html#time_series_transform.test.test_stock_base.Test_portfolio_extractor">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">portoflio_extractor</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;yahoo&quot;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;stockList&quot;</span><span class="p">,</span> <span class="p">[[</span><span class="s2">&quot;aapl&quot;</span><span class="p">,</span> <span class="s2">&quot;0050.TW&quot;</span><span class="p">,</span> <span class="s2">&quot;MSFT&quot;</span><span class="p">],[],[</span><span class="s2">&quot;aapl&quot;</span><span class="p">]])</span>
+<span class="k">class</span> <span class="nc">Test_portfolio_extractor</span><span class="p">:</span>
+<div class="viewcode-block" id="Test_portfolio_extractor.test_extractor_get_portfolio_period"><a class="viewcode-back" href="../../../docs/source/time_series_transform.test.html#time_series_transform.test.test_stock_base.Test_portfolio_extractor.test_extractor_get_portfolio_period">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;periods&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;1y&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="s2">&quot;1d&quot;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_extractor_get_portfolio_period</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stockList</span><span class="p">,</span> <span class="n">periods</span><span class="p">,</span><span class="n">source</span><span class="p">):</span>
+        <span class="n">se</span> <span class="o">=</span> <span class="n">Portfolio_Extractor</span><span class="p">(</span><span class="n">stockList</span><span class="p">,</span><span class="n">source</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">se</span><span class="o">.</span><span class="n">get_portfolio_period</span><span class="p">(</span><span class="n">periods</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Portfolio</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Test_portfolio_extractor.test_extractor_get_portfolio_date"><a class="viewcode-back" href="../../../docs/source/time_series_transform.test.html#time_series_transform.test.test_stock_base.Test_portfolio_extractor.test_extractor_get_portfolio_date">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;dates&quot;</span><span class="p">,</span> <span class="p">[[</span><span class="s2">&quot;2020-06-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2020-07-01&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2020-02-01&quot;</span><span class="p">],[</span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">]])</span>
+    <span class="k">def</span> <span class="nf">test_extractor_get_portfolio_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">stockList</span><span class="p">,</span> <span class="n">dates</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+        <span class="n">pe</span> <span class="o">=</span> <span class="n">Portfolio_Extractor</span><span class="p">(</span><span class="n">stockList</span><span class="p">,</span><span class="n">source</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pe</span><span class="o">.</span><span class="n">get_portfolio_date</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dates</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Portfolio</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Test_stock_util"><a class="viewcode-back" href="../../../docs/source/time_series_transform.test.html#time_series_transform.test.test_stock_base.Test_stock_util">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">util</span>
+<span class="k">class</span> <span class="nc">Test_stock_util</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Test_stock_util.arr"><a class="viewcode-back" href="../../../docs/source/time_series_transform.test.html#time_series_transform.test.test_stock_base.Test_stock_util.arr">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span> <span class="o">=</span> <span class="s1">&#39;class&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">arr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">se</span> <span class="o">=</span> <span class="n">Stock_Extractor</span><span class="p">(</span><span class="s1">&#39;aapl&#39;</span><span class="p">,</span><span class="s1">&#39;yahoo&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get_stock_period</span><span class="p">(</span><span class="s1">&#39;1y&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([[],</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">],</span> <span class="n">se</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="Test_stock_util.test_macd"><a class="viewcode-back" href="../../../docs/source/time_series_transform.test.html#time_series_transform.test.test_stock_base.Test_stock_util.test_macd">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;return_diff&quot;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span><span class="kc">False</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_macd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">return_diff</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">ar</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">:</span>
+            <span class="n">macd_res</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">oriLen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ar</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">oriLen</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+                    <span class="n">macd_res</span> <span class="o">=</span> <span class="n">macd</span><span class="p">(</span><span class="n">ar</span><span class="p">,</span> <span class="n">return_diff</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">macd_res</span> <span class="o">=</span> <span class="n">macd</span><span class="p">(</span><span class="n">ar</span><span class="p">,</span> <span class="n">return_diff</span><span class="p">)</span>
+                <span class="n">outKeys</span> <span class="o">=</span> <span class="p">[]</span>
+                
+                <span class="k">if</span> <span class="n">return_diff</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">macd_res</span><span class="p">)</span> <span class="o">==</span> <span class="n">oriLen</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">col</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">macd_res</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                    <span class="n">outKeys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;EMA_12&#39;</span><span class="p">,</span> <span class="s1">&#39;EMA_26&#39;</span><span class="p">,</span> <span class="s1">&#39;DIF&#39;</span><span class="p">,</span> <span class="s1">&#39;DEM&#39;</span><span class="p">,</span> <span class="s1">&#39;OSC&#39;</span><span class="p">]</span>
+                    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">outKeys</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">outKeys</span><span class="p">:</span>
+                        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">macd_res</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+                        <span class="k">assert</span> <span class="n">macd_res</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">oriLen</span> </div>
+
+
+<div class="viewcode-block" id="Test_stock_util.test_stochastic_oscillator"><a class="viewcode-back" href="../../../docs/source/time_series_transform.test.html#time_series_transform.test.test_stock_base.Test_stock_util.test_stochastic_oscillator">[docs]</a>    <span class="k">def</span> <span class="nf">test_stochastic_oscillator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">ar</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">:</span>
+            <span class="n">so_res</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">oriLen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ar</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">oriLen</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+                    <span class="n">so_res</span> <span class="o">=</span> <span class="n">stochastic_oscillator</span><span class="p">(</span><span class="n">ar</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">so_res</span> <span class="o">=</span> <span class="n">stochastic_oscillator</span><span class="p">(</span><span class="n">ar</span><span class="p">)</span>
+                <span class="n">col</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">so_res</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                <span class="n">outKeys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;k_val&#39;</span><span class="p">,</span> <span class="s1">&#39;d_val&#39;</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">outKeys</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">outKeys</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">so_res</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+                    <span class="k">assert</span> <span class="n">so_res</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">oriLen</span></div>
+
+<div class="viewcode-block" id="Test_stock_util.test_rsi"><a class="viewcode-back" href="../../../docs/source/time_series_transform.test.html#time_series_transform.test.test_stock_base.Test_stock_util.test_rsi">[docs]</a>    <span class="k">def</span> <span class="nf">test_rsi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">ar</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">:</span>
+            <span class="n">rsi_res</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">oriLen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ar</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">oriLen</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+                    <span class="n">rsi_res</span> <span class="o">=</span> <span class="n">rsi</span><span class="p">(</span><span class="n">ar</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rsi_res</span> <span class="o">=</span> <span class="n">rsi</span><span class="p">(</span><span class="n">ar</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">rsi_res</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+                <span class="k">assert</span> <span class="n">rsi_res</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">oriLen</span></div>
+
+<div class="viewcode-block" id="Test_stock_util.test_williams_r"><a class="viewcode-back" href="../../../docs/source/time_series_transform.test.html#time_series_transform.test.test_stock_base.Test_stock_util.test_williams_r">[docs]</a>    <span class="k">def</span> <span class="nf">test_williams_r</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">ar</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">:</span>
+            <span class="n">w_res</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">oriLen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ar</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">oriLen</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+                    <span class="n">w_res</span> <span class="o">=</span> <span class="n">williams_r</span><span class="p">(</span><span class="n">ar</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">w_res</span> <span class="o">=</span> <span class="n">williams_r</span><span class="p">(</span><span class="n">ar</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">w_res</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+                <span class="k">assert</span> <span class="n">w_res</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">oriLen</span></div></div>
+
+<div class="viewcode-block" id="Test_base"><a class="viewcode-back" href="../../../docs/source/time_series_transform.test.html#time_series_transform.test.test_stock_base.Test_base">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">base</span>
+<span class="k">class</span> <span class="nc">Test_base</span><span class="p">:</span>
+<div class="viewcode-block" id="Test_base.stock_test_sample"><a class="viewcode-back" href="../../../docs/source/time_series_transform.test.html#time_series_transform.test.test_stock_base.Test_base.stock_test_sample">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span> <span class="o">=</span> <span class="s1">&#39;class&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">stock_test_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">se</span> <span class="o">=</span> <span class="n">Stock_Extractor</span><span class="p">(</span><span class="s1">&#39;aapl&#39;</span><span class="p">,</span><span class="s1">&#39;yahoo&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get_stock_period</span><span class="p">(</span><span class="s1">&#39;1y&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">se</span></div>
+
+<div class="viewcode-block" id="Test_base.portfolio_test_sample"><a class="viewcode-back" href="../../../docs/source/time_series_transform.test.html#time_series_transform.test.test_stock_base.Test_base.portfolio_test_sample">[docs]</a>    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span> <span class="o">=</span> <span class="s1">&#39;class&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">portfolio_test_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">stockList</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;aapl&quot;</span><span class="p">,</span> <span class="s2">&quot;0050.TW&quot;</span><span class="p">,</span> <span class="s2">&quot;MSFT&quot;</span><span class="p">]</span>
+        <span class="n">pe</span> <span class="o">=</span> <span class="n">Portfolio_Extractor</span><span class="p">(</span><span class="n">stockList</span><span class="p">,</span><span class="s1">&#39;yahoo&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get_portfolio_period</span><span class="p">(</span><span class="s1">&#39;1y&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pe</span></div>
+    
+<div class="viewcode-block" id="Test_base.test_stock_make_technical_indicator"><a class="viewcode-back" href="../../../docs/source/time_series_transform.test.html#time_series_transform.test.test_stock_base.Test_base.test_stock_make_technical_indicator">[docs]</a>    <span class="k">def</span> <span class="nf">test_stock_make_technical_indicator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">stock_test_sample</span><span class="p">):</span>
+        <span class="n">colNames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">]</span>
+        <span class="n">funcList</span> <span class="o">=</span> <span class="p">[</span><span class="n">macd</span><span class="p">,</span> <span class="n">stochastic_oscillator</span><span class="p">,</span> <span class="n">rsi</span><span class="p">,</span> <span class="n">williams_r</span><span class="p">]</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;macd&#39;</span><span class="p">,</span> <span class="s1">&#39;so&#39;</span><span class="p">,</span> <span class="s1">&#39;rsi&#39;</span><span class="p">,</span> <span class="s1">&#39;williams&#39;</span><span class="p">]</span>
+
+        <span class="n">outkeyList</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">stock_test_sample</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">colNames</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">funcList</span><span class="p">)):</span>
+                <span class="n">stock_test_sample</span><span class="o">.</span><span class="n">make_technical_indicator</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">funcList</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;macd&quot;</span><span class="p">:</span>
+                    <span class="n">outkeyList</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;macd_EMA_12&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;macd_EMA_26&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;macd_DIF&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;macd_DEM&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;macd_OSC&#39;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;so&#39;</span><span class="p">:</span>
+                    <span class="n">outkeyList</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;so_k_val&#39;</span><span class="p">,</span><span class="s1">&#39;so_d_val&#39;</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span> 
+                    <span class="n">outkeyList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">stock_test_sample</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">outkeyList</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="Test_base.test_portfolio_get_portfolio_dataFrame"><a class="viewcode-back" href="../../../docs/source/time_series_transform.test.html#time_series_transform.test.test_stock_base.Test_base.test_portfolio_get_portfolio_dataFrame">[docs]</a>    <span class="k">def</span> <span class="nf">test_portfolio_get_portfolio_dataFrame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">portfolio_test_sample</span><span class="p">):</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">portfolio_test_sample</span><span class="o">.</span><span class="n">get_portfolio_dataFrame</span><span class="p">()</span>
+        <span class="n">outkeyList</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="s1">&#39;Open&#39;</span><span class="p">,</span><span class="s1">&#39;High&#39;</span><span class="p">,</span><span class="s1">&#39;Low&#39;</span><span class="p">,</span><span class="s1">&#39;Close&#39;</span><span class="p">,</span><span class="s1">&#39;Volume&#39;</span><span class="p">,</span><span class="s1">&#39;Dividends&#39;</span><span class="p">,</span><span class="s1">&#39;Stock Splits&#39;</span><span class="p">,</span><span class="s1">&#39;symbol&#39;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">outkeyList</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Test_base.test_portfolio_make_technical_indicator"><a class="viewcode-back" href="../../../docs/source/time_series_transform.test.html#time_series_transform.test.test_stock_base.Test_base.test_portfolio_make_technical_indicator">[docs]</a>    <span class="k">def</span> <span class="nf">test_portfolio_make_technical_indicator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">portfolio_test_sample</span><span class="p">):</span>
+        <span class="n">colNames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">]</span>
+        <span class="n">funcList</span> <span class="o">=</span> <span class="p">[</span><span class="n">macd</span><span class="p">,</span> <span class="n">stochastic_oscillator</span><span class="p">,</span> <span class="n">rsi</span><span class="p">,</span> <span class="n">williams_r</span><span class="p">]</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;macd&#39;</span><span class="p">,</span> <span class="s1">&#39;so&#39;</span><span class="p">,</span> <span class="s1">&#39;rsi&#39;</span><span class="p">,</span> <span class="s1">&#39;williams&#39;</span><span class="p">]</span>
+
+        <span class="n">outkeyList</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">portfolio_test_sample</span><span class="o">.</span><span class="n">get_portfolio_dataFrame</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">colNames</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">funcList</span><span class="p">)):</span>
+                <span class="n">portfolio_test_sample</span><span class="o">.</span><span class="n">make_technical_indicator</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">funcList</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">50</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;macd&quot;</span><span class="p">:</span>
+                    <span class="n">outkeyList</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;macd_EMA_12&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;macd_EMA_26&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;macd_DIF&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;macd_DEM&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;macd_OSC&#39;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;so&#39;</span><span class="p">:</span>
+                    <span class="n">outkeyList</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;so_k_val&#39;</span><span class="p">,</span><span class="s1">&#39;so_d_val&#39;</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span> 
+                    <span class="n">outkeyList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">portfolio_test_sample</span><span class="o">.</span><span class="n">get_portfolio_dataFrame</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">outkeyList</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Test_base.test_portfolio_remove_different_date"><a class="viewcode-back" href="../../../docs/source/time_series_transform.test.html#time_series_transform.test.test_stock_base.Test_base.test_portfolio_remove_different_date">[docs]</a>    <span class="k">def</span> <span class="nf">test_portfolio_remove_different_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">se</span> <span class="o">=</span> <span class="n">Stock_Extractor</span><span class="p">(</span><span class="s1">&#39;MSFT&#39;</span><span class="p">,</span> <span class="s1">&#39;yahoo&#39;</span><span class="p">)</span>
+        <span class="n">stock</span> <span class="o">=</span> <span class="n">se</span><span class="o">.</span><span class="n">get_stock_date</span><span class="p">(</span><span class="s1">&#39;2020-06-24&#39;</span><span class="p">,</span> <span class="s1">&#39;2020-07-23&#39;</span><span class="p">)</span>
+        <span class="n">se2</span> <span class="o">=</span> <span class="n">Stock_Extractor</span><span class="p">(</span><span class="s1">&#39;aapl&#39;</span><span class="p">,</span> <span class="s1">&#39;yahoo&#39;</span><span class="p">)</span>
+        <span class="n">stock2</span> <span class="o">=</span> <span class="n">se2</span><span class="o">.</span><span class="n">get_stock_date</span><span class="p">(</span><span class="s1">&#39;2020-07-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2020-07-23&#39;</span><span class="p">)</span>
+
+        <span class="n">pt</span> <span class="o">=</span> <span class="n">Portfolio</span><span class="p">([</span><span class="n">stock</span><span class="p">,</span><span class="n">stock2</span><span class="p">])</span>
+        <span class="n">pt</span><span class="o">.</span><span class="n">remove_different_date</span><span class="p">()</span>
+
+        <span class="k">assert</span> <span class="n">pt</span><span class="o">.</span><span class="n">get_portfolio_dataFrame</span><span class="p">()</span><span class="o">.</span><span class="n">Date</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;2020-07-01&#39;</span>
+        <span class="k">assert</span> <span class="n">pt</span><span class="o">.</span><span class="n">get_portfolio_dataFrame</span><span class="p">()</span><span class="o">.</span><span class="n">Date</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;2020-07-23&#39;</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Chiang
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

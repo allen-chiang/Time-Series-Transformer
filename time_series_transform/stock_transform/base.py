@@ -70,7 +70,7 @@ class Stock (object):
         else:
             raise ValueError("invalid format value")
 
-    def make_technical_indicator(self,colNames,labelName,indicatorFunction,*args,**kwargs):
+    def make_technical_indicator(self,colName,labelName,indicatorFunction,*args,**kwargs):
         """
         make_technical_indicator applies the indicatorFunctions to the given column
         
@@ -83,10 +83,10 @@ class Stock (object):
         indicatorFunction: dict
             dict of the indicator functions
         """
-        if isinstance(colNames,list):
-            arr = self.df[colNames]
+        if isinstance(colName,list):
+            arr = self.df[colName]
         else:
-            arr = self.df[colNames].values
+            arr = self.df[colName].values
         indicator = indicatorFunction(arr,*args,**kwargs)
         if isinstance(indicator,dict) or isinstance(indicator,pd.DataFrame):
             for k in indicator:
@@ -95,9 +95,6 @@ class Stock (object):
             self.df[f'{labelName}'] = indicator
         return self
 
-    def get_stock_by_date(self):
-        # todo 
-        pass
 
     
 

@@ -23,7 +23,7 @@ steps:
 
 - script: |
     python -m pip install --upgrade pip
-    pip install -r requirement.txt
+    pip install -r requirements.txt
     pip install .
   displayName: 'Install dependencies'
 
@@ -31,3 +31,17 @@ steps:
     pip install pytest pytest-azurepipelines
     pytest --pyargs time_series_transform/test
   displayName: 'pytest'
+
+- script: |
+    python setup.py sdist
+  displayName: 'Artifact creation'
+
+- task: CopyFiles@2
+  inputs:
+    targetFolder: $(Build.ArtifactStagingDirectory)
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'dist'
+    publishLocation: 'Container'

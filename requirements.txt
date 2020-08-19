@@ -1,0 +1,17 @@
+numpy
+pandas
+tensorflow
+pyarrow
+yfinance
+scipy
+PyWavelets
+Sphinx
+rinohtype
+nbsphinx
+plotly >= 4.8.0
+pytest-dependency
+scipy
+matplotlib
+sklearn
+joblib
+setuptools
