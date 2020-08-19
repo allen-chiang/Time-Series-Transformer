@@ -32,7 +32,7 @@ class Pandas_Time_Series_Tensor_Dataset(object):
         pandasFrame : pandas DataFrame
             input data
         config : dict, optional
-            the configuration to trainsform pandas dataFrame, by default {}
+            the configuration to transform pandas dataFrame, by default {}
         """
         self.df = pandasFrame
         if config is None:
