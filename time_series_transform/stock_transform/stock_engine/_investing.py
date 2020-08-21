@@ -1,0 +1,104 @@
+import investpy
+from datetime import date, timedelta
+from dateutil.relativedelta import *
+
+class investing(object):
+
+    """
+    Fetching finance data from investing.com
+    
+    API Document: 
+    - https://investpy.readthedocs.io/introduction.html
+    ---
+    Require:
+    - investpy
+
+    ---
+    Citation:
+        author = Alvaro Bartolome del Canto,
+        title = investpy - Financial Data Extraction from Investing.com with Python,
+        year = 2018-2020,
+        publisher = GitHub,
+        journal = GitHub Repository,
+        published = https://github.com/alvarobartt/investpy
+    """
+
+    
+    def __init__(self,symbol, country, product_type = 'stocks'):
+        self.symbol = symbol
+        self.country = country
+        self.product_type = product_type
+    
+
+    # interface function implementations
+    def getHistoricalByPeriod(self, period):
+        end_date = date.today()
+        t_delta = {
+            'd' : 0,
+            'mo' : 0,
+            'y' : 0
+        }
+        if period == 'max':
+            t_delta['y'] = 100
+        elif period == 'ytd':
+            t_delta['y'] = 1
+        else:
+            indx = -1
+            if 'mo' in period:
+                indx = -2
+            
+            t_delta[period[indx:]] = int(period[:indx])
+
+        start_date = end_date - relativedelta(years=t_delta['y'], months=t_delta['mo'], days=t_delta['d'])
+        return self.getHistoricalData(start_date.strftime("%d/%m/%Y"), end_date.strftime("%d/%m/%Y"))
+
+    def getHistoricalByRange(self, start_date, end_date):
+        return self.getHistoricalData(start_date, end_date)
+
+    def getAdditionalInfo(self):
+        info_dict = {
+            'company_info' : self.getCompanyInfo(),
+            'financial_statement': self.getFinancialSummary()
+        }
+
+        schedule_dict = {
+            'dividend': self.getDividends()
+        }
+
+        data = {
+            'info': info_dict,
+            'schedule': schedule_dict
+            
+        }
+        return data
+
+
+
+    def getAllStocks(self):
+        return investpy.stocks.get_stocks()
+    
+    def getAllCountries(self):
+        return investpy.stocks.get_stock_countries()
+
+    def getCountryStockOverview(self, as_json = False, n_results = 100):
+        return investpy.stocks.get_stocks_overview(self.country, as_json, n_results)
+
+
+    def getCompanyInfo(self, as_json = False):
+        return investpy.stocks.get_stock_information(self.symbol, self.country, as_json = as_json)
+    
+    def getHistoricalData(self, start_date, end_date, as_json = False, order = 'ascending', interval = 'Daily'):
+        return investpy.stocks.get_stock_historical_data(self.symbol, self.country, start_date, end_date, as_json, order, interval)
+
+    def getFinancialSummary(self, summary_type = 'income_statement', period = 'annual'):
+        try:
+            return investpy.stocks.get_stock_financial_summary(self.symbol, self.country, summary_type, period)
+        except:
+            return None
+        
+    
+    def getDividends(self):
+        try:
+            return investpy.stocks.get_stock_dividends(self.symbol, self.country)
+        except:
+            return None
