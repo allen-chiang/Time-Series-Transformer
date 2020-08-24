@@ -1,4 +1,81 @@
+import copy
 import numpy as np
+import pandas as pd
+
+
+class Time_Series_Data(object):
+
+    def __init__(self):
+        self.time_length = 0
+        self._data = {}
+        self._time_index= {}
+        self._labels = {}
+
+    @property
+    def data(self):
+        return self._data
+
+    def set_data(self,inputData,label):
+        if len(inputData) != self.time_length:
+            raise ValueError('input data has different time length')
+        self._data[label] = inputData
+
+    @property
+    def labels(self):
+        return self._labels
+
+    def set_labels(self,inputData,label):
+        if len(inputData) != self.time_length:
+            raise ValueError('input data has different time length')
+        self._labels[label] = inputData
+
+    @property
+    def time_index(self):
+        return self._time_index
+
+    def set_time_index(self,inputData,label):
+        self._time_index = {}
+        self._time_index[label] = inputData
+        self.time_length = len(inputData)
+
+    def _get_dictionary_list_info(self,dictionary,indexSlice,label):
+        res = {}
+        if label is None:
+            for i in dictionary:
+                res[i] = dictionary[i][indexSlice]
+        else:
+            res[label] = dictionary[label][indexSlice]
+        return res
+
+    def __getitem__(self,ix):
+        tmpInfo = self.labels
+        tmpInfo.update(self.data)
+        info = {}
+        if isinstance(ix,tuple):
+            t = ix[0]
+            info.update(self._get_dictionary_list_info(self.time_index,t,None))
+            for q in ix[1]:
+                info.update(self._get_dictionary_list_info(tmpInfo,t,q))
+        else:
+            info.update(self._get_dictionary_list_info(self.time_index,ix,None))
+            info.update(self._get_dictionary_list_info(tmpInfo,ix,None))
+        return info
+
+    def sort(self,ascending):
+        
+        pass
+
+    def make_dataframe(self):
+        pass
+
+
+    def __repr__(self):
+        return super().__repr__()
+
+class Time_Series_Data_Collection(object):
+    def __init__(self):
+        super().__init__()
+
 
 class Time_Series_Tensor(object):
     def __init__(self,data,dtype,name):
