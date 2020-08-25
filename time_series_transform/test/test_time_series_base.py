@@ -6,7 +6,8 @@ from time_series_transform.transform_core_api.base import *
 
 
 
-class Time_Series_Base:
+class Test_time_series_base:
+
     def test_time_series_base_length(self):
         tsd = Time_Series_Data()
         tsd.set_time_index([1,2,3],'time')
@@ -20,24 +21,33 @@ class Time_Series_Base:
         tsd.set_time_index([1,2,3],'time')
         tsd.set_data([4,5,6],'d1')
         tsd.set_labels(['a','b','c'],'l1')
-        assert tsd[:,['d1']] == {'d1':[4,5,6],'time':[1,2,3]}
-        assert tsd[:,['d1','l1']] == {'d1':[4,5,6],'l1':['a','b','c'],'time':[1,2,3]}
+        np.testing.assert_array_equal(tsd[:,['d1']]['d1'] ,np.array([4,5,6]))
 
     def test_time_series_base_sort(self):
         tsd = Time_Series_Data()
         tsd.set_time_index([1,3,2],'time')
         tsd.set_data([4,5,6],'d1')
-        assert tsd.sort(True)[:,['d1']] == [4,6,5]
-        assert tsd.sort(False)[:,['d1']] == [5,6,4]
+        np.testing.assert_array_equal(tsd.sort(True)[:,['d1']]['d1'],np.array([4,6,5]))
+        np.testing.assert_array_equal(tsd.sort(False)[:,['d1']]['d1'],np.array([5,6,4]))
 
     def test_time_series_base_make_frame(self):
         compareDf = pd.DataFrame({
-            'time':[1,3,2],
-            'd1':[4,5,6]
+            'time':np.array([1,3,2]),
+            'd1':np.array([4,5,6])
         })
         tsd = Time_Series_Data()
         tsd.set_time_index([1,3,2],'time')
         tsd.set_data([4,5,6],'d1')
         assert tsd.make_dataframe().equals(compareDf)
 
-        
+    def test_time_series_base_transform(self):
+        tsd = Time_Series_Data()
+        tsd.set_time_index([1,3,2],'time')
+        tsd.set_data([4,5,6],'d1')
+        tsd.sort()
+        tsd.transform('d1','res',lambda x: x*2)
+        np.testing.assert_array_equal(tsd[:,['res']]['res'] , np.array([8,12,10]))
+        tsd.transform('d1','res',lambda x: pd.Series(x*2))
+        np.testing.assert_array_equal(tsd[:,['res']]['res'] , np.array([8,12,10]))
+        tsd.transform('d1','res',lambda x: pd.DataFrame({'res':x*2}))
+        np.testing.assert_array_equal(tsd[:,['res_res']]['res_res'] , np.array([8,12,10]))

@@ -15,28 +15,33 @@ class Time_Series_Data(object):
     def data(self):
         return self._data
 
-    def set_data(self,inputData,label):
-        if len(inputData) != self.time_length:
-            raise ValueError('input data has different time length')
-        self._data[label] = inputData
-
     @property
     def labels(self):
         return self._labels
-
-    def set_labels(self,inputData,label):
-        if len(inputData) != self.time_length:
-            raise ValueError('input data has different time length')
-        self._labels[label] = inputData
 
     @property
     def time_index(self):
         return self._time_index
 
+    def set_data(self,inputData,label):
+        if len(inputData) != self.time_length:
+            raise ValueError('input data has different time length')
+        self._data[label] = np.array(inputData)
+        return self
+
+
+    def set_labels(self,inputData,label):
+        if len(inputData) != self.time_length:
+            raise ValueError('input data has different time length')
+        self._labels[label] = np.array(inputData)
+        return self
+
+
     def set_time_index(self,inputData,label):
         self._time_index = {}
-        self._time_index[label] = inputData
+        self._time_index[label] = np.array(inputData)
         self.time_length = len(inputData)
+        return self
 
     def _get_dictionary_list_info(self,dictionary,indexSlice,label):
         res = {}
@@ -65,9 +70,9 @@ class Time_Series_Data(object):
         descending = 1-ascending
         ixList = sorted(range(len(sortingList)), key=lambda k: sortingList[k],reverse = descending)
         ordered_list = [targetList[i] for i in ixList]
-        return ordered_list
+        return np.array(ordered_list)
 
-    def sort(self,ascending):
+    def sort(self,ascending=True):
         sortingList = list(self.time_index.values())[0]
         for data in self.data:
             self.data[data] = self._reorder_list(sortingList,self.data[data],ascending)
@@ -84,9 +89,49 @@ class Time_Series_Data(object):
         dfDict.update(self.data)
         return pd.DataFrame(dfDict)
 
-    def transform(self,colName,newName,func,*args,**kwargs):
-        pass
+    def _single_transform(self,colName,func,*args,**kwargs):
+        if colName in self.data:
+            arr = self.data[colName]
+            return func(arr,*args,**kwargs),'data'
+        else:
+            arr = self.labels[colName]
+            return func(arr,*args,**kwargs),'labels'
 
+    def _list_transform(self,inputList,func,*args,**kwargs):
+        arrDict = {}
+        outputType = 'label'
+        for col in inputList:
+            if col in self.data:
+                arrDict[col] = self.data[col]
+                outputType='data'
+            else:
+                arrDict[col] = self.labels[col]
+        arrDict = func(arrDict,*args,**kwargs)
+        return arrDict,outputType
+
+    def transform(self,inputLabels,newName,func,*args,**kwargs):
+        # transform
+        if isinstance(inputLabels,list):
+            arr,outputType = self._list_transform(inputLabels,func,*args,**kwargs)
+        else:
+            arr,outputType = self._single_transform(inputLabels,func,*args,**kwargs)
+
+        # organize into dict
+        if isinstance(arr,pd.DataFrame):
+            arr = arr.to_dict(orient='list')
+            arr = { f"{newName}_{k}": v for k, v in arr.items() }
+        elif isinstance(arr,list) or isinstance(arr,np.ndarray):
+            arr = {newName:np.array(arr)}   
+        elif isinstance(arr,pd.Series):
+            arr = {newName:arr.values}
+
+        if outputType == 'data':
+            self._data.update(arr)
+        else:
+            self._labels.update(arr)
+        # update existing dict
+        return self
+        
 
     def __repr__(self):
         dfDict = {}
