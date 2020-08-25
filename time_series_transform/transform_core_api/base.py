@@ -1,7 +1,7 @@
 import copy
 import numpy as np
 import pandas as pd
-
+import pprint
 
 class Time_Series_Data(object):
 
@@ -61,20 +61,47 @@ class Time_Series_Data(object):
             info.update(self._get_dictionary_list_info(tmpInfo,ix,None))
         return info
 
+    def _reorder_list(self,sortingList,targetList,ascending):
+        descending = 1-ascending
+        ixList = sorted(range(len(sortingList)), key=lambda k: sortingList[k],reverse = descending)
+        ordered_list = [targetList[i] for i in ixList]
+        return ordered_list
+
     def sort(self,ascending):
-        
-        pass
+        sortingList = list(self.time_index.values())[0]
+        for data in self.data:
+            self.data[data] = self._reorder_list(sortingList,self.data[data],ascending)
+        for label in self.labels:
+            self.labels[label] = self._reorder_list(sortingList,self.labels[label],ascending)
+        for time in self.time_index:
+            self.time_index[time] = self._reorder_list(sortingList,self.time_index[time],ascending)
+        return self
 
     def make_dataframe(self):
+        dfDict = {}
+        dfDict.update(self.time_index)
+        dfDict.update(self.labels)
+        dfDict.update(self.data)
+        return pd.DataFrame(dfDict)
+
+    def transform(self,colName,newName,func,*args,**kwargs):
         pass
 
 
     def __repr__(self):
-        return super().__repr__()
+        dfDict = {}
+        dfDict.update(self.time_index)
+        dfDict.update(self.labels)
+        dfDict.update(self.data)
+        return str(dfDict)
+
 
 class Time_Series_Data_Collection(object):
     def __init__(self):
         super().__init__()
+
+
+
 
 
 class Time_Series_Tensor(object):

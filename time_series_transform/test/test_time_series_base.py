@@ -24,7 +24,20 @@ class Time_Series_Base:
         assert tsd[:,['d1','l1']] == {'d1':[4,5,6],'l1':['a','b','c'],'time':[1,2,3]}
 
     def test_time_series_base_sort(self):
-        assert 1 == 0
+        tsd = Time_Series_Data()
+        tsd.set_time_index([1,3,2],'time')
+        tsd.set_data([4,5,6],'d1')
+        assert tsd.sort(True)[:,['d1']] == [4,6,5]
+        assert tsd.sort(False)[:,['d1']] == [5,6,4]
 
     def test_time_series_base_make_frame(self):
-        assert 1 == 0
+        compareDf = pd.DataFrame({
+            'time':[1,3,2],
+            'd1':[4,5,6]
+        })
+        tsd = Time_Series_Data()
+        tsd.set_time_index([1,3,2],'time')
+        tsd.set_data([4,5,6],'d1')
+        assert tsd.make_dataframe().equals(compareDf)
+
+        
