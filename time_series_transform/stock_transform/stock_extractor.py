@@ -1,4 +1,6 @@
 import pandas as pd
+import threading
+import numpy as np
 from time_series_transform.stock_transform.base import *
 from time_series_transform.stock_transform.stock_engine._yahoo_stock import yahoo_stock
 from time_series_transform.stock_transform.stock_engine._investing import investing
@@ -19,7 +21,7 @@ class Stock_Extractor(object):
         engine : str
             engine used for data extraction
         """
-        self.client = self._get_extractor(engine)(symbol, **kwargs)
+        self.client = self._get_extractor(engine)(symbol, *args, **kwargs)
         self.symbol = symbol
         self.stock = None
 
@@ -124,7 +126,7 @@ class Stock_Extractor(object):
         return stock_data
 
 class Portfolio_Extractor(object):
-    def __init__(self,symbolList,engine):
+    def __init__(self,symbolList,engine, *args, **kwargs):
         """
         Portfolio_Extractor extracts data of the given symbolList
         using the selected engine   
@@ -139,8 +141,10 @@ class Portfolio_Extractor(object):
         self.engine = engine
         self.symbolList = symbolList
         self.portfolio = None
+        self.args = args
+        self.kwargs = kwargs
 
-    def get_portfolio_period(self,period):
+    def get_portfolio_period(self,period, n_threads= 8):
         """
         get_portfolio_period extracts the list of stock
         by the given period
@@ -150,6 +154,9 @@ class Portfolio_Extractor(object):
         period : str
             period of the data
             for example, 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max 
+        
+        n_threads : int
+            number of thread of multi-thread processing
 
         Returns
         -------
@@ -157,14 +164,28 @@ class Portfolio_Extractor(object):
             portfolio data of the given stock list 
         """
         stockList = []
-        for symbol in self.symbolList:
-            stock_data = Stock_Extractor(symbol, self.engine).get_stock_period(period)
-            stockList.append(stock_data)
+        tasks = []
+        if len(self.symbolList) < n_threads:
+            n_threads = len(self.symbolList)
 
+        bins = np.array_split(self.symbolList, n_threads)
+        def get_stock_data(self, symbolList, period):
+            for symbol in symbolList:
+                stock_data = Stock_Extractor(symbol, self.engine, *self.args, **self.kwargs).get_stock_period(period)
+                stockList.append(stock_data)
+
+        for bn in bins:
+            thread = threading.Thread(target=get_stock_data, args= [self, bn, period])
+            tasks.append(thread)
+            thread.start()
+
+        for task in tasks:
+            task.join()
+        
         self.portfolio = Portfolio(stockList)
         return self.portfolio
 
-    def get_portfolio_date(self,start_date, end_date):
+    def get_portfolio_date(self,start_date, end_date, n_threads = 8):
         """
         get_portfolio_date extracts the list of stock
         by the date period
@@ -177,6 +198,9 @@ class Portfolio_Extractor(object):
 
         end_date : str
             end of the data
+        
+        n_threads : int
+            number of thread of multi-thread processing
 
         Returns
         -------
@@ -184,13 +208,27 @@ class Portfolio_Extractor(object):
             portfolio data of the given stock list 
         """
         stockList = []
-        for symbol in self.symbolList:
-            stock_data = Stock_Extractor(symbol, self.engine)
-            stock_data = stock_data.get_stock_date(start_date, end_date)
-            stockList.append(stock_data)
+        tasks = []
+        if len(self.symbolList) < n_threads:
+            n_threads = len(self.symbolList)
 
+        bins = np.array_split(self.symbolList, n_threads)
+        def get_stock_data(self, symbolList, start_date, end_date):
+            for symbol in symbolList:
+                stock_data = Stock_Extractor(symbol, self.engine, *self.args, **self.kwargs).get_stock_date(start_date, end_date)
+                stockList.append(stock_data)
+
+        for bn in bins:
+            thread = threading.Thread(target=get_stock_data, args= [self, bn, start_date, end_date])
+            tasks.append(thread)
+            thread.start()
+
+        for task in tasks:
+            task.join()
+        
         self.portfolio = Portfolio(stockList)
         return self.portfolio
+
 
 
 
