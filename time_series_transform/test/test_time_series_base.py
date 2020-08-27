@@ -51,3 +51,15 @@ class Test_time_series_base:
         np.testing.assert_array_equal(tsd[:,['res']]['res'] , np.array([8,12,10]))
         tsd.transform('d1','res',lambda x: pd.DataFrame({'res':x*2}))
         np.testing.assert_array_equal(tsd[:,['res_res']]['res_res'] , np.array([8,12,10]))
+
+
+class Test_Time_Series_Collection:
+
+    def test_time_series_collection_slice(self):
+        pass
+
+    def test_time_series_transform(self):
+        pass
+
+    def test_time_series_remove_different_date(self):
+        pass

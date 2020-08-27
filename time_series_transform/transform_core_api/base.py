@@ -2,6 +2,9 @@ import copy
 import numpy as np
 import pandas as pd
 import pprint
+from joblib import Parallel, delayed
+from collections import ChainMap
+from collections import Counter
 
 class Time_Series_Data(object):
 
@@ -140,12 +143,70 @@ class Time_Series_Data(object):
         dfDict.update(self.data)
         return str(dfDict)
 
-
-class Time_Series_Data_Collection(object):
-    def __init__(self):
+class Time_Series_Data_Colleciton(object):
+    def __init__(self,time_series_data,time_seriesIx,categoryIx):
         super().__init__()
+        self._time_series_data_collection = self._expand_time_series_data(time_series_data,categoryIx)
+        self._time_series_Ix = time_seriesIx
+        self._categoryIx = categoryIx
 
 
+    @property
+    def time_series_data_collection(self):
+        return self._time_series_data_collection
+
+
+    def _expand_time_series_data(self,time_series_data,categoryIx):
+        dct = {}
+        for i in list(set(time_series_data[:,[categoryIx]][categoryIx])):
+            ixList = np.where(time_series_data[:,[categoryIx]][categoryIx]==i)
+            tmp = {}
+            tmp = Time_Series_Data()
+            for t in time_series_data.time_index:
+                tmp.set_time_index(time_series_data.time_index[t][ixList],t)
+            for d in time_series_data.data:
+                tmp.set_data(time_series_data.data[d][ixList],d)
+            for l in time_series_data.labels:
+                if l == categoryIx:
+                    continue
+                tmp.set_data(time_series_data.labels[l][ixList],l)
+            dct[i] = tmp
+        return dct
+
+
+    def _parallel_transform(self,category,time_series_data,inputLabels,newName,func,*args,**kwargs):
+        return {category:time_series_data.transform(inputLabels,newName,func,*args,**kwargs)}
+
+
+    def transform(self,inputLabels,newName,func,n_jobs =1,verbose = 0,backend='loky',*args,**kwargs):
+        dctList= Parallel(n_jobs=n_jobs,verbose = verbose, backend=backend)(delayed(self._parallel_transform)(
+            c,self.time_series_data_collection[c],inputLabels,newName,func,*args,**kwargs
+            ) for c in self.time_series_data_collection)
+        self._time_series_data_collection = dict(ChainMap(*dctList))
+        return self
+
+    def remove_different_time_index(self):
+        timeix = []
+        for i in self.time_series_data_collection:
+            timeix.extend(self.time_series_data_collection[i][:][self._time_series_Ix])
+        timeix = Counter(timeix)
+        timeCol = [k for k,v in timeix.items() if v == len(self.time_series_data_collection)]    
+        for i in self.time_series_data_collection:
+            ix = np.isin(self.time_series_data_collection[i][:][self._time_series_Ix],timeCol)
+            self.time_series_data_collection[i] = self.time_series_data_collection[i][ix]
+        return self
+
+    def sort(self):
+        pass
+
+    def __repr__(self):
+        return super().__repr__()
+
+    def __getitem__(self,ix):
+        pass
+
+    def make_dataframe(self):
+        pass
 
 
 
