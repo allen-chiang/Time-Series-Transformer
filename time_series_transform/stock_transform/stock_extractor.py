@@ -163,25 +163,7 @@ class Portfolio_Extractor(object):
         portfolio
             portfolio data of the given stock list 
         """
-        stockList = []
-        tasks = []
-        if len(self.symbolList) < n_threads:
-            n_threads = len(self.symbolList)
-
-        bins = np.array_split(self.symbolList, n_threads)
-        def get_stock_data(self, symbolList, period):
-            for symbol in symbolList:
-                stock_data = Stock_Extractor(symbol, self.engine, *self.args, **self.kwargs).get_stock_period(period)
-                stockList.append(stock_data)
-
-        for bn in bins:
-            thread = threading.Thread(target=get_stock_data, args= [self, bn, period])
-            tasks.append(thread)
-            thread.start()
-
-        for task in tasks:
-            task.join()
-        
+        stockList = self._get_stock_list_multi(n_threads,'get_stock_period', [period])
         self.portfolio = Portfolio(stockList)
         return self.portfolio
 
@@ -207,29 +189,37 @@ class Portfolio_Extractor(object):
         portfolio
             portfolio data of the given stock list 
         """
-        stockList = []
-        tasks = []
-        if len(self.symbolList) < n_threads:
-            n_threads = len(self.symbolList)
-
-        bins = np.array_split(self.symbolList, n_threads)
-        def get_stock_data(self, symbolList, start_date, end_date):
-            for symbol in symbolList:
-                stock_data = Stock_Extractor(symbol, self.engine, *self.args, **self.kwargs).get_stock_date(start_date, end_date)
-                stockList.append(stock_data)
-
-        for bn in bins:
-            thread = threading.Thread(target=get_stock_data, args= [self, bn, start_date, end_date])
-            tasks.append(thread)
-            thread.start()
-
-        for task in tasks:
-            task.join()
-        
+        stockList = self._get_stock_list_multi(n_threads,'get_stock_date', [start_date, end_date])
         self.portfolio = Portfolio(stockList)
         return self.portfolio
 
+    def _get_stock_list_multi(self, n_threads, func, time_val):
+            stockList = []
+            tasks = []
+            if len(self.symbolList) < n_threads:
+                n_threads = len(self.symbolList)
 
+            bins = np.array_split(self.symbolList, n_threads)
 
+            for bn in bins:
+                thread = threading.Thread(target=self._get_stock_data, args= [stockList, bn, func, time_val])
+                tasks.append(thread)
+                thread.start()
+
+            for task in tasks:
+                task.join()
+            return stockList
+
+    def _get_stock_data(self, stockList, symbolList, func, time_val, *args, **kwargs):
+        for symbol in symbolList:
+            stock_data = Stock_Extractor(symbol, self.engine, *self.args, **self.kwargs)
+            extract_func = getattr(stock_data,func)
+            if len(time_val) >1:
+                stock_data = extract_func(time_val[0], time_val[1])
+            else:
+                stock_data = extract_func(time_val[0])
+            
+            stockList.append(stock_data)
+        return stockList
 
 
