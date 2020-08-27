@@ -58,8 +58,11 @@ class Test_Time_Series_Collection:
     def test_time_series_collection_slice(self):
         pass
 
-    def test_time_series_transform(self):
+    def test_time_series_collection_transform(self):
         pass
 
-    def test_time_series_remove_different_date(self):
+    def test_time_series_collection_remove_different_date(self):
+        pass
+
+    def test_time_series_collection_sort(self):
         pass

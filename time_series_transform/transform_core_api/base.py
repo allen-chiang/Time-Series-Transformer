@@ -196,19 +196,26 @@ class Time_Series_Data_Colleciton(object):
             self.time_series_data_collection[i] = self.time_series_data_collection[i][ix]
         return self
 
-    def sort(self):
-        pass
+    def sort(self,ascending=True,categoryList=None):
+        if categoryList is None:
+            categoryList = list(self._time_series_data_collection.keys())
+        for i in categoryList:
+            self._time_series_data_collection[i] =self._time_series_data_collection[i].sort(ascending)
+        return self
 
     def __repr__(self):
-        return super().__repr__()
+        return str(self._time_series_data_collection)
 
     def __getitem__(self,ix):
+        return self._time_series_data_collection[ix]
+
+    def make_dataframe(self,expandCategory,expandTimeIx):
         pass
 
-    def make_dataframe(self):
-        pass
 
 
+
+######## Depreciated ###########
 
 class Time_Series_Tensor(object):
     def __init__(self,data,dtype,name):
