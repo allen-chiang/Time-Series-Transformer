@@ -85,8 +85,12 @@ class investing(object):
 
 
     def getCompanyInfo(self, as_json = False):
-        return investpy.stocks.get_stock_information(self.symbol, self.country, as_json = as_json)
-    
+        data = investpy.stocks.get_stock_information(self.symbol, self.country, as_json = as_json)
+        data = data.set_index('Stock Symbol')
+        data = data.to_dict('r')
+        return data[0]
+
+
     def getHistoricalData(self, start_date, end_date, as_json = False, order = 'ascending', interval = 'Daily'):
         return investpy.stocks.get_stock_historical_data(self.symbol, self.country, start_date, end_date, as_json, order, interval)
 

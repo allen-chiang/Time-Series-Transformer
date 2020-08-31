@@ -175,7 +175,9 @@ class Portfolio(object):
 
 
     def remove_different_date(self):
-        # todo one day short
+        """
+        remove_different_date remove non-common date of the dataframe
+        """
         timeCol = {}
         for i in self.stockDict:
             for v in self.stockDict[i].dateRange:
@@ -189,7 +191,34 @@ class Portfolio(object):
             timeSeriesCol = self.stockDict[i].timeSeriesCol
             self.stockDict[i].df = self.stockDict[i].df[self.stockDict[i].df[timeSeriesCol].isin(timeCol)]
 
-
+    def weight_calculate(self,weights = {}, colName = 'Close'):
+        if len(weights) == 0 or sum(weights.values()) == 0:
+            for st in self.stockDict:
+                stock = self.stockDict[st]
+                info = stock.additionalInfo['info']['company_info']
+                outstanding_col = [i for i in list(info.keys()) if 'Outstanding' in i][0]
+                outstanding_shares = info[outstanding_col]
+                weights[stock.symbol] = outstanding_shares
+        
+        total_w = sum(weights.values())
+        self.remove_different_date()
+        ret = {}
+        for stock in self.stockDict:
+            stockList.append(stock)
+            df = self.stockDict[stock].df
+            df = df.set_index('Date')
+            ret[stock + '_' + colName] = df[colName]
+        pd_ret = pd.DataFrame(ret)
+        indx = []
+        for col in pd_ret.columns:
+            symbol = col[:col.find('_'+colName)]
+            if symbol in weights:
+                if len(indx) == 0:
+                    indx.extend(pd_ret[col] * weights[symbol]/total_w)
+                else:
+                    indx += pd_ret[col] * weights[symbol] / total_w
+        pd_ret['weighted_index'] = indx
+        return pd_ret
 
     def plot(self,stockIndicators, keyCol = 'Default' ,samePlot=False,*args,**kwargs):
         """
