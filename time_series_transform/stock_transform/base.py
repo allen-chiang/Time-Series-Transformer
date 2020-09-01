@@ -192,31 +192,53 @@ class Portfolio(object):
             self.stockDict[i].df = self.stockDict[i].df[self.stockDict[i].df[timeSeriesCol].isin(timeCol)]
 
     def weight_calculate(self,weights = {}, colName = 'Close'):
+        """
+        generate weight index with default to weight by market cap
+
+        Parameters
+        ----------
+        weights : dict, optional
+            dictionary of the weight, by default {}
+            for example, {'aapl':1, 'msft':1} will return average 
+        colName : str, optional
+            column name to be calculated, by default 'Close'
+
+        Returns
+        -------
+        pandas dataframe
+            columns of the original data and the index
+        """
+        self.remove_different_date()
         if len(weights) == 0 or sum(weights.values()) == 0:
             for st in self.stockDict:
                 stock = self.stockDict[st]
                 info = stock.additionalInfo['info']['company_info']
                 outstanding_col = [i for i in list(info.keys()) if 'Outstanding' in i][0]
                 outstanding_shares = info[outstanding_col]
-                weights[stock.symbol] = outstanding_shares
-        
+                data = outstanding_shares*stock.df[colName]
+                data = data.reset_index()[colName]
+                weights[stock.symbol] = data
+
         total_w = sum(weights.values())
-        self.remove_different_date()
         ret = {}
+        indx = []
+        pd_indx = 0
         for stock in self.stockDict:
-            stockList.append(stock)
             df = self.stockDict[stock].df
             df = df.set_index('Date')
             ret[stock + '_' + colName] = df[colName]
+            
+            pd_indx = df[colName].index
+            weight_data = df[colName].reset_index()[colName] * weights[stock]/total_w
+
+            if len(indx) == 0:
+                indx.extend(weight_data)
+            else:
+                indx += weight_data
+
         pd_ret = pd.DataFrame(ret)
-        indx = []
-        for col in pd_ret.columns:
-            symbol = col[:col.find('_'+colName)]
-            if symbol in weights:
-                if len(indx) == 0:
-                    indx.extend(pd_ret[col] * weights[symbol]/total_w)
-                else:
-                    indx += pd_ret[col] * weights[symbol] / total_w
+        indx = pd.DataFrame(indx).set_index(pd_indx)
+
         pd_ret['weighted_index'] = indx
         return pd_ret
 
