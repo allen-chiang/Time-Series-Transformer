@@ -277,7 +277,7 @@ class Portfolio(object):
                     df = pd.merge(df,tmp, on = [keyCol], how = 'outer')
 
             else:
-                self.stockDict[i].plot(stockIndicators[i], *args,**kwargs)
+                self.stockDict[i].plot(stockIndicators[i], title = i+ " plot", *args,**kwargs)
         
         if samePlot:
             df = df.set_index(keyCol)
