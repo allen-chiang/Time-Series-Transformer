@@ -136,13 +136,29 @@ class Time_Series_Data(object):
         return self
         
 
-    def __repr__(self):
+    def _get_all_info(self):
         dfDict = {}
         dfDict.update(self.time_index)
         dfDict.update(self.labels)
-        dfDict.update(self.data)
-        return str(dfDict)
+        dfDict.update(self.data)        
+        return dfDict
 
+    def __repr__(self):
+        return str(self._get_all_info())
+
+    def __eq__(self, other):
+        left = self._get_all_info()
+        right = other._get_all_info()
+        if len(left) != len(right):
+            return False
+        for i in left:
+            if i not in right:
+                return False
+            left[i] = list(left[i])
+            right[i] = list(right[i])
+        return left == right
+
+        
 class Time_Series_Data_Colleciton(object):
     def __init__(self,time_series_data,time_seriesIx,categoryIx):
         super().__init__()
@@ -196,6 +212,30 @@ class Time_Series_Data_Colleciton(object):
             self.time_series_data_collection[i] = self.time_series_data_collection[i][ix]
         return self
 
+    def pad_time_index(self):
+        timeix = []
+        for i in self.time_series_data_collection:
+            timeix.extend(self.time_series_data_collection[i][:][self._time_series_Ix]) 
+        timeix = sorted(list(set(timeix)))
+        for i in self.time_series_data_collection:
+            tmp_time = Time_Series_Data()
+            tmp_time.set_time_index(timeix,self._time_series_Ix)
+            tmp = self.time_series_data_collection[i]
+            for t in tmp.time_index:
+                posList= np.isin(timeix,tmp.time_index[t])
+            for d in tmp.data:
+                nanList = np.empty(len(timeix))
+                nanList[:] = np.nan
+                nanList[posList] = tmp.data[d]
+                tmp_time.set_data(nanList,d)
+            for l in tmp.labels:
+                nanList = np.empty(len(timeix))
+                nanList[:] = np.nan
+                nanList[posList] = tmp.labels[l]
+                tmp_time.set_labels(nanList,l)
+            self._time_series_data_collection[i] = tmp_time
+        return self
+
     def sort(self,ascending=True,categoryList=None):
         if categoryList is None:
             categoryList = list(self._time_series_data_collection.keys())
@@ -209,10 +249,54 @@ class Time_Series_Data_Colleciton(object):
     def __getitem__(self,ix):
         return self._time_series_data_collection[ix]
 
+    def _expand_dict_category(self,collectionDict):
+        time_series = Time_Series_Data()
+        for i in collectionDict:
+            tmp =collectionDict[i]
+            tmp.sort()
+            for t in tmp.time_index:
+                time_series.set_time_index(tmp.time_index[t],t)
+            for d in tmp.data:
+                time_series.set_data(tmp.data[d],f'{d}_{i}')
+            for l in tmp.labels:
+                time_series.set_labels(tmp.labels[l],f'{l}_{i}')
+            
+        return {'1':time_series}
+
+    def _expand_dict_date(self,collectionDict):
+        dct = {}
+        for k in collectionDict:
+            tmp = {}
+            a = collectionDict[k]
+            for i in range(a.time_length):
+                timeIx = list(a.time_index.keys())[0]
+                for t in a[i]:
+                    if t in a.time_index:
+                        continue
+                    if  not isinstance(a[i][t],list) or not isinstance(a[i][t],np.ndarray):
+                        tmp[f"{t}_{a[i][timeIx]}"]=[a[i][t]]
+                    else:
+                        tmp[f"{t}_{a[i][timeIx]}"]=a[i][t]
+            dct[k] = tmp
+        return dct
+
+
     def make_dataframe(self,expandCategory,expandTimeIx):
-        pass
-
-
+        resDf = pd.DataFrame()
+        transCollection = copy.copy(self.time_series_data_collection)
+        if expandCategory:
+            transCollection = self._expand_dict_category(transCollection)
+        if expandTimeIx:
+            transCollection = self._expand_dict_date(transCollection)
+        for i in transCollection:
+            if expandTimeIx == False:
+                tmp = pd.DataFrame(transCollection[i][:])
+            else:
+                tmp = pd.DataFrame(transCollection[i])
+            if expandCategory == False:
+                tmp[self._categoryIx] = i
+            resDf = resDf.append(tmp)
+        return resDf
 
 
 ######## Depreciated ###########
