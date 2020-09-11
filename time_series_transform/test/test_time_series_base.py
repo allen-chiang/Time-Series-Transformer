@@ -64,5 +64,11 @@ class Test_Time_Series_Collection:
     def test_time_series_collection_remove_different_date(self):
         pass
 
+    def test_time_series_collection_padding_date(self):
+        pass
+
     def test_time_series_collection_sort(self):
+        pass
+
+    def test_time_series_transform_make_dataframe(self):
         pass

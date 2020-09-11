@@ -348,4 +348,48 @@ class Pandas_Time_Series_Panel_Dataset(object):
 
     def __repr__(self):
         return repr(self.df)
-        
+
+
+class Time_Series_Transformer(object):
+
+    def __init__(self,data,timeSeriesCol,mainCategoryCol):
+        super().__init__()
+
+    def _setup_time_series_data(self,data,timeSeriesCol):
+        self.time_series = Time_Series_Data()
+        if timeSeriesCol is None:
+            pass
+        else:
+            pass
+        self.time_series.set_data()
+
+    def _setup_time_series_collection(self,data,timeSeriesCol,mainCategoryCol):
+        pass
+    
+    def transform(self):
+        pass
+
+    def make_lag(self):
+        pass
+
+    def make_lead(self):
+        pass
+
+    def make_sequence(self):
+        pass
+
+    def remove_different_category_time(self):
+        pass
+
+    def padd_different_category_time(self):
+        pass
+
+    def to_arrow(self):
+        pass
+    
+    def to_tfDataset(self):
+        pass
+
+    @classmethod
+    def from_Pandas(cls, parameter_list):
+        return cls
