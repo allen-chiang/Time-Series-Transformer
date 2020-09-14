@@ -6,7 +6,6 @@ import copy
 from time_series_transform.transform_core_api.base import *
 
 
-
 class Test_time_series_base:
 
     def test_time_series_base_length(self):

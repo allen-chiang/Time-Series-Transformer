@@ -166,7 +166,6 @@ class Time_Series_Data_Colleciton(object):
         self._time_series_Ix = time_seriesIx
         self._categoryIx = categoryIx
 
-
     @property
     def time_series_data_collection(self):
         return self._time_series_data_collection
