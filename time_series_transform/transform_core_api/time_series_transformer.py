@@ -354,17 +354,22 @@ class Time_Series_Transformer(object):
 
     def __init__(self,data,timeSeriesCol,mainCategoryCol):
         super().__init__()
+        self.time_series_data = self._setup_time_series_data(data,timeSeriesCol,mainCategoryCol)
 
-    def _setup_time_series_data(self,data,timeSeriesCol):
-        self.time_series = Time_Series_Data()
+    def _setup_time_series_data(self,data,timeSeriesCol,mainCategoryCol):
+        tsd = Time_Series_Data()
         if timeSeriesCol is None:
-            pass
+            raise KeyError("time series index is required")
+        tsd.set_time_index(data[timeSeriesCol],timeSeriesCol)
+        for i in data:
+            if i == timeSeriesCol:
+                continue
+            tsd.set_data(data[i],i)
+        if mainCategoryCol is None:
+            return tsd
         else:
-            pass
-        self.time_series.set_data()
-
-    def _setup_time_series_collection(self,data,timeSeriesCol,mainCategoryCol):
-        pass
+            tsc = Time_Series_Data_Colleciton(tsd,timeSeriesCol,mainCategoryCol)
+            return tsc
     
     def transform(self):
         pass
@@ -390,6 +395,66 @@ class Time_Series_Transformer(object):
     def to_tfDataset(self):
         pass
 
+    def __repr__(self):
+        return super().__repr__()
+
+
     @classmethod
     def from_Pandas(cls, parameter_list):
         return cls
+
+    @classmethod
+    def from_parquet(cls):
+        pass
+
+
+
+
+
+def rolling_window(arr, window):
+    """
+    rolling_window create an rolling window tensor
+    
+    this function create a rolling window numpy tensor given its original sequence and window size
+    
+    Parameters
+    ----------
+    arr : numpy 1D array
+        the original data sequence
+    window : int
+        aggregation window size
+    
+    Returns
+    -------
+    numpy 2d array
+        the rolling window array
+    """
+    shape = arr.shape[:-1] + (arr.shape[-1] - window + 1, window)
+    strides = arr.strides + (arr.strides[-1],)
+    return np.lib.stride_tricks.as_strided(arr, shape=shape, strides=strides)
+
+def identity_window(arr,batchLen):
+    """
+    identity_window create an 2d numpy array with same items
+    
+    Parameters
+    ----------
+    arr : numpy array
+        the original sequence
+    batchLen : int
+        window size
+    
+    Returns
+    -------
+    numpy 2d array
+        2d array with same item corresponding to original sequence
+    """
+    res = None
+    for value in arr:
+        tmp = np.full((batchLen),value)
+        tmp = tmp.reshape(-1,1)
+        if res is None:
+            res = tmp
+        else:
+            res = np.hstack([res,tmp])
+    return res
