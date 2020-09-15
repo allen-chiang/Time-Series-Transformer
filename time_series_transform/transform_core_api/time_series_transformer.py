@@ -355,6 +355,8 @@ class Time_Series_Transformer(object):
     def __init__(self,data,timeSeriesCol,mainCategoryCol):
         super().__init__()
         self.time_series_data = self._setup_time_series_data(data,timeSeriesCol,mainCategoryCol)
+        self.timeSeriesCol = timeSeriesCol
+        self._isCollection = [True if mainCategoryCol is not None else False][0]
 
     def _setup_time_series_data(self,data,timeSeriesCol,mainCategoryCol):
         tsd = Time_Series_Data()
@@ -371,11 +373,39 @@ class Time_Series_Transformer(object):
             tsc = Time_Series_Data_Colleciton(tsd,timeSeriesCol,mainCategoryCol)
             return tsc
     
-    def transform(self):
+    def transform(self,inputLabels,newName,func,n_jobs =1,verbose = 0,backend='loky',*args,**kwargs):
+        if isinstance(self.time_series_data,Time_Series_Data_Colleciton):
+            self.time_series_data = self.time_series_data.transform(inputLabels,newName,func,n_jobs =1,verbose = 0,backend='loky',*args,**kwargs)
+        else:
+            self.time_series_data = self.time_series_data.transform(inputLabels,newName,func,*args,**kwargs)
+        return self
+
+
+    def make_lag(self,inputLabels,lagNum,suffix=None,fillMissing=np.nan):
+        if self._isCollection:
+            for i in self.time_series_data:
+                for j in inputLabels:
+                    res = np.empty((lagNum))
+                    res[:] = fillMissing
+                    res = res.tolist()
+                    res.extend(self.time_series_data[i][:-lagNum,[j]][j])
+                    labelName = [f'{j}{suffix}{str(lagNum)}' if suffix is not None else f"{j}{str(lagNum)}"]
+                    self.time_series_data[i].set_data(res,labelName)                
+        else:
+            for i in inputLabels:
+                res = np.empty((lagNum))
+                res[:] = fillMissing
+                res = res.tolist()
+                lagValues = self.time_series_data[:-lagNum,[i]][i]
+                res.extend(lagValues)
+                labelName = [f'{i}{suffix}{str(lagNum)}' if suffix is not None else f"{i}{str(lagNum)}"][0]
+                self.time_series_data.set_data(res,labelName)
+        return self
+
+                
+    def make_label(self):
         pass
 
-    def make_lag(self):
-        pass
 
     def make_lead(self):
         pass
@@ -386,7 +416,7 @@ class Time_Series_Transformer(object):
     def remove_different_category_time(self):
         pass
 
-    def padd_different_category_time(self):
+    def pad_different_category_time(self):
         pass
 
     def to_arrow(self):
