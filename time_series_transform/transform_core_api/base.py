@@ -90,6 +90,8 @@ class Time_Series_Data(object):
         dfDict.update(self.time_index)
         dfDict.update(self.labels)
         dfDict.update(self.data)
+        for i in dfDict:
+            dfDict[i] = dfDict[i].tolist()
         return pd.DataFrame(dfDict)
 
     def _single_transform(self,colName,func,*args,**kwargs):
