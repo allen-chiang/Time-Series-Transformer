@@ -7,6 +7,7 @@ from collections import ChainMap
 from joblib import Parallel, delayed
 import plotly.graph_objects as go
 from time_series_transform.transform_core_api.util import *
+from time_series_transform.transform_core_api.base import *
 
 class Stock (object):
     def __init__(self,symbol,data,additionalInfo=None,timeSeriesCol = 'Date'):
