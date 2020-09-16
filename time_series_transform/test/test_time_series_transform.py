@@ -232,7 +232,7 @@ class Test_time_series_util:
         arr = np.array([1,2,3,4,5])
         np.testing.assert_array_almost_equal(moving_average(arr,3),[np.nan,np.nan,2.0,3.0,4.0])
 
-    def teest_rfft_transform(self):
+    def test_rfft_transform(self):
         arr = np.array([1,2,3,4,5])
         rft = rfft_transform(arr)
         assert len(arr) == len(rft)
@@ -247,3 +247,29 @@ class Test_time_series_util:
         arr = np.array([1,2,3,4,5,-6])
         wave = wavelet_denoising(arr)
         assert len(arr) == len(wave)
+
+
+    class Test_time_series_transform:
+        def test_from_pandas(self):
+            pass
+
+        def test_from_numpy(self):
+            pass
+
+        def test_from_dict(self):
+            pass
+
+        def test_to_tfDataset(self):
+            pass
+
+        def test_make_lag(self):
+            pass
+
+        def test_make_lead(self):
+            pass
+
+        def test_transform(self):
+            pass
+
+        def test_make_sequence(self):
+            pass

@@ -90,6 +90,8 @@ class Time_Series_Data(object):
         dfDict.update(self.time_index)
         dfDict.update(self.labels)
         dfDict.update(self.data)
+        for i in dfDict:
+            dfDict[i] = dfDict[i].tolist()
         return pd.DataFrame(dfDict)
 
     def _single_transform(self,colName,func,*args,**kwargs):
@@ -166,7 +168,6 @@ class Time_Series_Data_Colleciton(object):
         self._time_series_Ix = time_seriesIx
         self._categoryIx = categoryIx
 
-
     @property
     def time_series_data_collection(self):
         return self._time_series_data_collection
@@ -196,31 +197,41 @@ class Time_Series_Data_Colleciton(object):
 
     def transform(self,inputLabels,newName,func,n_jobs =1,verbose = 0,backend='loky',*args,**kwargs):
         dctList= Parallel(n_jobs=n_jobs,verbose = verbose, backend=backend)(delayed(self._parallel_transform)(
-            c,self.time_series_data_collection[c],inputLabels,newName,func,*args,**kwargs
+            c,self._time_series_data_collection[c],inputLabels,newName,func,*args,**kwargs
             ) for c in self.time_series_data_collection)
         self._time_series_data_collection = dict(ChainMap(*dctList))
         return self
 
     def remove_different_time_index(self):
         timeix = []
-        for i in self.time_series_data_collection:
-            timeix.extend(self.time_series_data_collection[i][:][self._time_series_Ix])
+        for i in self._time_series_data_collection:
+            timeix.extend(self._time_series_data_collection[i][:][self._time_series_Ix])
         timeix = Counter(timeix)
-        timeCol = [k for k,v in timeix.items() if v == len(self.time_series_data_collection)]    
-        for i in self.time_series_data_collection:
-            ix = np.isin(self.time_series_data_collection[i][:][self._time_series_Ix],timeCol)
-            self.time_series_data_collection[i] = self.time_series_data_collection[i][ix]
+        timeCol = [k for k,v in timeix.items() if v == len(self._time_series_data_collection)]    
+        for i in self._time_series_data_collection:
+            tmp_time = Time_Series_Data()
+            ix = np.isin(self._time_series_data_collection[i][:][self._time_series_Ix],timeCol)
+            for t in self._time_series_data_collection[i].time_index:
+                tmp = self._time_series_data_collection[i].time_index[t][ix]
+                tmp_time.set_time_index(tmp,t)
+            for d in self._time_series_data_collection[i].data:
+                tmp = self._time_series_data_collection[i].data[d][ix]
+                tmp_time.set_data(tmp,d)
+            for l in self._time_series_data_collection[i].labels:
+                tmp = self._time_series_data_collection[i].labels[l][ix]
+                tmp_time.set_labels(tmp,l)               
+            self._time_series_data_collection[i] = tmp_time
         return self
 
     def pad_time_index(self):
         timeix = []
-        for i in self.time_series_data_collection:
-            timeix.extend(self.time_series_data_collection[i][:][self._time_series_Ix]) 
+        for i in self._time_series_data_collection:
+            timeix.extend(self._time_series_data_collection[i][:][self._time_series_Ix]) 
         timeix = sorted(list(set(timeix)))
-        for i in self.time_series_data_collection:
+        for i in self._time_series_data_collection:
             tmp_time = Time_Series_Data()
             tmp_time.set_time_index(timeix,self._time_series_Ix)
-            tmp = self.time_series_data_collection[i]
+            tmp = self._time_series_data_collection[i]
             for t in tmp.time_index:
                 posList= np.isin(timeix,tmp.time_index[t])
             for d in tmp.data:
@@ -242,6 +253,11 @@ class Time_Series_Data_Colleciton(object):
         for i in categoryList:
             self._time_series_data_collection[i] =self._time_series_data_collection[i].sort(ascending)
         return self
+
+
+    def __iter__(self):
+        for i in self.time_series_data_collection:
+            yield i
 
     def __repr__(self):
         return str(self._time_series_data_collection)
