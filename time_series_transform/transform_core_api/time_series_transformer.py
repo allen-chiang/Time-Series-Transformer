@@ -380,59 +380,84 @@ class Time_Series_Transformer(object):
             self.time_series_data = self.time_series_data.transform(inputLabels,newName,func,*args,**kwargs)
         return self
 
-    def _make_lag(self,data,inputLabel,lagNum,fillMissing):
-        res = np.empty((lagNum))
-        res[:] = fillMissing
-        res = res.tolist()        
-        lagValues = data[:-lagNum]
-        res.extend(lagValues)        
-        return res
+
+    def _transform_wrapper(self,inputLabels,func,suffix,suffixNum,n_jobs,verbose,*args,**kwargs):
+        if self._isCollection:
+            for i in inputLabels:
+                labelName = [f'{i}{suffix}{str(suffixNum)}' if suffix is not None else f"{i}{str(suffixNum)}"][0]
+                self.time_series_data.transform(i,labelName,func,n_jobs =n_jobs,verbose = verbose,*args,**kwargs)
+        else:
+            for i in inputLabels:
+                labelName = [f'{i}{suffix}{str(suffixNum)}' if suffix is not None else f"{i}{str(suffixNum)}"][0]
+                self.time_series_data.transform(i,labelName,make_lag,*args,**kwargs)
+
 
     def make_lag(self,inputLabels,lagNum,suffix=None,fillMissing=np.nan,verbose=0,n_jobs=1):
-        if self._isCollection:
-            for i in inputLabels:
-                labelName = [f'{i}{suffix}{str(lagNum)}' if suffix is not None else f"{i}{str(lagNum)}"][0]
-                self.time_series_data.transform(i,labelName,self._make_lag,n_jobs =n_jobs,verbose = verbose,inputLabel = i,lagNum=lagNum,fillMissing=fillMissing)
-        else:
-            for i in inputLabels:
-                labelName = [f'{i}{suffix}{str(lagNum)}' if suffix is not None else f"{i}{str(lagNum)}"][0]
-                self.time_series_data.transform(i,labelName,self._make_lag,inputLabel = i,lagNum=lagNum,fillMissing=fillMissing)
+        self._transform_wrapper(
+            inputLabels,
+            make_lag,
+            suffix,
+            lagNum,
+            n_jobs,
+            verbose,
+            lagNum=lagNum,
+            fillMissing=fillMissing
+            )
         return self
 
-    def _make_lead(self,data,inputLabel,leadNum,fillMissing):
-        res = np.empty((leadNum))
-        res[:] = fillMissing
-        res = res.tolist()        
-        leadValues = data[leadNum:].tolist()
-        leadValues.extend(res)        
-        return leadValues        
 
     def make_lead(self,inputLabels,leadNum,suffix=None,fillMissing=np.nan,verbose=0,n_jobs=1):
-        if self._isCollection:
-            for i in inputLabels:
-                labelName = [f'{i}{suffix}{str(leadNum)}' if suffix is not None else f"{i}{str(leadNum)}"][0]
-                self.time_series_data.transform(i,labelName,self._make_lead,n_jobs =n_jobs,verbose = verbose,inputLabel = i,leadNum=leadNum,fillMissing=fillMissing)
-        else:
-            for i in inputLabels:
-                labelName = [f'{i}{suffix}{str(leadNum)}' if suffix is not None else f"{i}{str(leadNum)}"][0]
-                self.time_series_data.transform(i,labelName,self._make_lead,inputLabel = i,leadNum=leadNum,fillMissing=fillMissing)
+        self._transform_wrapper(
+            inputLabels,
+            make_lead,
+            suffix,
+            leadNum,
+            n_jobs,
+            verbose,
+            leadNum=leadNum,
+            fillMissing=fillMissing
+            )
         return self
                 
 
     def make_lag_sequence(self,inputLabels,windowSize,suffix=None,fillMissing=np.nan,verbose=0,n_jobs=1):
-        if self._isCollection:
-            for i in inputLabels:
-                labelName = [f'{i}{suffix}{str(windowSize)}' if suffix is not None else f"{i}{str(windowSize)}"][0]
-                self.time_series_data.transform(i,labelName,rolling_window,window=windowSize,fillMissing=fillMissing)
-        else:
-            for i in inputLabels:
-                labelName = [f'{i}{suffix}{str(windowSize)}' if suffix is not None else f"{i}{str(windowSize)}"][0]
-                self.time_series_data.transform(i,labelName,rolling_window,window=windowSize,fillMissing=fillMissing)
+        self._transform_wrapper(
+            inputLabels,
+            lag_sequence,
+            suffix,
+            windowSize,
+            n_jobs,
+            verbose,
+            window=windowSize,
+            fillMissing=fillMissing
+            )
         return self
 
-    def make_lead_sequence(self):
-        pass
+    def make_lead_sequence(self,inputLabels,windowSize,leadNum,suffix=None,fillMissing=np.nan,verbose=0,n_jobs=1):
+        self._transform_wrapper(
+            inputLabels,
+            lead_sequence,
+            suffix,
+            windowSize,
+            n_jobs,
+            verbose,
+            window=windowSize,
+            leadNum=leadNum,
+            fillMissing=fillMissing
+            )
+        return self
 
+    def make_identical_sequence(self,inputLabels,windowSize,suffix=None,verbose=0,n_jobs=1):
+        self._transform_wrapper(
+            inputLabels,
+            identity_window,
+            suffix,
+            windowSize,
+            n_jobs,
+            verbose,
+            window=windowSize
+            )
+        return self
 
     def make_label(self,data,inputLabel,leadNum,fillMissing):
         pass
@@ -463,7 +488,7 @@ class Time_Series_Transformer(object):
 
 
 
-def rolling_window(arr, window,fillMissing=np.nan):
+def lag_sequence(arr, window,fillMissing=np.nan):
     """
     rolling_window create an rolling window tensor
     
@@ -489,28 +514,31 @@ def rolling_window(arr, window,fillMissing=np.nan):
     res = np.vstack([empty,seq])
     return res
 
-def identity_window(arr,batchLen):
-    """
-    identity_window create an 2d numpy array with same items
-    
-    Parameters
-    ----------
-    arr : numpy array
-        the original sequence
-    batchLen : int
-        window size
-    
-    Returns
-    -------
-    numpy 2d array
-        2d array with same item corresponding to original sequence
-    """
-    res = None
-    for value in arr:
-        tmp = np.full((batchLen),value)
-        tmp = tmp.reshape(-1,1)
-        if res is None:
-            res = tmp
-        else:
-            res = np.hstack([res,tmp])
+def identity_window(arr,window):
+    return np.repeat(arr,window).reshape((-1,window))
+
+def make_lead(data,leadNum,fillMissing):
+    res = np.empty((leadNum))
+    res[:] = fillMissing
+    res = res.tolist()        
+    leadValues = data[leadNum:].tolist()
+    leadValues.extend(res)        
+    return leadValues        
+
+def make_lag(data,lagNum,fillMissing):
+    res = np.empty((lagNum))
+    res[:] = fillMissing
+    res = res.tolist()        
+    lagValues = data[:-lagNum]
+    res.extend(lagValues)        
+    return res
+
+def lead_sequence(arr,leadNum,window,fillMissing=np.nan):
+    shape = arr.shape[:-1] + (arr.shape[-1] - window + 1, window)
+    strides = arr.strides + (arr.strides[-1],)
+    seq = np.lib.stride_tricks.as_strided(arr, shape=shape, strides=strides)
+    seq = seq[leadNum:]
+    empty = np.empty(((len(arr)-seq.shape[0],seq.shape[1])))
+    empty[:] = fillMissing
+    res = np.vstack([seq,empty])
     return res
