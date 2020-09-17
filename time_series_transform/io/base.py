@@ -17,32 +17,29 @@ class io_base (object):
     def from_collection(self):
         pass
 
-    def to_collection(self,expandCategory,expandTimeIx,remove):
+    def to_collection(self,expandCategory,expandTimeIx,preprocessType='ignore'):
         transCollection = copy.deepcopy(self.time_series)
-        if remove:
+        if preprocessType == 'remove':
             transCollection = transCollection.remove_different_time_index()
-        else:
+        elif preprocessType == 'pad':
             transCollection = transCollection.pad_time_index()
+        elif preprocessType != 'ignore':
+            raise KeyError('preprocess type must be remove, pad, or ignore')
         if expandCategory:
             transCollection = self._expand_dict_category(transCollection)
         if expandTimeIx:
             transCollection = self._expand_dict_date(transCollection)
-        resList = []
+        res = {}
         for i in transCollection:
             if isinstance(transCollection[i],Time_Series_Data):
                 data = transCollection[i][:]
-                for j in data:
-                    data[j] = data[j].tolist()
             else:
                 data = transCollection[i]
-            resList.append(data)
-        res = {}
-        for i in resList:
-            for key in i:
+            for key in data:
                 if key not in res:
-                    res[key] = i[key]
+                    res[key] = list(data[key])
                 else:
-                    res[key]+= i[key]
+                    res[key] += list(data[key])
         return res
 
 
