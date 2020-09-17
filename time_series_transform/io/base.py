@@ -5,8 +5,6 @@ from time_series_transform.transform_core_api.base import (
     Time_Series_Data_Colleciton
     )
 
-
-
 class io_base (object):
     def __init__(self,time_series,timeSeriesCol,mainCategoryCol):
         self.time_series = copy.deepcopy(time_series)
@@ -25,7 +23,7 @@ class io_base (object):
     def to_single(self,expandTime):
         if expandTime:
             tmp = {"1":self.time_series}
-            return self._expand_dict_date(tmp)
+            return self._expand_dict_date(tmp)['1']
         else:
             dfDict = {}
             dfDict.update(self.time_series.time_index)

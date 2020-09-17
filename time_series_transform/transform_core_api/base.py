@@ -286,7 +286,6 @@ class Time_Series_Data_Colleciton(object):
             self._time_series_data_collection[i] =self._time_series_data_collection[i].sort(ascending)
         return self
 
-
     def __iter__(self):
         for i in self.time_series_data_collection:
             yield i
