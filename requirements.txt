@@ -16,3 +16,4 @@ sklearn
 joblib
 setuptools
 flatten-dict
+investpy
