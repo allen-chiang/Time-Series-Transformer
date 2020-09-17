@@ -18,7 +18,7 @@ class Stock(Time_Series_Data):
         self.timeSeriesCol = timeSeriesCol
         
     def get_dataFrame(self):
-        pass
+        self.make_dataframe()
 
     def plot(self, colName = 'Close', *args, **kwargs):
         pass
