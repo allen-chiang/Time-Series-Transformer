@@ -174,6 +174,8 @@ class Time_Series_Data_Colleciton(object):
         if isinstance(time_series_data,dict):
             if self._check_dict_type(time_series_data):
                 self._time_series_data_collection = time_series_data
+            else:
+                raise ValueError('dict values have to be Time_Series_Data')
         else:
             self._time_series_data_collection = self._expand_time_series_data(time_series_data,categoryIx)
         self._time_series_Ix = time_seriesIx
