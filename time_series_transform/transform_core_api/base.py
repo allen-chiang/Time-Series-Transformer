@@ -171,13 +171,32 @@ class Time_Series_Data(object):
 class Time_Series_Data_Colleciton(object):
     def __init__(self,time_series_data,time_seriesIx,categoryIx):
         super().__init__()
-        self._time_series_data_collection = self._expand_time_series_data(time_series_data,categoryIx)
+        if isinstance(time_series_data,dict):
+            if self._check_dict_type(time_series_data):
+                self._time_series_data_collection = time_series_data
+        else:
+            self._time_series_data_collection = self._expand_time_series_data(time_series_data,categoryIx)
         self._time_series_Ix = time_seriesIx
         self._categoryIx = categoryIx
+
+    def _check_dict_type(self,time_series_data):
+        check = True
+        for i in time_series_data:
+            check = isinstance(time_series_data[i],Time_Series_Data)
+            if check == False:
+                return check
+        return check
 
     @property
     def time_series_data_collection(self):
         return self._time_series_data_collection
+
+    def set_time_series_data_collection(self,ix,time_series_data):
+        if isinstance(time_series_data,Time_Series_Data):
+            self._time_series_data_collection[ix] = time_series_data
+        else:
+            raise ValueError("data must be Time_Series_Data type")
+
 
     def remove(self,key):
         if key in self._time_series_data_collection:
