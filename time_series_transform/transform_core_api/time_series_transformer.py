@@ -9,6 +9,7 @@ from collections import defaultdict
 from time_series_transform.io import *
 from time_series_transform.transform_core_api.base import *
 
+
 class Time_Series_Transformer(object):
 
     def __init__(self,data,timeSeriesCol,mainCategoryCol):

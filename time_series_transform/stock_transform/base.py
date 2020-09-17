@@ -7,6 +7,8 @@ from collections import ChainMap
 from joblib import Parallel, delayed
 import plotly.graph_objects as go
 from time_series_transform.transform_core_api.util import *
+from time_series_transform.transform_core_api.base import *
+from time_series_transform.io import *
 
 class Stock (object):
     def __init__(self,symbol,data,additionalInfo=None,timeSeriesCol = 'Date'):
@@ -25,6 +27,7 @@ class Stock (object):
             time series column name for sorting data
         """
         self.df = data
+        self.data = from_pandas(data, timeSeriesCol)
         self.symbol = symbol
         self.additionalInfo = additionalInfo
         self.timeSeriesCol = timeSeriesCol
@@ -45,7 +48,13 @@ class Stock (object):
         colName : str, optional
             column of the data used for plotting
         """
-        self.df[colName].plot(*args,**kwargs)
+        # self.df[colName].plot(*args,**kwargs)
+        data = self.data[:,[colName]]
+        fig, ax = plt.subplots()
+        ax.plot(data[self.timeSeriesCol], data[colName])
+        plt.xticks(rotation=90)
+        ax.set(**kwargs)
+        plt.show()
 
     def save(self, path, format = "csv",compression = None):
         """
@@ -91,10 +100,17 @@ class Stock (object):
         if isinstance(indicator,dict) or isinstance(indicator,pd.DataFrame):
             for k in indicator:
                 self.df[f'{labelName}_{k}'] = indicator[k]
+
+            for func in indicatorFunction:
+                self.data.transform(colName, labelName, func,*args, **kwargs)
         else:
             self.df[f'{labelName}'] = indicator
+
+            self.data.transform(colName, labelName, indicatorFunction,*args, **kwargs)
         return self
 
+    def get_dataFrame(self):
+        return self.data.make_dataframe()
 
     
 
@@ -175,7 +191,9 @@ class Portfolio(object):
 
 
     def remove_different_date(self):
-        # todo one day short
+        """
+        remove_different_date remove non-common date of the dataframe
+        """
         timeCol = {}
         for i in self.stockDict:
             for v in self.stockDict[i].dateRange:
@@ -189,7 +207,56 @@ class Portfolio(object):
             timeSeriesCol = self.stockDict[i].timeSeriesCol
             self.stockDict[i].df = self.stockDict[i].df[self.stockDict[i].df[timeSeriesCol].isin(timeCol)]
 
+    def weight_calculate(self,weights = {}, colName = 'Close'):
+        """
+        generate weight index with default to weight by market cap
 
+        Parameters
+        ----------
+        weights : dict, optional
+            dictionary of the weight, by default {}
+            for example, {'aapl':1, 'msft':1} will return average 
+        colName : str, optional
+            column name to be calculated, by default 'Close'
+
+        Returns
+        -------
+        pandas dataframe
+            columns of the original data and the index
+        """
+        self.remove_different_date()
+        if len(weights) == 0 or sum(weights.values()) == 0:
+            for st in self.stockDict:
+                stock = self.stockDict[st]
+                info = stock.additionalInfo['info']['company_info']
+                outstanding_col = [i for i in list(info.keys()) if 'Outstanding' in i][0]
+                outstanding_shares = info[outstanding_col]
+                data = outstanding_shares*stock.df[colName]
+                data = data.reset_index()[colName]
+                weights[stock.symbol] = data
+
+        total_w = sum(weights.values())
+        ret = {}
+        indx = []
+        pd_indx = 0
+        for stock in self.stockDict:
+            df = self.stockDict[stock].df
+            df = df.set_index('Date')
+            ret[stock + '_' + colName] = df[colName]
+            
+            pd_indx = df[colName].index
+            weight_data = df[colName].reset_index()[colName] * weights[stock]/total_w
+
+            if len(indx) == 0:
+                indx.extend(weight_data)
+            else:
+                indx += weight_data
+
+        pd_ret = pd.DataFrame(ret)
+        indx = pd.DataFrame(indx).set_index(pd_indx)
+
+        pd_ret['weighted_index'] = indx
+        return pd_ret
 
     def plot(self,stockIndicators, keyCol = 'Default' ,samePlot=False,*args,**kwargs):
         """
@@ -226,7 +293,7 @@ class Portfolio(object):
                     df = pd.merge(df,tmp, on = [keyCol], how = 'outer')
 
             else:
-                self.stockDict[i].plot(stockIndicators[i], *args,**kwargs)
+                self.stockDict[i].plot(stockIndicators[i], title = i+ " plot", *args,**kwargs)
         
         if samePlot:
             df = df.set_index(keyCol)
