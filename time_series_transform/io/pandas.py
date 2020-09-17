@@ -17,3 +17,7 @@ def from_pandas(pandasFrame,timeSeriesCol,mainCategoryCol=None):
     else:
         tsc = Time_Series_Data_Colleciton(tsd,timeSeriesCol,mainCategoryCol)
         return tsc
+
+
+def to_pandas():
+    pass
