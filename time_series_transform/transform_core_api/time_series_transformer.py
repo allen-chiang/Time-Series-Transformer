@@ -9,11 +9,12 @@ from collections import defaultdict
 from time_series_transform.io import *
 from time_series_transform.transform_core_api.base import *
 
+
 class Time_Series_Transformer(object):
 
     def __init__(self,data,timeSeriesCol,mainCategoryCol):
         super().__init__()
-        if isinstance(data,Time_Series_Data) or isinstance(data,Time_Series_Data_Colleciton):
+        if isinstance(data,(Time_Series_Data,Time_Series_Data_Colleciton)):
             self.time_series_data = data
         else:
             self.time_series_data = self._setup_time_series_data(data,timeSeriesCol,mainCategoryCol)
@@ -31,9 +32,8 @@ class Time_Series_Transformer(object):
             tsd.set_data(data[i],i)
         if mainCategoryCol is None:
             return tsd
-        else:
-            tsc = Time_Series_Data_Colleciton(tsd,timeSeriesCol,mainCategoryCol)
-            return tsc
+        tsc = Time_Series_Data_Colleciton(tsd,timeSeriesCol,mainCategoryCol)
+        return tsc
     
     def transform(self,inputLabels,newName,func,n_jobs =1,verbose = 0,backend='loky',*args,**kwargs):
         if isinstance(self.time_series_data,Time_Series_Data_Colleciton):
