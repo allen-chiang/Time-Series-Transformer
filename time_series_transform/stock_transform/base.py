@@ -1,17 +1,15 @@
 import scipy
 import numpy as np
 import pandas as pd
-from numpy.fft import *
 import matplotlib.pyplot as plt
 from collections import ChainMap
 from joblib import Parallel, delayed
 import plotly.graph_objects as go
 from time_series_transform.transform_core_api.util import *
 from time_series_transform.transform_core_api.base import *
-from time_series_transform.io import *
 
-class Stock (object):
-    def __init__(self,symbol,data,additionalInfo=None,timeSeriesCol = 'Date'):
+class Stock(Time_Series_Data):
+    def __init__(self, symbol, data,additionalInfo = None, timeSeriesCol='Date'):
         """
         The class initialize data as a Stock object 
         
@@ -26,20 +24,25 @@ class Stock (object):
         timeSeriesCol: str, optional
             time series column name for sorting data
         """
-        self.df = data
-        self.data = from_pandas(data, timeSeriesCol)
+        if isinstance(data, pd.DataFrame):
+            data = data.to_dict('list')
+        super().__init__(data, {timeSeriesCol:data[timeSeriesCol]})
         self.symbol = symbol
         self.additionalInfo = additionalInfo
         self.timeSeriesCol = timeSeriesCol
-        self.df = self.df.sort_values(timeSeriesCol,ascending = True)
-        self.dateRange = self.df.sort_values(timeSeriesCol,ascending=True)[timeSeriesCol].unique().tolist()
+        
+    def get_dataFrame(self):
+        """
+        get_dataFrame returns the pandas dataframe of the stock data
 
-    @property
-    def dataFrame(self):
-        self.df['symbol'] = self.symbol
-        return self.df
+        Returns
+        -------
+        pandas df
+            stock data
+        """
+        return self.make_dataframe()
 
-    def plot(self,colName = "Close",*args,**kwargs):
+    def plot(self, colName = 'Close', *args, **kwargs):
         """
         plot the stock data of the given column using matplot
         
@@ -48,7 +51,6 @@ class Stock (object):
         colName : str, optional
             column of the data used for plotting
         """
-        # self.df[colName].plot(*args,**kwargs)
         data = self.data[:,[colName]]
         fig, ax = plt.subplots()
         ax.plot(data[self.timeSeriesCol], data[colName])
@@ -56,66 +58,38 @@ class Stock (object):
         ax.set(**kwargs)
         plt.show()
 
-    def save(self, path, format = "csv",compression = None):
+    def make_technical_indicator(self, colNames, labelNames, func, *args, **kwargs):
         """
-        save the main data locally using pandas
+        make_technical_indicator applies the indicatorFunction to the given columns
         
         Parameters
         ----------
-        path : str 
-            path of local directory
-        format : str, optional
-            format of the file
-            valid values: csv, parquet
-        compression: str, optional
-            compression method, by default None
+        colNames : list or str 
+            columns of the data used for the indicator function
+        labelNames : list or str
+            label name to show on the dataframe 
+            if str is given, label will be in the format of {col}_{label}
+        func : function
+            indicator functions
         """
-        data = self.df
-        download_path = path + "/" + self.symbol + "_stock_extract." + format
-        if format == 'csv':
-            data.to_csv(download_path,compression = compression)
-        elif format == 'parquet':
-            data.to_parquet(download_path,compression = compression)
+        if isinstance(colNames, list):
+            if isinstance(labelNames, list):
+                if len(labelNames) != len(colNames):
+                    raise ValueError("labelNames length is different from colNames")
+                else:
+                    for i in range(len(colNames)):
+                        self.transform(colNames[i], labelNames[i], func, *args, **kwargs)
+            else:
+                for col in colNames:
+                    label = f'{col}_{labelNames}'
+                    self.transform(col, label, func,*args, **kwargs)
         else:
-            raise ValueError("invalid format value")
-
-    def make_technical_indicator(self,colName,labelName,indicatorFunction,*args,**kwargs):
-        """
-        make_technical_indicator applies the indicatorFunctions to the given column
+            self.transform(colNames, labelNames, func,*args, **kwargs)
         
-        Parameters
-        ----------
-        colNames : str 
-            column of the data used for the indicator functions
-        labelName : str
-            label name to show on the dataframe
-        indicatorFunction: dict
-            dict of the indicator functions
-        """
-        if isinstance(colName,list):
-            arr = self.df[colName]
-        else:
-            arr = self.df[colName].values
-        indicator = indicatorFunction(arr,*args,**kwargs)
-        if isinstance(indicator,dict) or isinstance(indicator,pd.DataFrame):
-            for k in indicator:
-                self.df[f'{labelName}_{k}'] = indicator[k]
-
-            for func in indicatorFunction:
-                self.data.transform(colName, labelName, func,*args, **kwargs)
-        else:
-            self.df[f'{labelName}'] = indicator
-
-            self.data.transform(colName, labelName, indicatorFunction,*args, **kwargs)
         return self
 
-    def get_dataFrame(self):
-        return self.data.make_dataframe()
-
-    
-
-class Portfolio(object):
-    def __init__(self,stockList):
+class Portfolio(Time_Series_Data_Colleciton):
+    def __init__(self, stockList, timeSeriesCol = 'Date', categoryCol = 'symbol'):
         """
         The class initialize data as a Portfolio object, which stores multiple Stock data
         
@@ -123,25 +97,23 @@ class Portfolio(object):
         ----------
         stockList : list[Stock]
             list of Stock data
-        """
-        self.stockDict = self._get_stock_dict(stockList)
 
-    def _get_stock_dict(self,stockList):
-        """
-        _get_stock_dict transform the stock list into dictionary
-        
-        Parameters
-        ----------
-        stockList : list[Stock] 
-            list of Stock data
-        """
-        stockDict = {}
-        for i in stockList:
-            key = i.symbol
-            stockDict[key] = i
-        return stockDict
+        timeSeriesCol : str
+            time series column
 
-    def make_technical_indicator(self,colName,labelName,indicator,n_jobs =1,verbose = 0,*args,**kwargs):
+        categoryCol : str
+            column of the category
+        """
+        time_series_data = self._get_time_data_from_stock(stockList)
+        super().__init__(time_series_data, timeSeriesCol, categoryCol)
+
+    def _get_time_data_from_stock(self,stockList):
+        res = {}
+        for stock in stockList:
+            res[stock.symbol] = stock
+        return res
+
+    def make_technical_indicator(self,colName, LabelName, indicator, n_job =1, verbose = 0, *args, **kwargs):
         """
         make_technical_indicator applies the indicator to the given column
         
@@ -158,56 +130,30 @@ class Portfolio(object):
         verbose : int
             The verbosity level: if non zero, progress messages are printed, by default 0
         """
-        dctList =  Parallel(n_jobs,verbose = verbose)(delayed(self._stock_technical_indicator)(
-            self.stockDict[i],
-            i,colName,
-            labelName,
-            indicator,
-            *args,
-            **kwargs) for i in self.stockDict)
-        self.stockDict = dict(ChainMap(*dctList))
-
-
-    def _stock_technical_indicator(self,stock,symbol,colName,labelName,indicator,*args,**kwargs):
-        return {symbol:stock.make_technical_indicator(colName,labelName,indicator,*args,**kwargs)}
-
+        self.transform(colName, LabelName, indicator,n_job, verbose, *args, **kwargs)
+        return self
 
     def get_portfolio_dataFrame(self):
+        # todo symbol missing
         """
         get_portfolio_dataFrame return the portfolio overview
         
         Returns
         -------
-        portfolio
+        pandas df
             portfolio dataset including all of the applied indicators
         """
         portfolio = None
-        for ix,v in enumerate(self.stockDict):
+        for ix,v in enumerate(self.time_series_data_collection):
             if ix == 0:
-                portfolio = self.stockDict[v].dataFrame
+                portfolio = self.time_series_data_collection[v].get_dataFrame()
             else:
-                portfolio = portfolio.append(self.stockDict[v].dataFrame)
+                portfolio = portfolio.append(self.time_series_data_collection[v].get_dataFrame())
         return portfolio
+        
 
-
-    def remove_different_date(self):
-        """
-        remove_different_date remove non-common date of the dataframe
-        """
-        timeCol = {}
-        for i in self.stockDict:
-            for v in self.stockDict[i].dateRange:
-                if v not in timeCol:
-                    timeCol[v] = 1
-                else:
-                    timeCol[v]+=1
-        timeCol = [k for k,v in timeCol.items() if v == len(self.stockDict)]
-        for i in self.stockDict:
-            self.stockDict[i].dateRange = timeCol
-            timeSeriesCol = self.stockDict[i].timeSeriesCol
-            self.stockDict[i].df = self.stockDict[i].df[self.stockDict[i].df[timeSeriesCol].isin(timeCol)]
-
-    def weight_calculate(self,weights = {}, colName = 'Close'):
+    def weight_calculate(self,weights={}, colName = 'Close'):
+        # additional info missing
         """
         generate weight index with default to weight by market cap
 
@@ -224,10 +170,10 @@ class Portfolio(object):
         pandas dataframe
             columns of the original data and the index
         """
-        self.remove_different_date()
+        self.remove_different_time_index()
         if len(weights) == 0 or sum(weights.values()) == 0:
-            for st in self.stockDict:
-                stock = self.stockDict[st]
+            for st in self.time_series_data_collection:
+                stock = self.time_series_data_collection[st]
                 info = stock.additionalInfo['info']['company_info']
                 outstanding_col = [i for i in list(info.keys()) if 'Outstanding' in i][0]
                 outstanding_shares = info[outstanding_col]
@@ -239,8 +185,8 @@ class Portfolio(object):
         ret = {}
         indx = []
         pd_indx = 0
-        for stock in self.stockDict:
-            df = self.stockDict[stock].df
+        for stock in self.time_series_data_collection:
+            df = self.time_series_data_collection[stock].df
             df = df.set_index('Date')
             ret[stock + '_' + colName] = df[colName]
             
@@ -276,12 +222,12 @@ class Portfolio(object):
         keyArr = None
         for ix,i in enumerate(stockIndicators):
             if keyCol == 'Default':
-                keyArr = [i for i in range(self.stockDict[i].df.shape[0])]
+                keyArr = [i for i in range(self.time_series_data_collection[i].df.shape[0])]
             else:
-                keyArr = self.stockDict[i].df[keyCol].tolist()
+                keyArr = self.time_series_data_collection[i].df[keyCol].tolist()
             
             if samePlot:
-                tmp = self.stockDict[i].df[stockIndicators[i]]
+                tmp = self.time_series_data_collection[i].df[stockIndicators[i]]
                 tmp.insert(0,keyCol,keyArr)
                 colName = [keyCol]
                 colName.extend([f'{i}_{d}' for d in stockIndicators[i]])
@@ -293,7 +239,7 @@ class Portfolio(object):
                     df = pd.merge(df,tmp, on = [keyCol], how = 'outer')
 
             else:
-                self.stockDict[i].plot(stockIndicators[i], title = i+ " plot", *args,**kwargs)
+                self.time_series_data_collection[i].plot(stockIndicators[i], title = i+ " plot", *args,**kwargs)
         
         if samePlot:
             df = df.set_index(keyCol)
@@ -302,3 +248,5 @@ class Portfolio(object):
         plt.show()
 
 
+
+    
