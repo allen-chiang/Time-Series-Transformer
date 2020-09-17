@@ -8,6 +8,7 @@ from joblib import Parallel, delayed
 import plotly.graph_objects as go
 from time_series_transform.transform_core_api.util import *
 from time_series_transform.transform_core_api.base import *
+from time_series_transform.io import *
 
 class Stock (object):
     def __init__(self,symbol,data,additionalInfo=None,timeSeriesCol = 'Date'):
@@ -26,6 +27,7 @@ class Stock (object):
             time series column name for sorting data
         """
         self.df = data
+        self.data = from_pandas(data, timeSeriesCol)
         self.symbol = symbol
         self.additionalInfo = additionalInfo
         self.timeSeriesCol = timeSeriesCol
@@ -46,7 +48,13 @@ class Stock (object):
         colName : str, optional
             column of the data used for plotting
         """
-        self.df[colName].plot(*args,**kwargs)
+        # self.df[colName].plot(*args,**kwargs)
+        data = self.data[:,[colName]]
+        fig, ax = plt.subplots()
+        ax.plot(data[self.timeSeriesCol], data[colName])
+        plt.xticks(rotation=90)
+        ax.set(**kwargs)
+        plt.show()
 
     def save(self, path, format = "csv",compression = None):
         """
@@ -92,10 +100,17 @@ class Stock (object):
         if isinstance(indicator,dict) or isinstance(indicator,pd.DataFrame):
             for k in indicator:
                 self.df[f'{labelName}_{k}'] = indicator[k]
+
+            for func in indicatorFunction:
+                self.data.transform(colName, labelName, func,*args, **kwargs)
         else:
             self.df[f'{labelName}'] = indicator
+
+            self.data.transform(colName, labelName, indicatorFunction,*args, **kwargs)
         return self
 
+    def get_dataFrame(self):
+        return self.data.make_dataframe()
 
     
 
