@@ -11,9 +11,11 @@ class Time_Series_Data(object):
     def __init__(self,data=None,time_index=None):
         self._time_index = {}
         self.time_length = 0
+        self.time_seriesIx = None
         self._data ={}
         if time_index is not None:
             for i in time_index:
+                self.time_seriesIx = list(time_index.keys())[0]
                 self.set_time_index(time_index[i],i)
         if data is not None:
             for i in data:
@@ -56,6 +58,7 @@ class Time_Series_Data(object):
     def set_time_index(self,inputData,label):
         self._time_index = {}
         self._time_index[label] = np.array(inputData)
+        self.time_seriesIx = label
         self.time_length = len(inputData)
         return self
 
@@ -221,9 +224,8 @@ class Time_Series_Data_Colleciton(object):
             for d in time_series_data.data:
                 tmp.set_data(time_series_data.data[d][ixList],d)
             for l in time_series_data.labels:
-                if l == categoryIx:
-                    continue
                 tmp.set_data(time_series_data.labels[l][ixList],l)
+            tmp = tmp.remove(categoryIx)
             dct[i] = tmp
         return dct
 
@@ -260,6 +262,21 @@ class Time_Series_Data_Colleciton(object):
             self._time_series_data_collection[i] = tmp_time
         return self
 
+
+    def _numpy_fill_missing(self,orgArray,posList,fillMissing):
+        nanList = np.empty(len(posList),object)
+        nanList[:] = fillMissing
+        if orgArray.ndim == 1:
+            nanList[posList] = orgArray
+            return nanList
+        nanList[:len(orgArray)] = orgArray.tolist()
+        ixList = np.append(np.where(posList==1),np.where(posList==0))
+        ixList = ixList.tolist()
+        idx = np.empty_like(ixList)
+        idx[ixList] = np.arange(len(ixList))
+        return nanList[idx]
+
+
     def pad_time_index(self,fillMissing=np.nan):
         timeix = []
         for i in self._time_series_data_collection:
@@ -272,14 +289,10 @@ class Time_Series_Data_Colleciton(object):
             for t in tmp.time_index:
                 posList= np.isin(timeix,tmp.time_index[t])
             for d in tmp.data:
-                nanList = np.empty(len(timeix))
-                nanList[:] = fillMissing
-                nanList[posList] = tmp.data[d]
+                nanList = self._numpy_fill_missing(tmp.data[d],posList,fillMissing)
                 tmp_time.set_data(nanList,d)
             for l in tmp.labels:
-                nanList = np.empty(len(timeix))
-                nanList[:] = fillMissing
-                nanList[posList] = tmp.labels[l]
+                nanList = self._numpy_fill_missing(tmp.labels[l],posList,fillMissing)
                 tmp_time.set_labels(nanList,l)
             self._time_series_data_collection[i] = tmp_time
         return self
