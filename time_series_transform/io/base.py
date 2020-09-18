@@ -1,9 +1,9 @@
 import copy
-import numpy as np
 from time_series_transform.transform_core_api.base import (
     Time_Series_Data,
     Time_Series_Data_Colleciton
     )
+import numpy as np
 
 class io_base (object):
     def __init__(self,time_series,timeSeriesCol,mainCategoryCol):
@@ -11,13 +11,30 @@ class io_base (object):
         self.timeSeriesCol = timeSeriesCol
         self.mainCategoryCol = mainCategoryCol
 
-    def from_single(self):
-        pass
+    def to_single(self,dictList,timeSeriesCol):
+        tsd = Time_Series_Data()
+        if timeSeriesCol is None:
+            raise KeyError("time series index is required")
+        tsd.set_time_index(dictList[timeSeriesCol],timeSeriesCol)
+        for i in dictList:
+            if i == timeSeriesCol:
+                continue
+            tsd.set_data(dictList[i],i)
+        return tsd
     
-    def from_collection(self):
-        pass
+    def to_collection(self,dictList,timeSeriesCol,mainCategoryCol):
+        tsd = Time_Series_Data()
+        if timeSeriesCol is None:
+            raise KeyError("time series index is required")
+        tsd.set_time_index(dictList[timeSeriesCol],timeSeriesCol)
+        for i in dictList:
+            if i == timeSeriesCol:
+                continue
+            tsd.set_data(dictList[i],i)
+        tsc = Time_Series_Data_Colleciton(tsd,timeSeriesCol,mainCategoryCol)
+        return tsc
 
-    def to_collection(self,expandCategory,expandTimeIx,preprocessType='ignore'):
+    def from_collection(self,expandCategory,expandTimeIx,preprocessType='ignore'):
         transCollection = copy.deepcopy(self.time_series)
         if preprocessType == 'remove':
             transCollection = transCollection.remove_different_time_index()
@@ -35,6 +52,9 @@ class io_base (object):
                 data = transCollection[i][:]
             else:
                 data = transCollection[i]
+            categoryList = np.empty(transCollection[i].time_length)
+            categoryList[:] = i
+            data[self.mainCategoryCol] = categoryList
             for key in data:
                 if key not in res:
                     res[key] = list(data[key])
@@ -42,8 +62,7 @@ class io_base (object):
                     res[key] += list(data[key])
         return res
 
-
-    def to_single(self,expandTime):
+    def from_single(self,expandTime):
         if expandTime:
             tmp = {"1":self.time_series}
             return self._expand_dict_date(tmp)['1']
