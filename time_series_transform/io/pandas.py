@@ -34,9 +34,8 @@ def from_pandas(pandasFrame,timeSeriesCol,mainCategoryCol=None):
 def to_pandas(time_series_data,expandCategory,expandTime,preprocessType):
     if isinstance(time_series_data,Time_Series_Data):
         pio = Pandas_IO(time_series_data,time_series_data.time_seriesIx,None)
-        return pio.from_single(expandTime)
+        return pio.to_pandas(expandTime,None,None)
     if isinstance(time_series_data,Time_Series_Data_Colleciton):
-        print('start')
         pio = Pandas_IO(
             time_series_data,
             time_series_data._time_series_Ix,
