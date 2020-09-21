@@ -150,21 +150,6 @@ class Time_Series_Transformer(object):
             warnings.warn('Setup mainCategoryCol is necessary for this function')
         return self
 
-    def to_arrow(self):
-        pass
-    
-    def to_tfDataset(self):
-        pass
-
-    def to_pandas(self):
-        pass
-
-    def to_numpy(self):
-        pass
-
-    def to_generator(self):
-        pass
-
     def __repr__(self):
         return super().__repr__()
 
