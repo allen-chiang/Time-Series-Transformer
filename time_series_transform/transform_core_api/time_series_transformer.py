@@ -119,6 +119,20 @@ class Time_Series_Transformer(object):
             )
         return self
 
+    def make_stack_sequence(self,inputLabels,removeOrg,suffix=None,verbose=0,n_jobs=1):
+        # To-do
+        self._transform_wrapper(
+            inputLabels,
+            stack_sequence,
+            suffix,
+            None,
+            n_jobs,
+            verbose,
+            removeOrg=removeOrg
+            )
+        return self
+
+
     def make_label(self,key,collectionKey=None):
         if self._isCollection:
             if collectionKey is None:
@@ -150,22 +164,17 @@ class Time_Series_Transformer(object):
             warnings.warn('Setup mainCategoryCol is necessary for this function')
         return self
 
-    def __repr__(self):
-        return super().__repr__()
-
     @classmethod
-    def from_Pandas(cls, pandasFrame,timeSeriesCol,mainCategoryCol):
+    def from_pandas(cls, pandasFrame,timeSeriesCol,mainCategoryCol):
         data = from_pandas(pandasFrame,timeSeriesCol,mainCategoryCol)
         return cls(data,timeSeriesCol,mainCategoryCol)
-
-    @classmethod
-    def from_parquet(cls):
-        pass
 
     @classmethod
     def from_numpy(cls):
         pass
 
+    def __repr__(self):
+        return super().__repr__()
 
 def lag_sequence(arr, window,fillMissing=np.nan):
     """
@@ -221,3 +230,7 @@ def lead_sequence(arr,leadNum,window,fillMissing=np.nan):
     empty[:] = fillMissing
     res = np.vstack([seq,empty])
     return res
+
+
+def stack_sequence(arrList):
+    pass

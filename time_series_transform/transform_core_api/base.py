@@ -71,19 +71,6 @@ class Time_Series_Data(object):
             res[label] = dictionary[label][indexSlice]
         return res
 
-    def __getitem__(self,ix):
-        tmpInfo = self.labels
-        tmpInfo.update(self.data)
-        info = {}
-        if isinstance(ix,tuple):
-            t = ix[0]
-            info.update(self._get_dictionary_list_info(self.time_index,t,None))
-            for q in ix[1]:
-                info.update(self._get_dictionary_list_info(tmpInfo,t,q))
-        else:
-            info.update(self._get_dictionary_list_info(self.time_index,ix,None))
-            info.update(self._get_dictionary_list_info(tmpInfo,ix,None))
-        return info
 
     def _reorder_list(self,sortingList,targetList,ascending):
         descending = 1-ascending
@@ -100,15 +87,6 @@ class Time_Series_Data(object):
         for time in self.time_index:
             self.time_index[time] = self._reorder_list(sortingList,self.time_index[time],ascending)
         return self
-
-    def make_dataframe(self):
-        dfDict = {}
-        dfDict.update(self.time_index)
-        dfDict.update(self.labels)
-        dfDict.update(self.data)
-        for i in dfDict:
-            dfDict[i] = dfDict[i].tolist()
-        return pd.DataFrame(dfDict)
 
     def _single_transform(self,colName,func,*args,**kwargs):
         if colName in self.data:
@@ -152,7 +130,6 @@ class Time_Series_Data(object):
         # update existing dict
         return self
         
-
     def _get_all_info(self):
         dfDict = {}
         dfDict.update(self.time_index)
@@ -175,6 +152,20 @@ class Time_Series_Data(object):
             right[i] = list(right[i])
         return left == right
 
+    def __getitem__(self,ix):
+        tmpInfo = self.labels
+        tmpInfo.update(self.data)
+        info = {}
+        if isinstance(ix,tuple):
+            t = ix[0]
+            info.update(self._get_dictionary_list_info(self.time_index,t,None))
+            for q in ix[1]:
+                info.update(self._get_dictionary_list_info(tmpInfo,t,q))
+        else:
+            info.update(self._get_dictionary_list_info(self.time_index,ix,None))
+            info.update(self._get_dictionary_list_info(tmpInfo,ix,None))
+        return info
+        
         
 class Time_Series_Data_Collection(object):
     def __init__(self,time_series_data,time_seriesIx,categoryIx):
