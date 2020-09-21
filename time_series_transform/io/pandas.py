@@ -1,5 +1,5 @@
 import pandas as pd
-from time_series_transform.transform_core_api.base import Time_Series_Data, Time_Series_Data_Colleciton
+from time_series_transform.transform_core_api.base import Time_Series_Data, Time_Series_Data_Collection
 from time_series_transform.io.base import io_base
 
 
@@ -21,7 +21,7 @@ class Pandas_IO (io_base):
         if isinstance(self.time_series,Time_Series_Data):
             data = self.from_single(expandTime)
             return pd.DataFrame(data)
-        if isinstance(self.time_series,Time_Series_Data_Colleciton):
+        if isinstance(self.time_series,Time_Series_Data_Collection):
             data = self.from_collection(expandCategory,expandTime,preprocessType)
             return pd.DataFrame(data)
         raise ValueError("Invalid data type")
@@ -35,7 +35,7 @@ def to_pandas(time_series_data,expandCategory,expandTime,preprocessType):
     if isinstance(time_series_data,Time_Series_Data):
         pio = Pandas_IO(time_series_data,time_series_data.time_seriesIx,None)
         return pio.to_pandas(expandTime,None,None)
-    if isinstance(time_series_data,Time_Series_Data_Colleciton):
+    if isinstance(time_series_data,Time_Series_Data_Collection):
         pio = Pandas_IO(
             time_series_data,
             time_series_data._time_series_Ix,

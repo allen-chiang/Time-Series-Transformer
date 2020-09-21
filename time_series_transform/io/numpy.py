@@ -1,6 +1,9 @@
 import numpy as np
 from time_series_transform.io.base import io_base
-from time_series_transform.transform_core_api import Time_Series_Data,Time_Series_Data_Collection
+from time_series_transform.transform_core_api.base import (
+    Time_Series_Data_Collection,
+    Time_Series_Data
+    )
 
 
 class Numpy_IO (io_base):

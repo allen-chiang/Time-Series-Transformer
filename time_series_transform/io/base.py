@@ -1,7 +1,7 @@
 import copy
 from time_series_transform.transform_core_api.base import (
     Time_Series_Data,
-    Time_Series_Data_Colleciton
+    Time_Series_Data_Collection
     )
 import numpy as np
 
@@ -31,7 +31,7 @@ class io_base (object):
             if i == timeSeriesCol:
                 continue
             tsd.set_data(dictList[i],i)
-        tsc = Time_Series_Data_Colleciton(tsd,timeSeriesCol,mainCategoryCol)
+        tsc = Time_Series_Data_Collection(tsd,timeSeriesCol,mainCategoryCol)
         return tsc
 
     def from_collection(self,expandCategory,expandTimeIx,preprocessType='ignore'):

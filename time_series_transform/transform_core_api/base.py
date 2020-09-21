@@ -176,7 +176,7 @@ class Time_Series_Data(object):
         return left == right
 
         
-class Time_Series_Data_Colleciton(object):
+class Time_Series_Data_Collection(object):
     def __init__(self,time_series_data,time_seriesIx,categoryIx):
         super().__init__()
         if isinstance(time_series_data,dict):
