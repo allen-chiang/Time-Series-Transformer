@@ -312,3 +312,14 @@ class Time_Series_Data_Collection(object):
     def __getitem__(self,ix):
         return self._time_series_data_collection[ix]
 
+    def __eq__(self,other):
+        cateList = sorted(list(self.time_series_data_collection.key()))
+        otherCateList = sorted(list(other.time_series_data_collection.key()))
+        if (cateList == otherCateList) == False:
+            return False
+        for i in cateList:
+            if self.time_series_data_collection[i] != other.time_series_data_collection[i]:
+                return False
+        return True
+        
+

@@ -12,18 +12,25 @@ from time_series_transform.transform_core_api.base import (
 @pytest.fixture('class')
 def dictList_single():
     return {
-        'time': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-        'data': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        'time': [1, 2],
+        'data': [1, 2]
     }
 
 @pytest.fixture('class')
 def dictList_collection():
-    return [
-        {
+    return {
         'time': [1,2,1,3],
         'data':[1,2,1,2],
         'category':[1,1,2,2]
-    }]
+    }
+
+@pytest.fixture('class')
+def expect_single_expandTime():
+    return {
+        'data_1':[1],
+        'data_2':[2]
+    }
+
 
 @pytest.fixture('class')
 def expect_collection_expandTime():
@@ -74,8 +81,7 @@ def expect_collection_expandFull():
 
 class Test_base_io:
 
-    def test_base_io_from_single(self, dictList_single,expect_single_noChange,expect_single_expandTime):
-        NoExpandTimeAns = expect_single_noChange
+    def test_base_io_from_single(self, dictList_single,expect_single_expandTime):
         ExpandTimeAns = expect_single_expandTime
         data = dictList_single
         ts = Time_Series_Data()
@@ -84,7 +90,7 @@ class Test_base_io:
         io = io_base(ts, 'time', None)
         timeSeries = io.from_single(False)
         for i in timeSeries:
-            assert timeSeries[i].tolist() == NoExpandTimeAns[i]
+            assert timeSeries[i].tolist() == data[i]
         timeSeries = io.from_single(True)
         for i in timeSeries:
             assert timeSeries[i] == ExpandTimeAns[i]
@@ -159,8 +165,10 @@ class Test_base_io:
 
     def test_base_io_to_collection(self, dictList_collection):
         dataList = dictList_collection
-        pass
-
+        tsd = Time_Series_Data(dataList,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        io = io_base(dataList, 'time', 'category')
+        assert io.to_collection(dataList,'time','category') == tsc
 
 class Test_Pandas_IO:
     def test_from_pandas_single(self):
