@@ -83,7 +83,7 @@ class io_base (object):
             for d in tmp.data:
                 time_series.set_data(tmp.data[d],f'{d}_{i}')
             for l in tmp.labels:
-                time_series.set_labels(tmp.labels[l],f'{l}_{i}')      
+                time_series.set_labels(tmp.labels[l],f'{l}_{i}')     
         return {'1':time_series}
 
     def _expand_dict_date(self,collectionDict):

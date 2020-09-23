@@ -14,9 +14,16 @@ class Time_Series_Data(object):
         self.time_seriesIx = None
         self._data ={}
         if time_index is not None:
-            for i in time_index:
-                self.time_seriesIx = list(time_index.keys())[0]
-                self.set_time_index(time_index[i],i)
+            if isinstance(time_index,dict):
+                for i in time_index:
+                    self.time_seriesIx = list(time_index.keys())[0]
+                    self.set_time_index(time_index[i],i)
+            elif isinstance(time_index,str):
+                self.time_seriesIx = time_index
+                self.set_time_index(data[time_index],time_index)
+                data.pop(time_index)
+            else:
+                raise ValueError('invalid data type for time_index')
         if data is not None:
             for i in data:
                 self.set_data(data[i],i)
