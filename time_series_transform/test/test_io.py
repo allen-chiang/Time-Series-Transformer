@@ -36,13 +36,13 @@ def expect_single_expandTime():
 def expect_collection_expandTime():
     return {
         'pad': {
-            'data1':[1,1],
-            'data2':[2,np.nan],
-            'data3':[np.nan,2],
+            'data_1':[1,1],
+            'data_2':[2,np.nan],
+            'data_3':[np.nan,2],
             'category':[1,2]
         },
         'remove': {
-            'data1':[1,1],
+            'data_1':[1,1],
             'category':[1,2]            
         }
     }
@@ -51,13 +51,13 @@ def expect_collection_expandCategory():
     return {
         'pad': {
             'time':[1,2,3],
-            'data1':[1,2,np.nan],
-            'data2':[1,np.nan,2]
+            'data_1':[1,2,np.nan],
+            'data_2':[1,np.nan,2]
         },
         'remove': {
             'time':[1],
-            'data1':[1],
-            'data2':[1]            
+            'data_1':[1],
+            'data_2':[1]            
         }        
     }
 
@@ -103,11 +103,11 @@ class Test_base_io:
         io = io_base(data, 'time', None)
         assert io.to_single(data, 'time') == ts
 
-    def test_base_io_from_collection_expandTime(self, dictList_collection,expect_single_expandTime):
+    def test_base_io_from_collection_expandTime(self, dictList_collection,expect_collection_expandTime):
         noChange = dictList_collection
-        expand = expect_single_expandTime
+        expand = expect_collection_expandTime
         fullExpand = []
-        data = dictList_collection[0]
+        data = dictList_collection
         ts = Time_Series_Data()
         ts = ts.set_time_index(data['time'], 'time')
         ts = ts.set_data(data['data'], 'data')
@@ -118,16 +118,16 @@ class Test_base_io:
             timeSeries = io.from_collection(False,True,'ignore')
         timeSeries = io.from_collection(False,True,'pad')
         for i in timeSeries:
-            assert timeSeries[i] == expand['pad'][i]
+            np.testing.assert_equal(timeSeries[i],expand['pad'][i])
         timeSeries = io.from_collection(False,True,'remove')
         for i in timeSeries:
-            assert timeSeries[i] == expand['remove'][i]
+            np.testing.assert_equal(timeSeries[i],expand['remove'][i])
 
-    def test_base_io_from_collection_expandCategory(self, dictList_collection,expect_single_expandCategory):
+    def test_base_io_from_collection_expandCategory(self, dictList_collection,expect_collection_expandCategory):
         noChange = dictList_collection
-        expand = expect_single_expandCategory
+        expand = expect_collection_expandCategory
         fullExpand = []
-        data = dictList_collection[0]
+        data = dictList_collection
         ts = Time_Series_Data()
         ts = ts.set_time_index(data['time'], 'time')
         ts = ts.set_data(data['data'], 'data')
@@ -138,16 +138,16 @@ class Test_base_io:
             timeSeries = io.from_collection(True,False,'ignore')
         timeSeries = io.from_collection(True,False,'pad')
         for i in timeSeries:
-            assert timeSeries[i] == expand['pad'][i]
+            np.testing.assert_equal(timeSeries[i],expand['pad'][i])
         timeSeries = io.from_collection(True,False,'remove')
         for i in timeSeries:
-            assert timeSeries[i] == expand['remove'][i]
+            np.testing.assert_equal(timeSeries[i],expand['remove'][i])
 
-    def test_base_io_from_collection_expandFull(self, dictList_collection,expect_single_expandFull):
+    def test_base_io_from_collection_expandFull(self, dictList_collection,expect_collection_expandFull):
         noChange = dictList_collection
-        expand = expect_single_expandFull
+        expand = expect_collection_expandFull
         fullExpand = []
-        data = dictList_collection[0]
+        data = dictList_collection
         ts = Time_Series_Data()
         ts = ts.set_time_index(data['time'], 'time')
         ts = ts.set_data(data['data'], 'data')
@@ -158,17 +158,18 @@ class Test_base_io:
             timeSeries = io.from_collection(True,True,'ignore')
         timeSeries = io.from_collection(True,True,'pad')
         for i in timeSeries:
-            assert timeSeries[i] == expand['pad'][i]
+           np.testing.assert_equal(timeSeries[i],expand['pad'][i])
         timeSeries = io.from_collection(True,True,'remove')
         for i in timeSeries:
-            assert timeSeries[i] == expand['remove'][i]
+            np.testing.assert_equal(timeSeries[i],expand['remove'][i])
 
     def test_base_io_to_collection(self, dictList_collection):
         dataList = dictList_collection
+        io = io_base(dataList, 'time', 'category')
+        testData = io.to_collection(dataList,'time','category')
         tsd = Time_Series_Data(dataList,'time')
         tsc = Time_Series_Data_Collection(tsd,'time','category')
-        io = io_base(dataList, 'time', 'category')
-        assert io.to_collection(dataList,'time','category') == tsc
+        assert  testData== tsc
 
 class Test_Pandas_IO:
     def test_from_pandas_single(self):

@@ -5,10 +5,12 @@ import pprint
 from joblib import Parallel, delayed
 from collections import ChainMap
 from collections import Counter
+import binstar_client.commands.copy
 
 class Time_Series_Data(object):
 
     def __init__(self,data=None,time_index=None):
+        data = copy.deepcopy(data)
         self._time_index = {}
         self.time_length = 0
         self.time_seriesIx = None
@@ -184,8 +186,15 @@ class Time_Series_Data_Collection(object):
                 raise ValueError('dict values have to be Time_Series_Data')
         else:
             self._time_series_data_collection = self._expand_time_series_data(time_series_data,categoryIx)
+        self.timeLengthList = self._get_time_lengthList()
         self._time_series_Ix = time_seriesIx
         self._categoryIx = categoryIx
+
+    def _get_time_lengthList(self):
+        tmpList = []
+        for i in self._time_series_data_collection:
+            tmpList.append(self._time_series_data_collection[i].time_length)
+        return  tmpList
 
     def _check_dict_type(self,time_series_data):
         check = True
@@ -313,8 +322,8 @@ class Time_Series_Data_Collection(object):
         return self._time_series_data_collection[ix]
 
     def __eq__(self,other):
-        cateList = sorted(list(self.time_series_data_collection.key()))
-        otherCateList = sorted(list(other.time_series_data_collection.key()))
+        cateList = sorted(list(self.time_series_data_collection.keys()))
+        otherCateList = sorted(list(other.time_series_data_collection.keys()))
         if (cateList == otherCateList) == False:
             return False
         for i in cateList:

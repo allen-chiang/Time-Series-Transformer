@@ -23,25 +23,30 @@ class io_base (object):
         return tsd
     
     def to_collection(self,dictList,timeSeriesCol,mainCategoryCol):
-        tsd = Time_Series_Data()
         if timeSeriesCol is None:
             raise KeyError("time series index is required")
-        tsd.set_time_index(dictList[timeSeriesCol],timeSeriesCol)
-        for i in dictList:
-            if i == timeSeriesCol:
-                continue
-            tsd.set_data(dictList[i],i)
+        tsd = Time_Series_Data(dictList,timeSeriesCol)
         tsc = Time_Series_Data_Collection(tsd,timeSeriesCol,mainCategoryCol)
         return tsc
 
     def from_collection(self,expandCategory,expandTimeIx,preprocessType='ignore'):
         transCollection = copy.deepcopy(self.time_series)
+        transCollection =  transCollection.sort()
         if preprocessType == 'remove':
             transCollection = transCollection.remove_different_time_index()
         elif preprocessType == 'pad':
             transCollection = transCollection.pad_time_index()
-        elif preprocessType != 'ignore':
+        elif preprocessType == 'ignore':
+            tmp = None
+            for i in transCollection:
+                timeList = transCollection[i].time_index[transCollection._time_series_Ix].tolist()
+                if tmp == 0:
+                    tmp = timeList
+                if tmp !=timeList:
+                    raise ValueError('category time length should be in consist. otherwise, use pad or ignore pre-process type. ')
+        else:
             raise KeyError('preprocess type must be remove, pad, or ignore')
+
         if expandCategory:
             transCollection = self._expand_dict_category(transCollection)
         if expandTimeIx:
@@ -50,11 +55,14 @@ class io_base (object):
         for i in transCollection:
             if isinstance(transCollection[i],Time_Series_Data):
                 data = transCollection[i][:]
+                categoryList = np.empty(transCollection[i].time_length)
             else:
                 data = transCollection[i]
-            categoryList = np.empty(transCollection[i].time_length)
-            categoryList[:] = i
-            data[self.mainCategoryCol] = categoryList
+                tmpKey =list(data.keys())[0]
+                categoryList = np.empty(len(data[tmpKey]))
+            if not expandCategory:
+                categoryList[:] = i
+                data[self.mainCategoryCol] = categoryList
             for key in data:
                 if key not in res:
                     res[key] = list(data[key])
