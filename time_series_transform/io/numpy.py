@@ -26,7 +26,7 @@ class Numpy_IO (io_base):
         return np.asarray(list(data.values()))
 
 
-def from_numpy(numpyArray,timeSeriesCol,mainCategoryCol):
+def from_numpy(numpyArray,timeSeriesCol,mainCategoryCol=None):
     if not isinstance(numpyArray,np.ndarray):
         raise ValueError('input data must be numpy array')
     numpyio = Numpy_IO(numpyArray,timeSeriesCol,mainCategoryCol)

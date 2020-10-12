@@ -175,28 +175,53 @@ class Test_Pandas_IO:
     def test_from_pandas_single(self):
         pass
 
-    def test_to_pandas_single(self):
-        pass
-
     def test_from_pandas_collection(self):
         pass
 
-    def test_to_pandas_collection(self):
+    def test_to_pandas_single(self):
+        pass
+
+    def test_to_pandas_collection_expandTime(self):
+        pass
+
+    def test_to_pandas_collection_expandCategory(self):
+        pass
+
+    def test_to_pandas_collection_expandFull(self):
         pass
 
 
 class Test_Numpy_IO:
-    def test_from_numpy_single(self):
-        pass
+    def test_from_numpy_single(self,dictList_single):
+        data = dictList_single
+        tsd = Time_Series_Data()
+        tsd.set_time_index(data['time'],0)
+        tsd.set_data(data['data'],1)
+        numpydata = pd.DataFrame(dictList_single).values
+        testData = from_numpy(numpydata,0,None)
+        assert tsd == testData
+
+    def test_from_numpy_collection(self,dictList_collection):
+        data = dictList_collection
+        numpyData = pd.DataFrame(data).values
+        numpyDataDict = pd.DataFrame(pd.DataFrame(data).values).to_dict('list')
+        testData = from_numpy(numpyData,0,2)
+        tsd = Time_Series_Data(numpyDataDict,0)
+        assert testData == Time_Series_Data_Collection(tsd,0,2)
 
     def test_to_numpy_single(self):
         pass
 
-    def test_from_numpy_collection(self):
+    def test_to_numpy_collection_expandTime(self):
         pass
 
-    def test_to_numpy_collection(self):
+    def test_to_numpy_collection_expandCategory(self):
         pass
+
+    def test_to_numpy_collection_expandFull(self):
+        pass
+
+    
 
 class Test_Generator_IO:
     def test_from_generator(self):

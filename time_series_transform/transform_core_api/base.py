@@ -20,7 +20,7 @@ class Time_Series_Data(object):
                 for i in time_index:
                     self.time_seriesIx = list(time_index.keys())[0]
                     self.set_time_index(time_index[i],i)
-            elif isinstance(time_index,str):
+            elif isinstance(time_index,(str,int,float)):
                 self.time_seriesIx = time_index
                 self.set_time_index(data[time_index],time_index)
                 data.pop(time_index)
@@ -178,6 +178,7 @@ class Time_Series_Data(object):
         
 class Time_Series_Data_Collection(object):
     def __init__(self,time_series_data,time_seriesIx,categoryIx):
+        time_series_data = copy.deepcopy(time_series_data)
         super().__init__()
         if isinstance(time_series_data,dict):
             if self._check_dict_type(time_series_data):
