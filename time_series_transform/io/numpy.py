@@ -9,21 +9,23 @@ from time_series_transform.transform_core_api.base import (
 class Numpy_IO (io_base):
     def __init__(self, time_series, timeSeriesColIx, mainCategoryColIx):
         super().__init__(time_series, timeSeriesColIx, mainCategoryColIx)
-        self.time_series = {}
-        for i in range(len(time_series.T)):
-            self.time_series[i] = time_series.T[i]
+        if self.dictList is not None:
+            self.dictList = {}
+            for i in range(len(time_series.T)):
+                self.dictList[i] = time_series.T[i]
 
     def from_numpy (self):
         if self.mainCategoryCol is None:
-            return self.to_single(self.time_series,self.timeSeriesCol)
-        return self.to_collection(self.time_series,self.timeSeriesCol,self.mainCategoryCol)
+            return self.to_single()
+        return self.to_collection()
+
 
     def to_numpy(self,expandTime,expandCategory,preprocessType):
         if isinstance(self.time_series,Time_Series_Data):
             data = self.from_single(expandTime)
         if isinstance(self.time_series,Time_Series_Data_Collection):
             data = self.from_collection(expandCategory,expandTime,preprocessType)
-        return np.asarray(list(data.values()))
+        return np.asarray(list(data.values())).T
 
 
 def from_numpy(numpyArray,timeSeriesCol,mainCategoryCol=None):
@@ -42,7 +44,7 @@ def to_numpy(time_series_data,expandCategory,expandTime,preprocessType):
             time_series_data._time_series_Ix,
             time_series_data._categoryIx
             )
-    return numpyio.to_numpy(expandCategory,expandTime,preprocessType)    
+    return numpyio.to_numpy(expandTime,expandCategory,preprocessType)
 
 
 __all__= [

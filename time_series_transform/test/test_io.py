@@ -66,10 +66,10 @@ def expect_collection_expandFull():
     return {
         'pad': {
             'data_1_1':[1],
-            'data_1_2':[2],
-            'data_1_3':[np.nan],
             'data_2_1':[1],
+            'data_1_2':[2],
             'data_2_2':[np.nan],
+            'data_1_3':[np.nan],
             'data_2_3':[2]
         },
         'remove': {
@@ -101,7 +101,7 @@ class Test_base_io:
         ts = ts.set_time_index(data['time'], 'time')
         ts = ts.set_data(data['data'], 'data')
         io = io_base(data, 'time', None)
-        assert io.to_single(data, 'time') == ts
+        assert io.to_single() == ts
 
     def test_base_io_from_collection_expandTime(self, dictList_collection,expect_collection_expandTime):
         noChange = dictList_collection
@@ -166,7 +166,7 @@ class Test_base_io:
     def test_base_io_to_collection(self, dictList_collection):
         dataList = dictList_collection
         io = io_base(dataList, 'time', 'category')
-        testData = io.to_collection(dataList,'time','category')
+        testData = io.to_collection()
         tsd = Time_Series_Data(dataList,'time')
         tsc = Time_Series_Data_Collection(tsd,'time','category')
         assert  testData== tsc
@@ -209,17 +209,96 @@ class Test_Numpy_IO:
         tsd = Time_Series_Data(numpyDataDict,0)
         assert testData == Time_Series_Data_Collection(tsd,0,2)
 
-    def test_to_numpy_single(self):
-        pass
+    def test_to_numpy_single(self,dictList_single,expect_single_expandTime):
+        data = dictList_single
+        numpyData = pd.DataFrame(data).values
+        expandTime = pd.DataFrame(expect_single_expandTime).values
+        tsd = Time_Series_Data()
+        tsd.set_time_index(data['time'],0)
+        tsd.set_data(data['data'],1)
+        testData = to_numpy(
+            tsd,
+            expandCategory= None,
+            expandTime=False,
+            preprocessType= None
+            )
+        np.testing.assert_equal(testData,numpyData)
+        testData = to_numpy(
+            tsd,
+            expandCategory= None,
+            expandTime=True,
+            preprocessType= None
+            )
+        np.testing.assert_equal(testData,expandTime)
 
-    def test_to_numpy_collection_expandTime(self):
-        pass
+    def test_to_numpy_collection_expandTime(self,dictList_collection,expect_collection_expandTime):
+        data = dictList_collection
+        results = expect_collection_expandTime
+        numpyData = pd.DataFrame(data).values
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        pad_numpy = to_numpy(
+            tsc,
+            expandCategory = False,
+            expandTime = True,
+            preprocessType='pad'
+            )
+        remove_numpy = to_numpy(
+            tsc,
+            expandCategory = False,
+            expandTime = True,
+            preprocessType='remove'
+            )
+        np.testing.assert_equal(pad_numpy,pd.DataFrame(results['pad']).values)
+        np.testing.assert_equal(remove_numpy,pd.DataFrame(results['remove']).values)
+        with pytest.raises(ValueError):
+            timeSeries = to_numpy(tsc,False,True,'ignore')
 
-    def test_to_numpy_collection_expandCategory(self):
-        pass
+    def test_to_numpy_collection_expandCategory(self,dictList_collection,expect_collection_expandCategory):
+        data = dictList_collection
+        results = expect_collection_expandCategory
+        numpyData = pd.DataFrame(data).values
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        pad_numpy = to_numpy(
+            tsc,
+            expandCategory = True,
+            expandTime = False,
+            preprocessType='pad'
+            )
+        remove_numpy = to_numpy(
+            tsc,
+            expandCategory = True,
+            expandTime = False,
+            preprocessType='remove'
+            )
+        np.testing.assert_equal(pad_numpy,pd.DataFrame(results['pad']).values)
+        np.testing.assert_equal(remove_numpy,pd.DataFrame(results['remove']).values)
+        with pytest.raises(ValueError):
+            timeSeries = to_numpy(tsc,False,True,'ignore')
 
-    def test_to_numpy_collection_expandFull(self):
-        pass
+    def test_to_numpy_collection_expandFull(self,dictList_collection,expect_collection_expandFull):
+        data = dictList_collection
+        results = expect_collection_expandFull
+        numpyData = pd.DataFrame(data).values
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        pad_numpy = to_numpy(
+            tsc,
+            expandCategory = True,
+            expandTime = True,
+            preprocessType='pad'
+            )
+        np.testing.assert_equal(pad_numpy,pd.DataFrame(results['pad']).values)
+        remove_numpy = to_numpy(
+            tsc,
+            expandCategory = True,
+            expandTime = True,
+            preprocessType='remove'
+            )
+        np.testing.assert_equal(remove_numpy,pd.DataFrame(results['remove']).values)
+        with pytest.raises(ValueError):
+            timeSeries = to_numpy(tsc,True,True,'ignore')
 
     
 

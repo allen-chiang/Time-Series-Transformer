@@ -7,26 +7,31 @@ import numpy as np
 
 class io_base (object):
     def __init__(self,time_series,timeSeriesCol,mainCategoryCol):
-        self.time_series = copy.deepcopy(time_series)
+        if isinstance(time_series,(Time_Series_Data,Time_Series_Data_Collection)):
+            self.time_series = copy.deepcopy(time_series)
+            self.dictList = None
+        else:
+            self.time_series = None
+            self.dictList = copy.deepcopy(time_series)
         self.timeSeriesCol = timeSeriesCol
         self.mainCategoryCol = mainCategoryCol
 
-    def to_single(self,dictList,timeSeriesCol):
+    def to_single(self):
         tsd = Time_Series_Data()
-        if timeSeriesCol is None:
+        if self.timeSeriesCol is None:
             raise KeyError("time series index is required")
-        tsd.set_time_index(dictList[timeSeriesCol],timeSeriesCol)
-        for i in dictList:
-            if i == timeSeriesCol:
+        tsd.set_time_index(self.dictList[self.timeSeriesCol],self.timeSeriesCol)
+        for i in self.dictList:
+            if i == self.timeSeriesCol:
                 continue
-            tsd.set_data(dictList[i],i)
+            tsd.set_data(self.dictList[i],i)
         return tsd
     
-    def to_collection(self,dictList,timeSeriesCol,mainCategoryCol):
-        if timeSeriesCol is None:
+    def to_collection(self):
+        if self.timeSeriesCol is None:
             raise KeyError("time series index is required")
-        tsd = Time_Series_Data(dictList,timeSeriesCol)
-        tsc = Time_Series_Data_Collection(tsd,timeSeriesCol,mainCategoryCol)
+        tsd = Time_Series_Data(self.dictList,self.timeSeriesCol)
+        tsc = Time_Series_Data_Collection(tsd,self.timeSeriesCol,self.mainCategoryCol)
         return tsc
 
     def from_collection(self,expandCategory,expandTimeIx,preprocessType='ignore'):
