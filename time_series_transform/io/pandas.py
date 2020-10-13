@@ -6,15 +6,16 @@ from time_series_transform.io.base import io_base
 class Pandas_IO (io_base):
     def __init__(self, time_series, timeSeriesCol, mainCategoryCol):
         super().__init__(time_series, timeSeriesCol, mainCategoryCol)
-
+        if self.dictList is not None:
+            self.dictList = time_series
     
     def from_pandas(self):
-        if not isinstance(self.time_series,pd.DataFrame):
+        if not isinstance(self.dictList,pd.DataFrame):
             raise ValueError("input data must be pandas frame")
-        data = self.time_series.to_dict('list')
+        data = self.dictList.to_dict('list')
         if self.mainCategoryCol is None:
-            return self.to_single(data,self.timeSeriesCol)
-        return self.to_collection(data,self.timeSeriesCol,self.mainCategoryCol)
+            return self.to_single()
+        return self.to_collection()
         
 
     def to_pandas(self,expandTime,expandCategory,preprocessType):
@@ -41,7 +42,7 @@ def to_pandas(time_series_data,expandCategory,expandTime,preprocessType):
             time_series_data._time_series_Ix,
             time_series_data._categoryIx
             )
-        return pio.to_pandas(expandCategory,expandTime,preprocessType)
+        return pio.to_pandas(expandTime,expandCategory,preprocessType)
     
 
 __all__ = [

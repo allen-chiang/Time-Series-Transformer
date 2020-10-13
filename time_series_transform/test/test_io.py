@@ -172,23 +172,110 @@ class Test_base_io:
         assert  testData== tsc
 
 class Test_Pandas_IO:
-    def test_from_pandas_single(self):
-        pass
+    def test_from_pandas_single(self,dictList_single):
+        data = dictList_single
+        df = pd.DataFrame(dictList_single)
+        tsd = Time_Series_Data(data,'time')
+        testData = from_pandas(df,'time',None)
+        assert tsd == testData
 
-    def test_from_pandas_collection(self):
-        pass
+    def test_from_pandas_collection(self,dictList_collection):
+        data = dictList_collection
+        df = pd.DataFrame(dictList_collection)
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = from_pandas(df,'time','category')
+        assert tsc == testData
 
-    def test_to_pandas_single(self):
-        pass
+    def test_to_pandas_single(self,dictList_single,expect_single_expandTime):
+        data = dictList_single
+        df = pd.DataFrame(data)
+        expandTime = pd.DataFrame(expect_single_expandTime)
+        tsd = Time_Series_Data(data,'time')
+        testData = to_pandas(
+            tsd,
+            expandCategory= None,
+            expandTime=False,
+            preprocessType= None
+            )
+        pd.testing.assert_frame_equal(testData,df,check_dtype=False)
+        testData = to_pandas(
+            tsd,
+            expandCategory= None,
+            expandTime=True,
+            preprocessType= None
+            )
+        pd.testing.assert_frame_equal(testData,expandTime,check_dtype=False)
 
-    def test_to_pandas_collection_expandTime(self):
-        pass
+    def test_to_pandas_collection_expandTime(self,dictList_collection,expect_collection_expandTime):
+        data = dictList_collection
+        expandTime_pad = pd.DataFrame(expect_collection_expandTime['pad'])
+        expandTime_remove = pd.DataFrame(expect_collection_expandTime['remove'])
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = to_pandas(
+            tsc,
+            expandCategory= False,
+            expandTime=True,
+            preprocessType= 'pad'
+            )
+        pd.testing.assert_frame_equal(testData,expandTime_pad,check_dtype=False)
+        testData = to_pandas(
+            tsc,
+            expandCategory= False,
+            expandTime=True,
+            preprocessType= 'remove'
+            )
+        pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
+        with pytest.raises(ValueError):
+            timeSeries = to_pandas(tsc,False,True,'ignore')        
 
-    def test_to_pandas_collection_expandCategory(self):
-        pass
 
-    def test_to_pandas_collection_expandFull(self):
-        pass
+    def test_to_pandas_collection_expandCategory(self,dictList_collection,expect_collection_expandCategory):
+        data = dictList_collection
+        expandTime_pad = pd.DataFrame(expect_collection_expandCategory['pad'])
+        expandTime_remove = pd.DataFrame(expect_collection_expandCategory['remove'])
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = to_pandas(
+            tsc,
+            expandCategory= True,
+            expandTime=False,
+            preprocessType= 'pad'
+            )
+        pd.testing.assert_frame_equal(testData,expandTime_pad,check_dtype=False)
+        testData = to_pandas(
+            tsc,
+            expandCategory= True,
+            expandTime=False,
+            preprocessType= 'remove'
+            )
+        pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
+        with pytest.raises(ValueError):
+            timeSeries = to_pandas(tsc,True,False,'ignore')    
+
+    def test_to_pandas_collection_expandFull(self,dictList_collection,expect_collection_expandFull):
+        data = dictList_collection
+        expandTime_pad = pd.DataFrame(expect_collection_expandFull['pad'])
+        expandTime_remove = pd.DataFrame(expect_collection_expandFull['remove'])
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = to_pandas(
+            tsc,
+            expandCategory= True,
+            expandTime=True,
+            preprocessType= 'pad'
+            )
+        pd.testing.assert_frame_equal(testData,expandTime_pad,check_dtype=False)
+        testData = to_pandas(
+            tsc,
+            expandCategory= True,
+            expandTime=True,
+            preprocessType= 'remove'
+            )
+        pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
+        with pytest.raises(ValueError):
+            timeSeries = to_pandas(tsc,True,True,'ignore')
 
 
 class Test_Numpy_IO:
