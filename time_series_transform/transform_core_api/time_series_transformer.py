@@ -22,14 +22,9 @@ class Time_Series_Transformer(object):
         self._isCollection = [True if mainCategoryCol is not None else False][0]
 
     def _setup_time_series_data(self,data,timeSeriesCol,mainCategoryCol):
-        tsd = Time_Series_Data()
         if timeSeriesCol is None:
             raise KeyError("time series index is required")
-        tsd.set_time_index(data[timeSeriesCol],timeSeriesCol)
-        for i in data:
-            if i == timeSeriesCol:
-                continue
-            tsd.set_data(data[i],i)
+        tsd = Time_Series_Data(data,timeSeriesCol)
         if mainCategoryCol is None:
             return tsd
         tsc = Time_Series_Data_Collection(tsd,timeSeriesCol,mainCategoryCol)
@@ -44,6 +39,8 @@ class Time_Series_Transformer(object):
 
 
     def _transform_wrapper(self,inputLabels,func,suffix,suffixNum,n_jobs,verbose,*args,**kwargs):
+        if isinstance(inputLabels,list) == False:
+            inputLabels = [inputLabels]
         if self._isCollection:
             for i in inputLabels:
                 labelName = [f'{i}{suffix}{str(suffixNum)}' if suffix is not None else f"{i}{str(suffixNum)}"][0]
@@ -51,7 +48,7 @@ class Time_Series_Transformer(object):
         else:
             for i in inputLabels:
                 labelName = [f'{i}{suffix}{str(suffixNum)}' if suffix is not None else f"{i}{str(suffixNum)}"][0]
-                self.time_series_data.transform(i,labelName,make_lag,*args,**kwargs)
+                self.time_series_data.transform(i,labelName,func,*args,**kwargs)
 
 
     def make_lag(self,inputLabels,lagNum,suffix=None,fillMissing=np.nan,verbose=0,n_jobs=1):
@@ -80,15 +77,16 @@ class Time_Series_Transformer(object):
             )
         return self
                 
-    def make_lag_sequence(self,inputLabels,windowSize,suffix=None,fillMissing=np.nan,verbose=0,n_jobs=1):
+    def make_lag_sequence(self,inputLabels,windowSize,lagNum,suffix=None,fillMissing=np.nan,verbose=0,n_jobs=1):
         self._transform_wrapper(
             inputLabels,
-            lag_sequence,
+            make_lag_sequnece,
             suffix,
             windowSize,
             n_jobs,
             verbose,
-            window=windowSize,
+            windowSize=windowSize,
+            lagNum = lagNum,
             fillMissing=fillMissing
             )
         return self
@@ -173,10 +171,19 @@ class Time_Series_Transformer(object):
     def from_numpy(cls):
         pass
 
+    def to_pandas (self,expandCategory=False,expandTime=False,preprocessType='ignore'):
+        return to_pandas(
+            self.time_series_data,
+            expandCategory = expandCategory,
+            expandTime = expandTime,
+            preprocessType=preprocessType
+            )
+
+
     def __repr__(self):
         return super().__repr__()
 
-def lag_sequence(arr, window,fillMissing=np.nan):
+def make_sequence(arr, window,fillMissing=np.nan):
     """
     rolling_window create an rolling window tensor
     
@@ -201,6 +208,11 @@ def lag_sequence(arr, window,fillMissing=np.nan):
     empty[:] = fillMissing
     res = np.vstack([empty,seq])
     return res
+
+
+def make_lag_sequnece(data,windowSize,lagNum,fillMissing):
+    lagdata = np.array(make_lag(data,lagNum,fillMissing))
+    return make_sequence(lagdata,windowSize,fillMissing)
 
 def identity_window(arr,window):
     return np.repeat(arr,window).reshape((-1,window))

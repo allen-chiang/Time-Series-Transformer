@@ -1,7 +1,7 @@
 import pandas as pd
 from time_series_transform.transform_core_api.base import Time_Series_Data, Time_Series_Data_Collection
 from time_series_transform.io.base import io_base
-
+import numpy as np
 
 class Pandas_IO (io_base):
     def __init__(self, time_series, timeSeriesCol, mainCategoryCol):
@@ -21,9 +21,15 @@ class Pandas_IO (io_base):
     def to_pandas(self,expandTime,expandCategory,preprocessType):
         if isinstance(self.time_series,Time_Series_Data):
             data = self.from_single(expandTime)
+            for i in data:
+                if isinstance(data[i],np.ndarray):
+                    data[i] = data[i].tolist()
             return pd.DataFrame(data)
         if isinstance(self.time_series,Time_Series_Data_Collection):
             data = self.from_collection(expandCategory,expandTime,preprocessType)
+            for i in data:
+                if isinstance(data[i],np.ndarray):
+                    data[i] = data[i].tolist()
             return pd.DataFrame(data)
         raise ValueError("Invalid data type")
 
