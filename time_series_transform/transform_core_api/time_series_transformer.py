@@ -99,7 +99,7 @@ class Time_Series_Transformer(object):
             windowSize,
             n_jobs,
             verbose,
-            window=windowSize,
+            windowSize=windowSize,
             leadNum=leadNum,
             fillMissing=fillMissing
             )
@@ -108,12 +108,12 @@ class Time_Series_Transformer(object):
     def make_identical_sequence(self,inputLabels,windowSize,suffix=None,verbose=0,n_jobs=1):
         self._transform_wrapper(
             inputLabels,
-            identity_window,
+            windowSize,
             suffix,
             windowSize,
             n_jobs,
             verbose,
-            window=windowSize
+            windowSize=windowSize
             )
         return self
 
@@ -214,8 +214,8 @@ def make_lag_sequnece(data,windowSize,lagNum,fillMissing):
     lagdata = np.array(make_lag(data,lagNum,fillMissing))
     return make_sequence(lagdata,windowSize,fillMissing)
 
-def identity_window(arr,window):
-    return np.repeat(arr,window).reshape((-1,window))
+def identity_window(arr,windowSize):
+    return np.repeat(arr,windowSize).reshape((-1,windowSize))
 
 def make_lead(data,leadNum,fillMissing):
     res = np.empty((leadNum))
@@ -233,8 +233,8 @@ def make_lag(data,lagNum,fillMissing):
     res.extend(lagValues)        
     return res
 
-def lead_sequence(arr,leadNum,window,fillMissing=np.nan):
-    shape = arr.shape[:-1] + (arr.shape[-1] - window + 1, window)
+def lead_sequence(arr,leadNum,windowSize,fillMissing=np.nan):
+    shape = arr.shape[:-1] + (arr.shape[-1] - windowSize + 1, windowSize)
     strides = arr.strides + (arr.strides[-1],)
     seq = np.lib.stride_tricks.as_strided(arr, shape=shape, strides=strides)
     seq = seq[leadNum:]

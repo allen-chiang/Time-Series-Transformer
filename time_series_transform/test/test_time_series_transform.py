@@ -49,6 +49,23 @@ def expect_single_lag_sequence():
     }
 
 @pytest.fixture('class')
+def expect_single_lead_sequence():
+    return {
+        'time':[1,2],
+        'data':[1,2],
+        'data_lead_1':[[2],[np.nan]]
+    }
+
+@pytest.fixture('class')
+def expect_single_identical_sequence():
+    return {
+        'time':[1,2],
+        'data':[1,2],
+        'data_identical_2':[[1,1],[2,2]]
+    }
+
+
+@pytest.fixture('class')
 def expect_single_identical():
     return {
         
@@ -105,17 +122,25 @@ class Test_time_series_transform:
         expectDf = pd.DataFrame(expect_single_lag_sequence)
         tst = Time_Series_Transformer(data,'time',None)
         tst.make_lag_sequence('data',1,1,'_lag_')
-        print(tst.time_series_data)
         df = tst.to_pandas()
         pd.testing.assert_frame_equal(df,expectDf,False)
 
 
-    def test_single_sequence(self):
-        pass
+    def test_single_lead_sequence(self,dictList_single,expect_single_lead_sequence):
+        data = dictList_single
+        expectDf = pd.DataFrame(expect_single_lead_sequence)
+        tst = Time_Series_Transformer(data,'time',None)
+        tst.make_lead_sequence('data',1,1,'_lead_')
+        df = tst.to_pandas()
+        pd.testing.assert_frame_equal(df,expectDf,False)
 
+    def test_single_identical_sequence(self,dictList_single,expect_single_identical_sequence):
+        data = dictList_single
+        expectDf = pd.DataFrame(expect_single_identical_sequence)
+        tst = Time_Series_Transformer(data,'time',None)
+        tst.make_identical_sequence('data',1,1,'_identical_')
+        df = tst.to_pandas()
+        pd.testing.assert_frame_equal(df,expectDf,False)
 
     def test_transform(self):
-        pass
-
-    def test_make_sequence(self):
         pass
