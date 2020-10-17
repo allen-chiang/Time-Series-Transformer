@@ -108,7 +108,7 @@ class Time_Series_Transformer(object):
     def make_identical_sequence(self,inputLabels,windowSize,suffix=None,verbose=0,n_jobs=1):
         self._transform_wrapper(
             inputLabels,
-            windowSize,
+            identity_window,
             suffix,
             windowSize,
             n_jobs,

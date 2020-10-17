@@ -65,12 +65,6 @@ def expect_single_identical_sequence():
     }
 
 
-@pytest.fixture('class')
-def expect_single_identical():
-    return {
-        
-    }
-
 # To-do
 # Test
 #   io input
@@ -138,9 +132,21 @@ class Test_time_series_transform:
         data = dictList_single
         expectDf = pd.DataFrame(expect_single_identical_sequence)
         tst = Time_Series_Transformer(data,'time',None)
-        tst.make_identical_sequence('data',1,1,'_identical_')
+        tst.make_identical_sequence('data',2,'_identical_')
         df = tst.to_pandas()
         pd.testing.assert_frame_equal(df,expectDf,False)
 
-    def test_transform(self):
+    def test_collection_lag(self):
+        pass
+
+    def test_collection_lead(self):
+        pass
+
+    def test_collection_lag_sequence(self):
+        pass
+
+    def test_collection_lead_sequence(self):
+        pass
+
+    def test_collection_identity_sequence(self):
         pass
