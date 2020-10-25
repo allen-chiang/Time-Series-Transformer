@@ -6,7 +6,7 @@ import pandas as pd
 import pyarrow as pa
 from pyarrow import parquet as pq
 from collections import defaultdict
-from time_series_transform.io import *
+from time_series_transform import io
 from time_series_transform.transform_core_api.base import *
 
 
@@ -28,6 +28,7 @@ class Time_Series_Transformer(object):
         if mainCategoryCol is None:
             return tsd
         tsc = Time_Series_Data_Collection(tsd,timeSeriesCol,mainCategoryCol)
+        print(tsc)
         return tsc
     
     def transform(self,inputLabels,newName,func,n_jobs =1,verbose = 0,backend='loky',*args,**kwargs):
@@ -164,7 +165,7 @@ class Time_Series_Transformer(object):
 
     @classmethod
     def from_pandas(cls, pandasFrame,timeSeriesCol,mainCategoryCol):
-        data = from_pandas(pandasFrame,timeSeriesCol,mainCategoryCol)
+        data = io.from_pandas(pandasFrame,timeSeriesCol,mainCategoryCol)
         return cls(data,timeSeriesCol,mainCategoryCol)
 
     @classmethod
@@ -172,7 +173,7 @@ class Time_Series_Transformer(object):
         pass
 
     def to_pandas (self,expandCategory=False,expandTime=False,preprocessType='ignore'):
-        return to_pandas(
+        return io.to_pandas(
             self.time_series_data,
             expandCategory = expandCategory,
             expandTime = expandTime,

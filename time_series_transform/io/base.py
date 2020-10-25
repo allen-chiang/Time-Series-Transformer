@@ -47,7 +47,7 @@ class io_base (object):
                 timeList = transCollection[i].time_index[transCollection._time_series_Ix].tolist()
                 if tmp == 0:
                     tmp = timeList
-                if tmp !=timeList:
+                if tmp !=timeList and (False == (expandCategory == expandTimeIx == False)):
                     raise ValueError('category time length should be in consist. otherwise, use pad or ignore pre-process type. ')
         else:
             raise KeyError('preprocess type must be remove, pad, or ignore')

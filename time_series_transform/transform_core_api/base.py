@@ -246,7 +246,10 @@ class Time_Series_Data_Collection(object):
         dctList= Parallel(n_jobs=n_jobs,verbose = verbose, backend=backend)(delayed(self._parallel_transform)(
             c,self._time_series_data_collection[c],inputLabels,newName,func,*args,**kwargs
             ) for c in self.time_series_data_collection)
-        self._time_series_data_collection = dict(ChainMap(*dctList))
+        results = {}
+        for i in dctList:
+            results.update(i)
+        self._time_series_data_collection = results
         return self
 
     def remove_different_time_index(self):
