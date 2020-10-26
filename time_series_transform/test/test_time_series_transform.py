@@ -109,36 +109,57 @@ def expect_collection_identity_sequence():
         'category':[1,1,2,2],
     }
 
-
-# To-do
-# Test
-#   io input
-#   io output with label or without label
-#   transformation
-#       lag, sequence, lead, identical sequence
-
-
 class Test_time_series_transform:
-    def test_from_pandas(self):
-        pass
+    def test_from_pandas(self,dictList_single,dictList_collection):
+        data = dictList_single
+        result = Time_Series_Transformer(data,'time',None)
+        assert Time_Series_Transformer.from_pandas(pd.DataFrame(data),'time',None) == result
+        data = dictList_collection
+        result = Time_Series_Transformer(data,'time','category')
+        assert Time_Series_Transformer.from_pandas(pd.DataFrame(data),'time','category') == result
+                
+    def test_from_numpy(self,dictList_single,dictList_collection):
+        data = pd.DataFrame(pd.DataFrame(dictList_single).values)
+        result = Time_Series_Transformer(data,0,None)
+        assert Time_Series_Transformer.from_numpy(pd.DataFrame(dictList_single).values,0,None) == result
+        data = pd.DataFrame(pd.DataFrame(dictList_collection).values)
+        result = Time_Series_Transformer(data,0,None)
+        assert Time_Series_Transformer.from_numpy(pd.DataFrame(dictList_collection).values,0,None) == result
 
-    def test_to_pandas(self):
-        pass
 
-    def test_from_numpy(self):
-        pass
+    def test_to_pandas(self,dictList_single,dictList_collection):
+        data = dictList_single
+        result = pd.DataFrame(data)
+        df = Time_Series_Transformer(data,'time',None).to_pandas()
+        pd.testing.assert_frame_equal(df,result,False)
+        data = dictList_collection
+        result = pd.DataFrame(data)
+        df = Time_Series_Transformer(data,'time','category').to_pandas()
+        pd.testing.assert_frame_equal(df,result,False)
 
-    def test_to_numpy(self):
-        pass
 
-    def test_from_dict(self):
-        pass
+    def test_to_numpy(self,dictList_single,dictList_collection):
+        data = dictList_single
+        result = pd.DataFrame(data).values
+        numpyData = Time_Series_Transformer(data,'time',None).to_numpy()
+        np.testing.assert_equal(numpyData,result)
+        data = dictList_collection
+        result = pd.DataFrame(data).values
+        numpyData = Time_Series_Transformer(data,'time',None).to_numpy()
+        np.testing.assert_equal(numpyData,result)
 
-    def test_to_dict(self):
-        pass
 
-    def test_to_tfDataset(self):
-        pass
+    def test_to_dict(self,dictList_single,dictList_collection):
+        data = dictList_single
+        dictData = Time_Series_Transformer(data,'time',None).to_dict()
+        assert len(dictData) == len(data)
+        for i in data:
+            assert data[i] == dictData[i].tolist()
+        data = dictList_collection
+        dictData = Time_Series_Transformer(data,'time',None).to_dict()
+        assert len(dictData) == len(data)
+        for i in data:
+            assert data[i] == dictData[i].tolist()
 
     def test_single_make_lag(self,dictList_single,expect_single_lag):
         data = dictList_single

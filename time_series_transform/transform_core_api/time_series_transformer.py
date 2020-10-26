@@ -20,6 +20,7 @@ class Time_Series_Transformer(object):
             self.time_series_data = self._setup_time_series_data(data,timeSeriesCol,mainCategoryCol)
         self.timeSeriesCol = timeSeriesCol
         self._isCollection = [True if mainCategoryCol is not None else False][0]
+        self.mainCategoryCol = mainCategoryCol
 
     def _setup_time_series_data(self,data,timeSeriesCol,mainCategoryCol):
         if timeSeriesCol is None:
@@ -169,8 +170,9 @@ class Time_Series_Transformer(object):
         return cls(data,timeSeriesCol,mainCategoryCol)
 
     @classmethod
-    def from_numpy(cls):
-        pass
+    def from_numpy(cls,numpyData,timeSeriesCol,mainCategoryCol):
+        data = io.from_numpy(numpyData,timeSeriesCol,mainCategoryCol)
+        return cls(data,timeSeriesCol,mainCategoryCol)
 
     def to_pandas (self,expandCategory=False,expandTime=False,preprocessType='ignore'):
         return io.to_pandas(
@@ -179,6 +181,17 @@ class Time_Series_Transformer(object):
             expandTime = expandTime,
             preprocessType=preprocessType
             )
+
+    def to_numpy(self,expandCategory=False,expandTime=False,preprocessType='ignore'):
+        return io.to_numpy(self.time_series_data,expandCategory,expandTime,preprocessType)
+
+    def to_dict(self):
+        return self.time_series_data[:]
+
+    def __eq__(self,other):
+        if isinstance(other,Time_Series_Transformer):
+            return self.time_series_data == other.time_series_data
+        return False
 
 
     def __repr__(self):
