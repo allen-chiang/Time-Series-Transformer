@@ -119,8 +119,7 @@ class Time_Series_Transformer(object):
             )
         return self
 
-    def make_stack_sequence(self,inputLabels,removeOrg,suffix=None,verbose=0,n_jobs=1):
-        # To-do
+    def make_stack_sequence(self,inputLabels,axis =-1,suffix=None,verbose=0,n_jobs=1):
         self._transform_wrapper(
             inputLabels,
             stack_sequence,
@@ -128,7 +127,7 @@ class Time_Series_Transformer(object):
             None,
             n_jobs,
             verbose,
-            removeOrg=removeOrg
+            axis =axis
             )
         return self
 
@@ -164,6 +163,19 @@ class Time_Series_Transformer(object):
             warnings.warn('Setup mainCategoryCol is necessary for this function')
         return self
 
+    def remove_category(self,categoryName):
+        if self._isCollection:
+            self.time_series_data.remove(categoryName)
+        return self
+
+    def remove_feature(self,colName):
+        if isinstance(self._isCollection):
+            for i in self.time_series_data:
+                self.time_series_data[i].remove(colName)
+                return self
+        self.time_series_data.remove(colName)
+        return self
+
     @classmethod
     def from_pandas(cls, pandasFrame,timeSeriesCol,mainCategoryCol):
         data = io.from_pandas(pandasFrame,timeSeriesCol,mainCategoryCol)
@@ -174,16 +186,19 @@ class Time_Series_Transformer(object):
         data = io.from_numpy(numpyData,timeSeriesCol,mainCategoryCol)
         return cls(data,timeSeriesCol,mainCategoryCol)
 
-    def to_pandas (self,expandCategory=False,expandTime=False,preprocessType='ignore'):
-        return io.to_pandas(
-            self.time_series_data,
-            expandCategory = expandCategory,
-            expandTime = expandTime,
-            preprocessType=preprocessType
-            )
+    def to_pandas(self,expandCategory=False,expandTime=False,preprocessType='ignore',sepLabel = False):
+        if sepLabel == False:
+            return io.to_pandas(
+                self.time_series_data,
+                expandCategory = expandCategory,
+                expandTime = expandTime,
+                preprocessType=preprocessType
+                )
+        
 
-    def to_numpy(self,expandCategory=False,expandTime=False,preprocessType='ignore'):
-        return io.to_numpy(self.time_series_data,expandCategory,expandTime,preprocessType)
+    def to_numpy(self,expandCategory=False,expandTime=False,preprocessType='ignore',sepLabel = False):
+        if sepLabel == False:
+            return io.to_numpy(self.time_series_data,expandCategory,expandTime,preprocessType)
 
     def to_dict(self):
         return self.time_series_data[:]
@@ -257,6 +272,11 @@ def lead_sequence(arr,leadNum,windowSize,fillMissing=np.nan):
     res = np.vstack([seq,empty])
     return res
 
-
-def stack_sequence(arrList):
-    pass
+def stack_sequence(arrList, axis = -1):
+    res = None
+    for ix, v in enumerate(arrList):
+        if ix == 0:
+            res = v
+            continue
+        res = np.stack([res,v],axis = axis )
+    return res
