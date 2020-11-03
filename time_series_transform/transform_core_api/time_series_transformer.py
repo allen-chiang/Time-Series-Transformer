@@ -29,7 +29,6 @@ class Time_Series_Transformer(object):
         if mainCategoryCol is None:
             return tsd
         tsc = Time_Series_Data_Collection(tsd,timeSeriesCol,mainCategoryCol)
-        print(tsc)
         return tsc
     
     def transform(self,inputLabels,newName,func,n_jobs =1,verbose = 0,backend='loky',*args,**kwargs):
@@ -40,25 +39,35 @@ class Time_Series_Transformer(object):
         return self
 
 
-    def _transform_wrapper(self,inputLabels,func,suffix,suffixNum,n_jobs,verbose,*args,**kwargs):
+    def _transform_wrapper(self,inputLabels,newName,func,suffix,suffixNum,inputAsList,n_jobs,verbose,*args,**kwargs):
         if isinstance(inputLabels,list) == False:
             inputLabels = [inputLabels]
         if self._isCollection:
-            for i in inputLabels:
-                labelName = [f'{i}{suffix}{str(suffixNum)}' if suffix is not None else f"{i}{str(suffixNum)}"][0]
-                self.time_series_data.transform(i,labelName,func,n_jobs =n_jobs,verbose = verbose,*args,**kwargs)
+            if inputAsList == False:
+                for i in inputLabels:
+                    labelName = [f'{i}{suffix}{str(suffixNum)}' if suffix is not None else f"{i}{str(suffixNum)}"][0]
+                    self.time_series_data.transform(i,labelName,func,n_jobs =n_jobs,verbose = verbose,*args,**kwargs)
+                return
+            labelName = newName
+            self.time_series_data.transform(inputLabels,labelName,func,n_jobs =n_jobs,verbose = verbose,*args,**kwargs)
         else:
-            for i in inputLabels:
-                labelName = [f'{i}{suffix}{str(suffixNum)}' if suffix is not None else f"{i}{str(suffixNum)}"][0]
-                self.time_series_data.transform(i,labelName,func,*args,**kwargs)
+            if inputAsList == False:
+                for i in inputLabels:
+                    labelName = [f'{i}{suffix}{str(suffixNum)}' if suffix is not None else f"{i}{str(suffixNum)}"][0]
+                    self.time_series_data.transform(i,labelName,func,*args,**kwargs)
+                return
+            labelName = newName
+            self.time_series_data.transform(inputLabels,labelName,func,*args,**kwargs)
 
 
     def make_lag(self,inputLabels,lagNum,suffix=None,fillMissing=np.nan,verbose=0,n_jobs=1):
         self._transform_wrapper(
             inputLabels,
+            None,
             make_lag,
             suffix,
             lagNum,
+            False,
             n_jobs,
             verbose,
             lagNum=lagNum,
@@ -69,9 +78,11 @@ class Time_Series_Transformer(object):
     def make_lead(self,inputLabels,leadNum,suffix=None,fillMissing=np.nan,verbose=0,n_jobs=1):
         self._transform_wrapper(
             inputLabels,
+            None,
             make_lead,
             suffix,
             leadNum,
+            False,
             n_jobs,
             verbose,
             leadNum=leadNum,
@@ -82,9 +93,11 @@ class Time_Series_Transformer(object):
     def make_lag_sequence(self,inputLabels,windowSize,lagNum,suffix=None,fillMissing=np.nan,verbose=0,n_jobs=1):
         self._transform_wrapper(
             inputLabels,
+            None,
             make_lag_sequnece,
             suffix,
             windowSize,
+            False,
             n_jobs,
             verbose,
             windowSize=windowSize,
@@ -96,9 +109,11 @@ class Time_Series_Transformer(object):
     def make_lead_sequence(self,inputLabels,windowSize,leadNum,suffix=None,fillMissing=np.nan,verbose=0,n_jobs=1):
         self._transform_wrapper(
             inputLabels,
+            None,
             lead_sequence,
             suffix,
             windowSize,
+            False,
             n_jobs,
             verbose,
             windowSize=windowSize,
@@ -110,21 +125,25 @@ class Time_Series_Transformer(object):
     def make_identical_sequence(self,inputLabels,windowSize,suffix=None,verbose=0,n_jobs=1):
         self._transform_wrapper(
             inputLabels,
+            None,
             identity_window,
             suffix,
             windowSize,
+            False,
             n_jobs,
             verbose,
             windowSize=windowSize
             )
         return self
 
-    def make_stack_sequence(self,inputLabels,axis =-1,suffix=None,verbose=0,n_jobs=1):
+    def make_stack_sequence(self,inputLabels,newName,axis =-1,verbose=0,n_jobs=1):
         self._transform_wrapper(
             inputLabels,
+            newName,
             stack_sequence,
-            suffix,
             None,
+            '',
+            True,
             n_jobs,
             verbose,
             axis =axis
@@ -272,11 +291,11 @@ def lead_sequence(arr,leadNum,windowSize,fillMissing=np.nan):
     res = np.vstack([seq,empty])
     return res
 
-def stack_sequence(arrList, axis = -1):
+def stack_sequence(arrDict, axis = -1):
     res = None
-    for ix, v in enumerate(arrList):
+    for ix, v in enumerate(arrDict):
         if ix == 0:
-            res = v
+            res = arrDict[v]
             continue
-        res = np.stack([res,v],axis = axis )
+        res = np.stack([res,arrDict[v]],axis = axis )
     return res

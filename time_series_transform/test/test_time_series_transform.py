@@ -109,6 +109,27 @@ def expect_collection_identity_sequence():
         'category':[1,1,2,2],
     }
 
+@pytest.fixture('class')
+def expect_single_stack_sequence():
+    return {
+        'time':[1,2],
+        'data':[1,2],
+        'data_lag_1':[[np.nan],[1]],
+        'stack_data':[[[np.nan,np.nan]],[[1,1]]]
+    }
+
+@pytest.fixture('class')
+def expect_collection_stack_sequence():
+    return {
+        'time': [1,2,1,3],
+        'data':[1,2,1,2],
+        'data_lag_1':[[np.nan],[1],[np.nan],[1]],
+        'stack_data':[[[np.nan,np.nan]],[[1,1]],[[np.nan,np.nan]],[[1,1]]],
+        'category':[1,1,2,2]        
+    }
+
+
+
 class Test_time_series_transform:
     def test_from_pandas(self,dictList_single,dictList_collection):
         data = dictList_single
@@ -245,5 +266,27 @@ class Test_time_series_transform:
         expectResults = pd.DataFrame(expectResults)
         tst = Time_Series_Transformer(data,'time','category')
         tst.make_identical_sequence('data',2,'_identical_')
+        df = tst.to_pandas()
+        pd.testing.assert_frame_equal(df,expectResults,False)
+
+
+    def test_collection_stack_sequence(self,dictList_collection,expect_collection_stack_sequence):
+        data = dictList_collection
+        expectResults = pd.DataFrame(expect_collection_stack_sequence)
+        tst = Time_Series_Transformer(data,'time','category')
+        tst = tst.make_lag_sequence('data',1,1,'_lag_')
+        tst = tst.make_stack_sequence(['data_lag_1','data_lag_1'],'stack_data',-1)
+        df = tst.to_pandas()
+        print(df)
+        print(expectResults)
+        pd.testing.assert_frame_equal(df,expectResults,False)
+
+
+    def test_single_stack_sequence(self,dictList_single,expect_single_stack_sequence):
+        data = dictList_single
+        expectResults = pd.DataFrame(expect_single_stack_sequence)
+        tst = Time_Series_Transformer(data,'time',None)
+        tst = tst.make_lag_sequence('data',1,1,'_lag_')
+        tst = tst.make_stack_sequence(['data_lag_1','data_lag_1'],'stack_data',-1)
         df = tst.to_pandas()
         pd.testing.assert_frame_equal(df,expectResults,False)

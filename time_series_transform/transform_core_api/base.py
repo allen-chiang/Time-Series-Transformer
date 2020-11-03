@@ -6,6 +6,7 @@ from joblib import Parallel, delayed
 from collections import ChainMap
 from collections import Counter
 import binstar_client.commands.copy
+import uuid
 
 class Time_Series_Data(object):
 
@@ -109,10 +110,17 @@ class Time_Series_Data(object):
         outputType = 'label'
         for col in inputList:
             if col in self.data:
-                arrDict[col] = self.data[col]
+                if col not in arrDict:
+                    arrDict[col] = self.data[col]
+                else:
+                    arrDict[f"{col}_{str(uuid.uuid4())}"] = self.data[col]
                 outputType='data'
             else:
-                arrDict[col] = self.labels[col]
+                if col not in arrDict:
+                    arrDict[col] = self.labels[col]
+                else:
+                    arrDict[f"{col}_{str(uuid.uuid4())}"] = self.labels[col]
+        print(f"print {arrDict}")
         arrDict = func(arrDict,*args,**kwargs)
         return arrDict,outputType
 
