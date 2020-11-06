@@ -277,8 +277,6 @@ class Test_time_series_transform:
         tst = tst.make_lag_sequence('data',1,1,'_lag_')
         tst = tst.make_stack_sequence(['data_lag_1','data_lag_1'],'stack_data',-1)
         df = tst.to_pandas()
-        print(df)
-        print(expectResults)
         pd.testing.assert_frame_equal(df,expectResults,False)
 
 

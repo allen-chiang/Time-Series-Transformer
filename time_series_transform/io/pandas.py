@@ -38,17 +38,27 @@ def from_pandas(pandasFrame,timeSeriesCol,mainCategoryCol=None):
     pio = Pandas_IO(pandasFrame,timeSeriesCol,mainCategoryCol)
     return pio.from_pandas()
 
-def to_pandas(time_series_data,expandCategory,expandTime,preprocessType):
+def to_pandas(time_series_data,expandCategory,expandTime,preprocessType,seperateLabels = False):
     if isinstance(time_series_data,Time_Series_Data):
         pio = Pandas_IO(time_series_data,time_series_data.time_seriesIx,None)
-        return pio.to_pandas(expandTime,None,None)
-    if isinstance(time_series_data,Time_Series_Data_Collection):
+        expandCategory = None
+        preprocessType = None
+        labelsList = list(time_series_data.labels.keys())
+    elif isinstance(time_series_data,Time_Series_Data_Collection):
         pio = Pandas_IO(
             time_series_data,
             time_series_data._time_series_Ix,
             time_series_data._categoryIx
             )
-        return pio.to_pandas(expandTime,expandCategory,preprocessType)
+        labelsList = []
+        for i in time_series_data:
+            labelsList.extend(list(time_series_data[i].labels.keys()))
+    else:
+        raise ValueError('Input data should time_series_data or time_series_collection')
+    df = pio.to_pandas(expandTime,expandCategory,preprocessType)
+    if seperateLabels == False:
+        return df
+    return df.drop(labelsList,axis =1),df[labelsList]
     
 
 __all__ = [
