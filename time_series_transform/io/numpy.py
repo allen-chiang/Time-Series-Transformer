@@ -20,12 +20,21 @@ class Numpy_IO (io_base):
         return self.to_collection()
 
 
-    def to_numpy(self,expandTime,expandCategory,preprocessType):
+    def to_numpy(self,expandTime,expandCategory,preprocessType,labelList):
         if isinstance(self.time_series,Time_Series_Data):
             data = self.from_single(expandTime)
         if isinstance(self.time_series,Time_Series_Data_Collection):
             data = self.from_collection(expandCategory,expandTime,preprocessType)
-        return np.asarray(list(data.values())).T
+        if labelList is None:
+            return np.asarray(list(data.values())).T
+        labelDict = {}
+        dataDict = {}
+        for i in data:
+            if i in labelList:
+                labelDict[i] = data[i]
+                continue
+            dataDict[i] = data[i]
+        return np.asarray(list(dataDict.values())).T,np.asarray(list(labelDict.values())).T
 
 
 def from_numpy(numpyArray,timeSeriesCol,mainCategoryCol=None):
@@ -49,15 +58,13 @@ def to_numpy(time_series_data,expandCategory,expandTime,preprocessType,seperateL
             )
         for i in time_series_data:
             labelsList.extend(list(time_series_data[i].labels.keys()))
-            labelList = list(set(labelsList))
+            labelsList = list(set(labelsList))
     else:
         raise ValueError('input data should be time_series_data or time_series_collection')
-    npList = numpyio.to_numpy(expandTime,expandCategory,preprocessType)
     if seperateLabels == False:
-        return npList
-    npShape = np.arange(npList.shape[1])
-    normalIx = np.isin(npShape,labelsList,invert = True)
-    return npList[:,npShape[normalIx]], npList[:,labelsList]
+        return numpyio.to_numpy(expandTime,expandCategory,preprocessType,None)
+    return numpyio.to_numpy(expandTime,expandCategory,preprocessType,labelsList)
+
 
 
 __all__= [
