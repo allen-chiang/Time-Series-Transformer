@@ -170,8 +170,8 @@ class Time_Series_Data(object):
         return left == right
 
     def __getitem__(self,ix):
-        tmpInfo = self.labels
-        tmpInfo.update(self.data)
+        tmpInfo = self.data
+        tmpInfo.update(self.labels)
         info = {}
         if isinstance(ix,tuple):
             t = ix[0]
