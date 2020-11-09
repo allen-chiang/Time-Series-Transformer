@@ -31,6 +31,27 @@ def expect_single_expandTime():
         'data_2':[2]
     }
 
+@pytest.fixture('class')
+def expect_single_seperateLabel():
+    return [{
+        'time': [1, 2],
+        'data': [1, 2]
+    },
+    {
+        'data_label': [1, 2]
+    }]
+
+@pytest.fixture('class')
+def expect_collection_seperateLabel():
+    return [{
+        'time': [1,2,1,3],
+        'data':[1,2,1,2],
+        'category':[1,1,2,2]
+    },
+    {
+        'data_label':[1,2,1,2]
+    }
+]
 
 @pytest.fixture('class')
 def expect_collection_expandTime():
@@ -97,7 +118,6 @@ def expect_collection_noExpand():
             'category':[1,2]
         }        
     }
-
 
 
 
@@ -348,6 +368,32 @@ class Test_Pandas_IO:
             )
         pd.testing.assert_frame_equal(testData,expandTime_ignore,check_dtype=False)
 
+    def test_to_pandas_seperateLabels_single(self,dictList_single,expect_single_seperateLabel):
+        data = dictList_single
+        expectedX, expectedY = expect_single_seperateLabel
+        expectedX = pd.DataFrame(expectedX)
+        expectedY = pd.DataFrame(expectedY)
+        tsd = Time_Series_Data(data,'time')
+        tsd.set_labels([1,2],'data_label')
+        x, y  = to_pandas(tsd,False,False,'ignore',True)
+        print(x)
+        print(y)
+        pd.testing.assert_frame_equal(x,expectedX,check_dtype=False)
+        pd.testing.assert_frame_equal(y,expectedY,check_dtype=False)
+
+    def test_to_pandas_seperateLabels_collection(self,dictList_collection,expect_collection_seperateLabel):
+        data = dictList_collection
+        expectedX, expectedY = expect_collection_seperateLabel
+        expectedX = pd.DataFrame(expectedX)
+        expectedY = pd.DataFrame(expectedY)
+        tsd = Time_Series_Data(data,'time')
+        tsd = tsd.set_labels([1,2,1,2],'data_label')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        x, y  = to_pandas(tsc,False,False,'ignore',True)
+        print(y)
+        pd.testing.assert_frame_equal(x,expectedX,check_dtype=False)
+        pd.testing.assert_frame_equal(y,expectedY,check_dtype=False) 
+
 
 class Test_Numpy_IO:
     def test_from_numpy_single(self,dictList_single):
@@ -485,6 +531,31 @@ class Test_Numpy_IO:
             preprocessType='ignore'
             )
         np.testing.assert_equal(ignore_numpy,pd.DataFrame(results['ignore']).values)
+
+    def test_to_numpy_seperateLabel_single(self,dictList_single,expect_single_seperateLabel):
+        data = dictList_single
+        expectedX, expectedY = expect_single_seperateLabel
+        expectedX = pd.DataFrame(expectedX).values
+        expectedY = pd.DataFrame(expectedY).values
+        tsd = Time_Series_Data(data,'time')
+        tsd.set_labels([1,2],'data_label')
+        x, y  = to_numpy(tsd,False,False,'ignore',True)
+        print(x)
+        print(y)
+        np.testing.assert_equal(x,expectedX)
+        np.testing.assert_equal(y,expectedY)
+
+    def test_to_numpy_seperateLabel_collection(self,dictList_collection,expect_collection_seperateLabel):
+        data = dictList_collection
+        expectedX, expectedY = expect_collection_seperateLabel
+        expectedX = pd.DataFrame(expectedX).values
+        expectedY = pd.DataFrame(expectedY).values
+        tsd = Time_Series_Data(data,'time')
+        tsd = tsd.set_labels([1,2,1,2],'data_label')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        x, y  = to_numpy(tsc,False,False,'ignore',True)
+        np.testing.assert_equal(x,expectedX)
+        np.testing.assert_equal(y,expectedY)
 
 class Test_Generator_IO:
     def test_from_generator(self):

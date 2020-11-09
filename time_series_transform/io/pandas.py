@@ -54,7 +54,7 @@ def to_pandas(time_series_data,expandCategory,expandTime,preprocessType,seperate
         labelsList = []
         for i in time_series_data:
             labelsList.extend(list(time_series_data[i].labels.keys()))
-            labelList = list(set(labelsList))
+            labelsList = list(set(labelsList))
     else:
         raise ValueError('Input data should time_series_data or time_series_collection')
     df = pio.to_pandas(expandTime,expandCategory,preprocessType)

@@ -29,6 +29,7 @@ class Numpy_IO (io_base):
             return np.asarray(list(data.values())).T
         labelDict = {}
         dataDict = {}
+        print(f"label {labelList}")
         for i in data:
             if i in labelList:
                 labelDict[i] = data[i]
@@ -47,7 +48,6 @@ def to_numpy(time_series_data,expandCategory,expandTime,preprocessType,seperateL
     labelsList = []
     if isinstance(time_series_data,Time_Series_Data):
         numpyio = Numpy_IO(time_series_data,time_series_data.time_seriesIx,None)
-        expandTime = None
         expandCategory = None
         labelsList = list(time_series_data.labels.keys())
     elif isinstance(time_series_data,Time_Series_Data_Collection):
@@ -57,6 +57,7 @@ def to_numpy(time_series_data,expandCategory,expandTime,preprocessType,seperateL
             time_series_data._categoryIx
             )
         for i in time_series_data:
+            print(time_series_data[i].labels)
             labelsList.extend(list(time_series_data[i].labels.keys()))
             labelsList = list(set(labelsList))
     else:

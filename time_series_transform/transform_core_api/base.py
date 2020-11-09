@@ -240,7 +240,7 @@ class Time_Series_Data_Collection(object):
             for d in time_series_data.data:
                 tmp.set_data(time_series_data.data[d][ixList],d)
             for l in time_series_data.labels:
-                tmp.set_data(time_series_data.labels[l][ixList],l)
+                tmp.set_labels(time_series_data.labels[l][ixList],l)
             tmp = tmp.remove(categoryIx)
             dct[i] = tmp
         return dct
