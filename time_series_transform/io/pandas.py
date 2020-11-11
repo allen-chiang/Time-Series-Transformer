@@ -1,28 +1,35 @@
 import pandas as pd
-from time_series_transform.transform_core_api.base import Time_Series_Data, Time_Series_Data_Colleciton
+from time_series_transform.transform_core_api.base import Time_Series_Data, Time_Series_Data_Collection
 from time_series_transform.io.base import io_base
-
+import numpy as np
 
 class Pandas_IO (io_base):
     def __init__(self, time_series, timeSeriesCol, mainCategoryCol):
         super().__init__(time_series, timeSeriesCol, mainCategoryCol)
-
+        if self.dictList is not None:
+            self.dictList = time_series
     
     def from_pandas(self):
-        if not isinstance(self.time_series,pd.DataFrame):
+        if not isinstance(self.dictList,pd.DataFrame):
             raise ValueError("input data must be pandas frame")
-        data = self.time_series.to_dict('list')
+        data = self.dictList.to_dict('list')
         if self.mainCategoryCol is None:
-            return self.to_single(data,self.timeSeriesCol)
-        return self.to_collection(data,self.timeSeriesCol,self.mainCategoryCol)
+            return self.to_single()
+        return self.to_collection()
         
 
     def to_pandas(self,expandTime,expandCategory,preprocessType):
         if isinstance(self.time_series,Time_Series_Data):
             data = self.from_single(expandTime)
+            for i in data:
+                if isinstance(data[i],np.ndarray):
+                    data[i] = data[i].tolist()
             return pd.DataFrame(data)
-        if isinstance(self.time_series,Time_Series_Data_Colleciton):
+        if isinstance(self.time_series,Time_Series_Data_Collection):
             data = self.from_collection(expandCategory,expandTime,preprocessType)
+            for i in data:
+                if isinstance(data[i],np.ndarray):
+                    data[i] = data[i].tolist()
             return pd.DataFrame(data)
         raise ValueError("Invalid data type")
 
@@ -31,18 +38,29 @@ def from_pandas(pandasFrame,timeSeriesCol,mainCategoryCol=None):
     pio = Pandas_IO(pandasFrame,timeSeriesCol,mainCategoryCol)
     return pio.from_pandas()
 
-def to_pandas(time_series_data,expandCategory,expandTime,preprocessType):
+def to_pandas(time_series_data,expandCategory,expandTime,preprocessType,seperateLabels = False):
+    labelsList = []
     if isinstance(time_series_data,Time_Series_Data):
         pio = Pandas_IO(time_series_data,time_series_data.time_seriesIx,None)
-        return pio.from_single(expandTime)
-    if isinstance(time_series_data,Time_Series_Data_Colleciton):
-        print('start')
+        expandCategory = None
+        preprocessType = None
+        labelsList = list(time_series_data.labels.keys())
+    elif isinstance(time_series_data,Time_Series_Data_Collection):
         pio = Pandas_IO(
             time_series_data,
             time_series_data._time_series_Ix,
             time_series_data._categoryIx
             )
-        return pio.to_pandas(expandCategory,expandTime,preprocessType)
+        labelsList = []
+        for i in time_series_data:
+            labelsList.extend(list(time_series_data[i].labels.keys()))
+            labelsList = list(set(labelsList))
+    else:
+        raise ValueError('Input data should time_series_data or time_series_collection')
+    df = pio.to_pandas(expandTime,expandCategory,preprocessType)
+    if seperateLabels == False:
+        return df
+    return df.drop(labelsList,axis =1),df[labelsList]
     
 
 __all__ = [

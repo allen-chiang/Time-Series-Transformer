@@ -1,47 +1,57 @@
 import copy
 from time_series_transform.transform_core_api.base import (
     Time_Series_Data,
-    Time_Series_Data_Colleciton
+    Time_Series_Data_Collection
     )
 import numpy as np
 
 class io_base (object):
     def __init__(self,time_series,timeSeriesCol,mainCategoryCol):
-        self.time_series = copy.deepcopy(time_series)
+        if isinstance(time_series,(Time_Series_Data,Time_Series_Data_Collection)):
+            self.time_series = copy.deepcopy(time_series)
+            self.dictList = None
+        else:
+            self.time_series = None
+            self.dictList = copy.deepcopy(time_series)
         self.timeSeriesCol = timeSeriesCol
         self.mainCategoryCol = mainCategoryCol
 
-    def to_single(self,dictList,timeSeriesCol):
+    def to_single(self):
         tsd = Time_Series_Data()
-        if timeSeriesCol is None:
+        if self.timeSeriesCol is None:
             raise KeyError("time series index is required")
-        tsd.set_time_index(dictList[timeSeriesCol],timeSeriesCol)
-        for i in dictList:
-            if i == timeSeriesCol:
+        tsd.set_time_index(self.dictList[self.timeSeriesCol],self.timeSeriesCol)
+        for i in self.dictList:
+            if i == self.timeSeriesCol:
                 continue
-            tsd.set_data(dictList[i],i)
+            tsd.set_data(self.dictList[i],i)
         return tsd
     
-    def to_collection(self,dictList,timeSeriesCol,mainCategoryCol):
-        tsd = Time_Series_Data()
-        if timeSeriesCol is None:
+    def to_collection(self):
+        if self.timeSeriesCol is None:
             raise KeyError("time series index is required")
-        tsd.set_time_index(dictList[timeSeriesCol],timeSeriesCol)
-        for i in dictList:
-            if i == timeSeriesCol:
-                continue
-            tsd.set_data(dictList[i],i)
-        tsc = Time_Series_Data_Colleciton(tsd,timeSeriesCol,mainCategoryCol)
+        tsd = Time_Series_Data(self.dictList,self.timeSeriesCol)
+        tsc = Time_Series_Data_Collection(tsd,self.timeSeriesCol,self.mainCategoryCol)
         return tsc
 
     def from_collection(self,expandCategory,expandTimeIx,preprocessType='ignore'):
         transCollection = copy.deepcopy(self.time_series)
+        transCollection =  transCollection.sort()
         if preprocessType == 'remove':
             transCollection = transCollection.remove_different_time_index()
         elif preprocessType == 'pad':
             transCollection = transCollection.pad_time_index()
-        elif preprocessType != 'ignore':
+        elif preprocessType == 'ignore':
+            tmp = None
+            for i in transCollection:
+                timeList = transCollection[i].time_index[transCollection._time_series_Ix].tolist()
+                if tmp == 0:
+                    tmp = timeList
+                if tmp !=timeList and (False == (expandCategory == expandTimeIx == False)):
+                    raise ValueError('category time length should be in consist. otherwise, use pad or ignore pre-process type. ')
+        else:
             raise KeyError('preprocess type must be remove, pad, or ignore')
+
         if expandCategory:
             transCollection = self._expand_dict_category(transCollection)
         if expandTimeIx:
@@ -50,11 +60,14 @@ class io_base (object):
         for i in transCollection:
             if isinstance(transCollection[i],Time_Series_Data):
                 data = transCollection[i][:]
+                categoryList = np.empty(transCollection[i].time_length)
             else:
                 data = transCollection[i]
-            categoryList = np.empty(transCollection[i].time_length)
-            categoryList[:] = i
-            data[self.mainCategoryCol] = categoryList
+                tmpKey =list(data.keys())[0]
+                categoryList = np.empty(len(data[tmpKey]))
+            if not expandCategory:
+                categoryList[:] = i
+                data[self.mainCategoryCol] = categoryList
             for key in data:
                 if key not in res:
                     res[key] = list(data[key])
@@ -83,7 +96,7 @@ class io_base (object):
             for d in tmp.data:
                 time_series.set_data(tmp.data[d],f'{d}_{i}')
             for l in tmp.labels:
-                time_series.set_labels(tmp.labels[l],f'{l}_{i}')      
+                time_series.set_labels(tmp.labels[l],f'{l}_{i}')     
         return {'1':time_series}
 
     def _expand_dict_date(self,collectionDict):

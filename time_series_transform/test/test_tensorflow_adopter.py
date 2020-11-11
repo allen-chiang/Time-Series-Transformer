@@ -1,7 +1,7 @@
 import pytest
-from time_series_transform.transform_core_api.tensorflow_adopter import *
 import os
 import numpy as np
+from time_series_transform.transform_core_api.tensorflow_adopter import *
 
 
 class Test_tfrecord_adopter:
