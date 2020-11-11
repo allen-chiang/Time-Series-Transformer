@@ -211,13 +211,14 @@ class Time_Series_Transformer(object):
                 self.time_series_data,
                 expandCategory = expandCategory,
                 expandTime = expandTime,
-                preprocessType=preprocessType
+                preprocessType=preprocessType,
+                seperateLabels = sepLabel
                 )
         
 
     def to_numpy(self,expandCategory=False,expandTime=False,preprocessType='ignore',sepLabel = False):
         if sepLabel == False:
-            return io.to_numpy(self.time_series_data,expandCategory,expandTime,preprocessType)
+            return io.to_numpy(self.time_series_data,expandCategory,expandTime,preprocessType,sepLabel)
 
     def to_dict(self):
         return self.time_series_data[:]
