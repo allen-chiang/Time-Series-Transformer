@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
-import parrow as pa
-from parrow.parquet as pq
+import pyarrow as pa
+from pyarrow import parquet as pq
 from time_series_transform.io.base import io_base
 from time_series_transform.io.pandas import (
     from_pandas,
@@ -19,18 +19,19 @@ class Arrow_IO(io_base):
             self.dictList = time_series
 
     def from_arrow_table(self):
-        df = self.time_series.to_pandas()
-        return from_pandas(df,self.time_series,self.mainCategoryCol)
+        df = self.dictList.to_pandas()
+        return from_pandas(df,self.timeSeriesCol,self.mainCategoryCol)
 
     def from_arrow_record_batch(self):
         df = None
-        if isinstance(self.time_series,list):
-            for ix,v in enumerate(self.time_series):
+        if isinstance(self.dictList,list):
+            for ix,v in enumerate(self.dictList):
                 if ix == 0:
                     df = v.to_pandas()
                     continue
                 df = df.append(v.to_pandas(),ignore_index = True)
-        return from_pandas(df,self.timeSeriesCol,self.mainCategoryCol)
+            return from_pandas(df,self.timeSeriesCol,self.mainCategoryCol)
+        return from_pandas(self.dictList.to_pandas(),self.timeSeriesCol,self.mainCategoryCol)
 
     def to_arrow_table(self,expandCategory,expandTime,preprocessType,seperateLabels):
         if seperateLabels == False:
@@ -70,8 +71,8 @@ def from_arrow_record_batch(time_series, timeSeriesCol, mainCategoryCol):
 
 def to_arrow_table(time_series,expandCategory,expandTime,preprocessType,seperateLabels = False):
     aio = Arrow_IO(time_series,
-                   time_series._time_series_Ix,
-                   time_series._categoryIx
+                    None,
+                    None
                    )
     return aio.to_arrow_table(
         expandCategory= expandCategory,
@@ -81,12 +82,13 @@ def to_arrow_table(time_series,expandCategory,expandTime,preprocessType,seperate
         )
 
 
-def to_arrow_record_batch(time_series,expandCategory,expandTime,preprocessType,seperateLabels = False):
+def to_arrow_record_batch(time_series,max_chunksize,expandCategory,expandTime,preprocessType,seperateLabels = False):
     aio = Arrow_IO(time_series,
-                   time_series._time_series_Ix,
-                   time_series._categoryIx
+                   None,
+                   None
                    )
     return aio.to_arrow_record_batch(
+        max_chunksize =max_chunksize,
         expandCategory= expandCategory,
         expandTime=expandTime,
         preprocessType=preprocessType,
