@@ -7,9 +7,10 @@ from joblib import Parallel, delayed
 import plotly.graph_objects as go
 from time_series_transform.transform_core_api.util import *
 from time_series_transform.transform_core_api.base import *
+from time_series_transform.io import *
 
 class Stock(Time_Series_Data):
-    def __init__(self, symbol, data,additionalInfo = None, timeSeriesCol='Date'):
+    def __init__(self, symbol, data, additionalInfo = None, timeSeriesCol='Date'):
         """
         The class initialize data as a Stock object 
         
@@ -31,6 +32,10 @@ class Stock(Time_Series_Data):
         self.additionalInfo = additionalInfo
         self.timeSeriesCol = timeSeriesCol
         
+    def get_data_columns(self):
+
+        return list(self.data[0].keys())
+
     def get_dataFrame(self):
         """
         get_dataFrame returns the pandas dataframe of the stock data
@@ -40,7 +45,7 @@ class Stock(Time_Series_Data):
         pandas df
             stock data
         """
-        return self.make_dataframe()
+        return to_pandas(self,None,False,None)
 
     def plot(self, colName = 'Close', *args, **kwargs):
         """
@@ -88,7 +93,7 @@ class Stock(Time_Series_Data):
         
         return self
 
-class Portfolio(Time_Series_Data_Colleciton):
+class Portfolio(Time_Series_Data_Collection):
     def __init__(self, stockList, timeSeriesCol = 'Date', categoryCol = 'symbol'):
         """
         The class initialize data as a Portfolio object, which stores multiple Stock data

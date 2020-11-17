@@ -3,52 +3,164 @@ from time_series_transform.stock_transform.base import *
 from time_series_transform.stock_transform.stock_extractor import *
 from time_series_transform.stock_transform.util import *
 
+@pytest.fixture('class')
+def extractor_yahoo_sample():
+    return {
+        'period': ["1y", "max", "1d"],
+        'date': [["2020-01-01", "2020-07-01"], ["2020-01-01", "2020-03-01"],["2020-01-01", "2020-02-01"]],
+        'symbol': ["aapl", "0050.TW", "MSFT"]
+    }
+
+@pytest.fixture('class')
+def extractor_investing_sample():
+    return {
+        'period': ["1y", "max", "1d"],
+        'date': [["2020-01-01", "2020-07-01"], ["2020-01-01", "2020-03-01"],["2020-01-01", "2020-02-01"]],
+        'symbol': ["aapl", "1310", "2206"],
+        'country': ["united states", "japan", "taiwan"]
+    }
+
+@pytest.fixture('class')
+def extractor_portfolio_yahoo_sample():
+    return {
+        'period': ["1y", "max", "1d"],
+        'date': [["2020-01-01", "2020-07-01"], ["2020-01-01", "2020-03-01"],["2020-01-01", "2020-02-01"]],
+        "stockList": [["aapl", "0050.TW", "MSFT"],[],["aapl"]]
+    }
+
+@pytest.fixture('class')
+def extractor_portfolio_investing_sample():
+    return {
+        'period': ["1y", "max", "1d"],
+        'date': [["2020-01-01", "2020-07-01"], ["2020-01-01", "2020-03-01"],["2020-01-01", "2020-02-01"]],
+        'symbol': ["aapl", "1310", "2206"],
+        "stockList": [["aapl", "1310", "2206"],[],["aapl"]],
+        'country': [["united states", "japan", "taiwan"],[],["united states"]]
+    }
+
 # test marks
 #   - stock_extractor
 #   - portfolio_extractor
 #   - util
 #   - base 
-# Quck command to run mark: pytest -v -m <mark>
 
-@pytest.mark.stock_extractor
-@pytest.mark.parametrize("source", ["yahoo"])
-@pytest.mark.parametrize("stockSymbol", ["aapl", "0050.TW", "MSFT"])
 class Test_stock_extractor:
-    @pytest.mark.parametrize("periods", ["1y", "max", "1d"])
-    def test_extractor_get_stock_period(self, stockSymbol, periods,source):
-        se = Stock_Extractor(stockSymbol,source)
-        data = se.get_stock_period(periods)
-        assert isinstance(data, Stock)
 
-    @pytest.mark.parametrize("dates", [["2020-01-01", "2020-07-01"], ["2020-01-01", "2020-03-01"],["2020-01-01", "2020-02-01"]])
-    def test_extractor_get_stock_date(self,stockSymbol, dates, source):
-        se = Stock_Extractor(stockSymbol,source)
-        data = se.get_stock_date(dates[0], dates[1])
-        assert isinstance(data, Stock)
+    def test_yahoo_stock_extractor_period(self,extractor_yahoo_sample):
+        period = extractor_yahoo_sample['period']
+        symbol = extractor_yahoo_sample['symbol']
+        source = 'yahoo'
+        for i in len(symbol):
+            se = Stock_Extractor(symbol[i],source)
+            data = se.get_stock_period(period[i])
+            assert isinstance(data, Stock)
+            assert data.symbol == symbol[i]
+            assert data.time_index == 'Date'
 
-@pytest.mark.portoflio_extractor
-@pytest.mark.parametrize("source", ["yahoo"])
-@pytest.mark.parametrize("stockList", [["aapl", "0050.TW", "MSFT"],[],["aapl"]])
+    def test_yahoo_stock_extractor_date(self,extractor_yahoo_sample):
+        date = extractor_yahoo_sample['date']
+        symbol = extractor_yahoo_sample['symbol']
+        source = 'yahoo'
+        for i in len(symbol):
+            se = Stock_Extractor(symbol[i],source)
+            data = se.get_stock_date(date[i][0], date[i][1])
+            assert isinstance(data, Stock)
+            assert data.symbol == symbol[i]
+            assert data.time_index == 'Date'
+
+    def test_investing_stock_extractor_period(self,extractor_investing_sample):
+        period = extractor_investing_sample['period']
+        symbol = extractor_investing_sample['symbol']
+        country = extractor_investing_sample['country']
+        source = 'investing'
+        for i in len(symbol):
+            se = Stock_Extractor(symbol[i],source, country = country[i])
+            data = se.get_stock_period(period[i])
+            assert isinstance(data, Stock)
+            assert data.symbol == symbol[i]
+            assert data.time_index == 'Date'
+
+    def test_investing_stock_extractor_date(self,extractor_investing_sample):
+        date = extractor_investing_sample['date']
+        symbol = extractor_investing_sample['symbol']
+        country = extractor_investing_sample['country']
+        source = 'investing'
+        for i in len(symbol):
+            se = Stock_Extractor(symbol[i],source, country = country[i])
+            data = se.get_stock_date(date[i][0], date[i][1])
+            assert isinstance(data, Stock)
+            assert data.symbol == symbol[i]
+            assert data.time_index == 'Date'
+
 class Test_portfolio_extractor:
-    @pytest.mark.parametrize("periods", ["1y", "max", "1d"])
-    def test_extractor_get_portfolio_period(self, stockList, periods,source):
-        se = Portfolio_Extractor(stockList,source)
-        data = se.get_portfolio_period(periods)
-        assert isinstance(data, Portfolio)
 
-    @pytest.mark.parametrize("dates", [["2020-06-01", "2020-07-01"], ["2020-01-01", "2020-02-01"],["2020-01-01", "2020-01-01"]])
-    def test_extractor_get_portfolio_date(self,stockList, dates, source):
-        pe = Portfolio_Extractor(stockList,source)
-        data = pe.get_portfolio_date(dates[0], dates[1])
-        assert isinstance(data, Portfolio)
+    def test_yahoo_portfolio_period(self,extractor_portfolio_yahoo_sample):
+        period = extractor_portfolio_yahoo_sample['period']
+        stockList = extractor_portfolio_yahoo_sample['stockList']
+        source = 'yahoo'
+        for i in len(stockList):
+            if len(stockList[i]) == 0:
+                with pytest.raises(ValueError):
+                    pe = Portfolio_Extractor(stockList[i],source)
+                    data = pe.get_portfolio_period(period[i])
+            else:
+                pe = Portfolio_Extractor(stockList[i],source)
+                data = pe.get_portfolio_period(period[i])
+                assert isinstance(data, Portfolio)
+
+    def test_yahoo_portfolio_date(self,extractor_portfolio_yahoo_sample):
+        date = extractor_portfolio_yahoo_sample['date']
+        stockList = extractor_portfolio_yahoo_sample['stockList']
+        source = 'yahoo'
+        for i in len(stockList):
+            if len(stockList[i]) == 0:
+                with pytest.raises(ValueError):
+                    pe = Portfolio_Extractor(stockList[i],source)
+                    data = pe.get_portfolio_period(date[i][0], date[i][1])
+            else:
+                pe = Portfolio_Extractor(stockList[i],source)
+                data = pe.get_portfolio_period(date[i][0], date[i][1])
+                assert isinstance(data, Portfolio)
+
+    def test_investing_portfolio_period(self,extractor_portfolio_investing_sample):
+        period = extractor_portfolio_investing_sample['period']
+        country = extractor_portfolio_investing_sample['country']
+        stockList = extractor_portfolio_investing_sample['stockList']
+        source = 'investing'
+        for i in len(stockList):
+            if len(stockList[i]) == 0:
+                with pytest.raises(ValueError):
+                    pe = Portfolio_Extractor(stockList[i],source, country = country[i])
+                    data = pe.get_portfolio_period(period[i])
+            else:
+                pe = Portfolio_Extractor(stockList[i],source, country = country[i])
+                data = pe.get_portfolio_period(period[i])
+                assert isinstance(data, Portfolio)
+
+    def test_investing_portfolio_date(self,extractor_portfolio_investing_sample):
+        date = extractor_portfolio_investing_sample['date']
+        country = extractor_portfolio_investing_sample['country']
+        stockList = extractor_portfolio_investing_sample['stockList']
+        source = 'investing'
+        for i in len(stockList):
+            if len(stockList[i]) == 0:
+                with pytest.raises(ValueError):
+                    pe = Portfolio_Extractor(stockList[i],source, country = country[i])
+                    data = pe.get_portfolio_period(date[i][0], date[i][1])
+            else:
+                pe = Portfolio_Extractor(stockList[i],source, country = country[i])
+                data = pe.get_portfolio_period(date[i][0], date[i][1])
+                assert isinstance(data, Portfolio)
 
 
+
+# todo from here
 @pytest.mark.util
 class Test_stock_util:
 
     @pytest.fixture(scope = 'class')
     def arr(self):
-        se = Stock_Extractor('aapl','yahoo').get_stock_period('1y').df['Close']
+        se = Stock_Extractor('aapl','yahoo').get_stock_period('1y')[:]['Close']
         data = list([[], [100], [100,20,30], se])
         return data
 
@@ -187,7 +299,7 @@ class Test_base:
         stock2 = se2.get_stock_date('2020-07-01', '2020-07-23')
 
         pt = Portfolio([stock,stock2])
-        pt.remove_different_date()
+        pt.remove_different_time_index()
 
         assert pt.get_portfolio_dataFrame().Date.min() == '2020-07-01'
         assert pt.get_portfolio_dataFrame().Date.max() == '2020-07-23'
