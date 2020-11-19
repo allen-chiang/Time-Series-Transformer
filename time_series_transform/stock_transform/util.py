@@ -1,4 +1,7 @@
 from time_series_transform.transform_core_api.util import *
+from time_series_transform.transform_core_api.base import *
+from time_series_transform.io import *
+import pandas as pd
 
 def _arr_check(arr):
     if len(arr) == 0:
@@ -35,31 +38,37 @@ def macd(arr, return_diff = False):
     else:
         return df
 
-def stochastic_oscillator(arr):
+def stochastic_oscillator(arr, window = 14):
     """
     Return the stochastic oscillator 
     
     Parameters
     ----------
-    arr : array 
+    arr : pandas or Time_Series_Data 
         data used to calculate the stochastic oscillator
 
+    window : int
+        window of the stochastic oscillator
     Returns
     -------
     ret : dict
         stochastic oscillator of the given data, including k and d values
     """
-    _arr_check(arr)
-    rsv_day = 9
-    ret = {}
-    df = pd.DataFrame(arr)
+    if not isinstance(arr, Time_Series_Data) and not isinstance(arr, pd.DataFrame):
+        raise ValueError("Input must be either Time_Series_Data or Pandas")
 
-    rsv_rolling = df.rolling(rsv_day)
-    rsv_val = 100*(df - rsv_rolling.min())/(rsv_rolling.max() - rsv_rolling.min())
-    ret['k_val'] = rsv_val
-    ret['d_val'] = np.array(ret['k_val'].rolling(3).mean()).reshape(-1)
-    ret['k_val'] = np.array(rsv_val).reshape(-1)
-    
+    if isinstance(arr, Time_Series_Data):
+        df = to_pandas(arr, False, None, False)
+    else:
+        df = arr
+    ret = {}
+    df['Low_window'] = df['Low'].rolling(window = window).min()
+    df['High_window'] = df['High'].rolling(window = window).max()
+
+    ret['k_val'] = 100*((df['Close'] - df['Low_window']) / (df['High_window'] - df['Low_window']))
+    ret['d_val'] = np.array(ret['k_val'].rolling(window = 3).mean()).reshape(-1)
+    ret['k_val'] = np.array(ret['k_val']).reshape(-1)
+
     return ret
 
 def rsi(arr, n_day = 14):

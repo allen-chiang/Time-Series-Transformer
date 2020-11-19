@@ -38,11 +38,148 @@ def extractor_portfolio_investing_sample():
         'country': [["united states", "japan", "taiwan"],[],["united states"]]
     }
 
+@pytest.fixture('class')
+def util_stock_sample():
+    data = list([[], [100], [100,20,30], list(range(30))])
+    return data
+
+@pytest.fixture('class')
+def util_stochastic_oscillator_sample():
+    data = {'Date': np.array(['2019-11-20', '2019-11-21', '2019-11-22', '2019-11-25',
+        '2019-11-26', '2019-11-27', '2019-11-29', '2019-12-02',
+        '2019-12-03', '2019-12-04', '2019-12-05', '2019-12-06',
+        '2019-12-09', '2019-12-10', '2019-12-11', '2019-12-12',
+        '2019-12-13', '2019-12-16', '2019-12-17', '2019-12-18'],
+       dtype='<U10'),
+            'Open': np.array([65.28211731, 64.82728897, 64.55686221, 64.58636831, 65.62630751,
+                    65.29194888, 65.54271583, 65.70741992, 63.50464714, 64.18317973,
+                    64.85188633, 65.75905139, 66.37858796, 66.03439846, 66.08602908,
+                    65.83280459, 66.73753195, 68.09951742, 68.73134069, 68.78788252]),
+            'High': np.array([65.41486909, 64.90596168, 64.70191081, 65.50337897, 65.68039408,
+                    65.88198683, 65.88689963, 65.9483523 , 63.80458035, 64.73387376,
+                    65.36816577, 66.62442872, 66.57526226, 66.39579327, 66.64901994,
+                    67.00795108, 67.68158222, 69.03127826, 69.27219875, 69.30416193]),
+            'Low': np.array([64.01846201, 64.21021162, 64.12663063, 64.53965685, 64.53474775,
+                    65.22557298, 65.37062018, 64.76829159, 63.00803961, 64.08729594,
+                    64.5912895 , 65.7147933 , 65.12722956, 65.36077368, 66.00981723,
+                    65.71971725, 66.60723352, 68.09460319, 68.542034  , 68.62070862]),
+            'Close': np.array([64.70437622, 64.41426849, 64.35772705, 65.48616791, 64.97481537,
+                    65.8475647 , 65.70251465, 64.94284058, 63.78491592, 64.34789276,
+                    65.29194641, 66.5531311 , 65.62138367, 66.00489807, 66.56788635,
+                    66.73751831, 67.64470673, 68.80263519, 68.93785095, 68.77313232]),
+            'Volume': np.array([106234400, 121395200,  65325200,  84020400, 105207600,  65235600,
+                    46617600,  94487200, 114430400,  67181600,  74424400, 106075600,
+                    128042400,  90420400,  78756800, 137310400, 133587600, 128186000,
+                    114158400, 116028400]),
+            'Dividends': np.array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+                    0., 0., 0.]),
+            'Stock Splits': np.array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+                    0., 0., 0.])}
+    data = pd.DataFrame(data)
+    out = {[1,2,3], data}
+    return out
+
+@pytest.fixture('class')
+def util_macd_output():
+    out = {True:[[],[np.array(0)],
+    np.array([ 0.        , -0.7977208 , -0.57822641]),
+    np.array([0.        , 0.00997151, 0.0278164 , 0.05247809, 0.0828554 ,
+       0.11783225, 0.1563057 , 0.19721132, 0.23954485, 0.2823797 ,
+       0.32488004, 0.36630945, 0.40603556, 0.44353089, 0.47837069,
+       0.51022811, 0.53886758, 0.56413675, 0.58595762, 0.60431723,
+       0.61925843, 0.6308707 , 0.63928167, 0.64464905, 0.64715343,
+       0.64699177, 0.64437167, 0.63950645, 0.63261098, 0.62389814])],
+           False:[[], {'EMA_12': np.array([100.]),
+                    'EMA_26': np.array([100.]),
+                    'DIF': np.array([0.]),
+                    'DEM': np.array([0.]),
+                    'OSC': np.array([0.])},
+                    {'EMA_12': np.array([100.        ,  56.66666667,  46.25866051]),
+                    'EMA_26': np.array([100.        ,  58.46153846,  48.23558403]),
+                    'DIF': np.array([ 0.        , -1.79487179, -1.97692352]),
+                    'DEM': np.array([ 0.        , -0.997151  , -1.39869711]),
+                    'OSC': np.array([ 0.        , -0.7977208 , -0.57822641])},
+                    {'EMA_12': np.array([ 0.        ,  0.54166667,  1.1108545 ,  1.70718391,  2.33013385,
+                            2.97905178,  3.65316581,  4.35159852,  5.07338219,  5.81747474,
+                            6.58277601,  7.36814394,  8.17241011,  8.99439453,  9.83291914,
+                            10.68681999, 11.55495793, 12.43622764, 13.32956518, 14.23395391,
+                            15.14842892, 16.07208019, 17.00405443, 17.94355591, 18.88984628,
+                            19.84224366, 20.80012112, 21.76290456, 22.73007028, 23.70114227]),
+                    'EMA_26': np.array([ 0.        ,  0.51923077,  1.05125678,  1.59604022,  2.15352841,
+                            2.72365397,  3.30633512,  3.90147606,  4.50896728,  5.12868609,
+                            5.76049704,  6.40425254,  7.05979334,  7.72694924,  8.40553968,
+                            9.0953744 ,  9.79625419, 10.50797158, 11.23031153, 11.96305221,
+                            12.70596571, 13.4588188 , 14.22137363, 14.99338848, 15.77461845,
+                            16.56481618, 17.36373247, 18.17111701, 18.98671895, 19.81028752]),
+                    'DIF': np.array([0.        , 0.0224359 , 0.05959773, 0.11114369, 0.17660544,
+                            0.25539782, 0.34683068, 0.45012246, 0.56441491, 0.68878865,
+                            0.82227897, 0.9638914 , 1.11261677, 1.26744529, 1.42737947,
+                            1.5914456 , 1.75870373, 1.92825606, 2.09925365, 2.2709017 ,
+                            2.44246321, 2.61326139, 2.7826808 , 2.95016743, 3.11522782,
+                            3.27742749, 3.43638865, 3.59178754, 3.74335132, 3.89085475]),
+                    'DEM': np.array([0.        , 0.01246439, 0.03178133, 0.0586656 , 0.09375003,
+                            0.13756557, 0.19052499, 0.25291114, 0.32487006, 0.40640895,
+                            0.49739893, 0.59758195, 0.70658121, 0.82391439, 0.94900878,
+                            1.08121748, 1.21983615, 1.3641193 , 1.51329604, 1.66658447,
+                            1.82320478, 1.98239069, 2.14339914, 2.30551838, 2.46807439,
+                            2.63043572, 2.79201698, 2.95228109, 3.11074034, 3.26695661]),
+                    'OSC': np.array([0.        , 0.00997151, 0.0278164 , 0.05247809, 0.0828554 ,
+                            0.11783225, 0.1563057 , 0.19721132, 0.23954485, 0.2823797 ,
+                            0.32488004, 0.36630945, 0.40603556, 0.44353089, 0.47837069,
+                            0.51022811, 0.53886758, 0.56413675, 0.58595762, 0.60431723,
+                            0.61925843, 0.6308707 , 0.63928167, 0.64464905, 0.64715343,
+                            0.64699177, 0.64437167, 0.63950645, 0.63261098, 0.62389814])}]}
+    return out
+
+
+
+@pytest.fixture('class')
+def util_stochastic_oscillator_output():
+    out = {[], {'k_val': np.array([        np.nan,         np.nan,         np.nan,         np.nan,         np.nan,
+                np.nan,         np.nan,         np.nan,         np.nan,         np.nan,
+                np.nan,         np.nan,         np.nan, 82.86880556, 97.77165536,
+        93.23903111, 99.21097349, 96.20398455, 94.66252704, 91.56576726]),
+ 'd_val': np.array([        np.nan,         np.nan,         np.nan,         np.nan,         np.nan,
+                np.nan,         np.nan,         np.nan,         np.nan,         np.nan,
+                np.nan,         np.nan,         np.nan,         np.nan,         np.nan,
+        91.29316401, 96.74055332, 96.21799638, 96.69249503, 94.14409295])}}
+    return out
+
+@pytest.fixture('class')
+def util_rsi_output():
+    out = {}
+    return out
+
+@pytest.fixture('class')
+def util_william_r_output():
+    out = {}
+    return out
+
+
 # test marks
 #   - stock_extractor
 #   - portfolio_extractor
 #   - util
 #   - base 
+
+def compare_equal(a,b):
+    try:
+        np.testing.assert_equal(a,b)
+    except AssertionError:
+        return False
+    return True
+
+def compare_arr_result(real, expect):
+    if isinstance(real, dict):
+        if list(real.keys()) != list(expect.keys()):
+            return False
+        for key in real:
+            if not compare_equal(real[key].round(4), expect[key].round(4)):
+                return False
+        return True
+    else:
+        return compare_equal(real[key].round(4), expect[key].round(4))
+
 
 class Test_stock_extractor:
 
@@ -153,59 +290,43 @@ class Test_portfolio_extractor:
                 assert isinstance(data, Portfolio)
 
 
-
-# todo from here
 @pytest.mark.util
 class Test_stock_util:
-
-    @pytest.fixture(scope = 'class')
-    def arr(self):
-        se = Stock_Extractor('aapl','yahoo').get_stock_period('1y')[:]['Close']
-        data = list([[], [100], [100,20,30], se])
-        return data
-
-
-    @pytest.mark.parametrize("return_diff", [True,False])
-    def test_macd(self, arr, return_diff):
-        for ar in arr:
-            macd_res = []
-            oriLen = len(ar)
-            if oriLen == 0:
-                with pytest.raises(ValueError):
-                    macd_res = macd(ar, return_diff)
-            else:
-                macd_res = macd(ar, return_diff)
-                outKeys = []
-                
-                if return_diff:
-                    assert len(macd_res) == oriLen
+    
+    def test_macd(self, util_stock_sample, util_macd_output):
+        return_diff = [True, False]
+        for rd in return_diff:
+            for ind in range(len(util_stock_sample)):
+                ar = util_stock_sample[ind]
+                out_res = util_macd_output[rd][ind]
+                macd_res = []
+                oriLen = len(ar)
+                if oriLen == 0:
+                    with pytest.raises(ValueError):
+                        macd_res = macd(ar, rd)
                 else:
-                    col = list(macd_res.keys())
-                    outKeys = ['EMA_12', 'EMA_26', 'DIF', 'DEM', 'OSC']
-                    assert np.array_equal(col, outKeys)
-                    for key in outKeys:
-                        assert len(macd_res[key].shape) == 1
-                        assert macd_res[key].shape[0] == oriLen 
+                    macd_res = macd(ar, rd)
+                    assert compare_arr_result(macd_res, out_res)
+                    
 
 
-    def test_stochastic_oscillator(self, arr):
-        for ar in arr:
+    def test_stochastic_oscillator(self, util_stochastic_oscillator_sample, util_stochastic_oscillator_output):
+        for ind in range(len(util_stochastic_oscillator_sample)):
+            ar = util_stochastic_oscillator_sample[ind]
+            so_out = util_stochastic_oscillator_output[ind]
             so_res = []
-            oriLen = len(ar)
-            if oriLen == 0:
+            
+            if not isinstance(ar, Time_Series_Data) and not isinstance(ar, pd.DataFrame):
                 with pytest.raises(ValueError):
                     so_res = stochastic_oscillator(ar)
             else:
                 so_res = stochastic_oscillator(ar)
-                col = list(so_res.keys())
-                outKeys = ['k_val', 'd_val']
-                assert np.array_equal(col, outKeys)
-                for key in outKeys:
-                    assert len(so_res[key].shape) == 1
-                    assert so_res[key].shape[0] == oriLen
+                assert compare_arr_result(so_res, so_out)
 
-    def test_rsi(self, arr):
-        for ar in arr:
+# todo
+    def test_rsi(self, util_stock_sample, util_rsi_output):
+        for ind in range(len(util_stock_sample)):
+            ar = util_stock_sample[ind]
             rsi_res = []
             oriLen = len(ar)
             if oriLen == 0:
@@ -216,8 +337,9 @@ class Test_stock_util:
                 assert len(rsi_res.shape) == 1
                 assert rsi_res.shape[0] == oriLen
 
-    def test_williams_r(self, arr):
-        for ar in arr:
+    def test_williams_r(self, util_stock_sample, util_william_r_output):
+        for ind in range(len(util_stock_sample)):
+            ar = util_stock_sample[ind]
             w_res = []
             oriLen = len(ar)
             if oriLen == 0:
@@ -227,6 +349,7 @@ class Test_stock_util:
                 w_res = williams_r(ar)
                 assert len(w_res.shape) == 1
                 assert w_res.shape[0] == oriLen
+
 
 @pytest.mark.base
 class Test_base:
