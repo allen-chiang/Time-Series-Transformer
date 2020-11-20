@@ -86,22 +86,21 @@ def rsi(arr, n_day = 14):
         Relative Strength Index of the given array
     """
     _arr_check(arr)
-    arr = np.array(arr)
-    orgLen = len(arr)
-    arr = arr[~np.isnan(arr)]
+    close = pd.DataFrame(arr)
+    delta = close.diff() 
+    up, down = delta.copy(), delta.copy()
 
-    dif = [arr[i+1]-arr[i] for i in range(len(arr)-1)]
-    u_val = np.array([val if val>0 else 0 for val in dif])
-    d_val = np.array([-1*val if val<0 else 0 for val in dif])
+    up[up < 0] = 0
+    down[down > 0] = 0
+    
+    roll_up = up.ewm(com=n_day - 1, adjust=False).mean()
+    roll_down = down.ewm(com=n_day - 1, adjust=False).mean().abs()
+    
+    rs = roll_up / roll_down
 
-    u_ema = ema(u_val, span = n_day)
-    d_ema = ema(d_val,span = n_day)
-    rs = u_ema/d_ema
-    rsi = 100*(1-1/(1+rs))
-    rsi = rsi.reshape(-1)
-    res = np.empty((int(orgLen-len(rsi))))
-    res[:] = np.nan
-    return np.append(res,rsi) 
+    rsi = 100-(100/(1+rs))
+    rsi = np.array(rsi).reshape(-1)
+    return rsi
 
 def williams_r(arr, n_day=14):
     """
@@ -120,13 +119,18 @@ def williams_r(arr, n_day=14):
         Relative Strength Index of the given array
     """
     
-    _arr_check(arr)
-    arr = np.array(arr)
-    orgLen = len(arr)
-    arr = arr[~np.isnan(arr)]
-    df = pd.DataFrame(arr)
+    if not isinstance(arr, Time_Series_Data) and not isinstance(arr, pd.DataFrame):
+        raise ValueError("Input must be either Time_Series_Data or Pandas")
+
+    if isinstance(arr, Time_Series_Data):
+        df = to_pandas(arr, False, None, False)
+    else:
+        df = arr
+
     r_rolling = df.rolling(n_day)
-    r_val = 100*(r_rolling.max()-df)/(r_rolling.max() - r_rolling.min())
-    res = np.empty((int(orgLen-len(r_val))))
-    res[:] = np.nan
-    return np.append(res,r_val) 
+    highest = r_rolling.max()['High']
+    lowest = r_rolling.min()['Low']
+    r_val = -100 * (highest - df['Close']) / (highest - lowest)
+    r_val = np.array(r_val).reshape(-1)
+
+    return r_val

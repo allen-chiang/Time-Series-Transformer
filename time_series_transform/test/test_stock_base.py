@@ -3,6 +3,8 @@ from time_series_transform.stock_transform.base import *
 from time_series_transform.stock_transform.stock_extractor import *
 from time_series_transform.stock_transform.util import *
 
+###################### Data and Result ########################
+
 @pytest.fixture('class')
 def extractor_yahoo_sample():
     return {
@@ -17,7 +19,7 @@ def extractor_investing_sample():
         'period': ["1y", "max", "1d"],
         'date': [["2020-01-01", "2020-07-01"], ["2020-01-01", "2020-03-01"],["2020-01-01", "2020-02-01"]],
         'symbol': ["aapl", "1310", "2206"],
-        'country': ["united states", "japan", "taiwan"]
+        'country': ["united states", "taiwan", "japan"]
     }
 
 @pytest.fixture('class')
@@ -33,18 +35,17 @@ def extractor_portfolio_investing_sample():
     return {
         'period': ["1y", "max", "1d"],
         'date': [["2020-01-01", "2020-07-01"], ["2020-01-01", "2020-03-01"],["2020-01-01", "2020-02-01"]],
-        'symbol': ["aapl", "1310", "2206"],
         "stockList": [["aapl", "1310", "2206"],[],["aapl"]],
-        'country': [["united states", "japan", "taiwan"],[],["united states"]]
+        'country': [["united states", "taiwan", "japan"],[],["united states"]]
     }
 
 @pytest.fixture('class')
-def util_stock_sample():
-    data = list([[], [100], [100,20,30], list(range(30))])
+def util_scaler_sample():
+    data = [[], [100], [100,20,30], list(range(30))]
     return data
 
 @pytest.fixture('class')
-def util_stochastic_oscillator_sample():
+def util_stock_sample():
     data = {'Date': np.array(['2019-11-20', '2019-11-21', '2019-11-22', '2019-11-25',
         '2019-11-26', '2019-11-27', '2019-11-29', '2019-12-02',
         '2019-12-03', '2019-12-04', '2019-12-05', '2019-12-06',
@@ -76,7 +77,7 @@ def util_stochastic_oscillator_sample():
             'Stock Splits': np.array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
                     0., 0., 0.])}
     data = pd.DataFrame(data)
-    out = {[1,2,3], data}
+    out = [[1,2,3], data]
     return out
 
 @pytest.fixture('class')
@@ -132,35 +133,37 @@ def util_macd_output():
     return out
 
 
-
 @pytest.fixture('class')
 def util_stochastic_oscillator_output():
-    out = {[], {'k_val': np.array([        np.nan,         np.nan,         np.nan,         np.nan,         np.nan,
+    out = [[], {'k_val': np.array([        np.nan,         np.nan,         np.nan,         np.nan,         np.nan,
                 np.nan,         np.nan,         np.nan,         np.nan,         np.nan,
                 np.nan,         np.nan,         np.nan, 82.86880556, 97.77165536,
         93.23903111, 99.21097349, 96.20398455, 94.66252704, 91.56576726]),
  'd_val': np.array([        np.nan,         np.nan,         np.nan,         np.nan,         np.nan,
                 np.nan,         np.nan,         np.nan,         np.nan,         np.nan,
                 np.nan,         np.nan,         np.nan,         np.nan,         np.nan,
-        91.29316401, 96.74055332, 96.21799638, 96.69249503, 94.14409295])}}
+        91.29316401, 96.74055332, 96.21799638, 96.69249503, 94.14409295])}]
     return out
 
 @pytest.fixture('class')
 def util_rsi_output():
-    out = {}
+    out = [[],np.array([np.nan]),
+        np.array([       np.nan, 0.        , 0.95238095]),
+        np.array([ np.nan, 100., 100., 100., 100., 100., 100., 100., 100., 100., 100.,
+                100., 100., 100., 100., 100., 100., 100., 100., 100., 100., 100.,
+                100., 100., 100., 100., 100., 100., 100., 100.])]
     return out
 
 @pytest.fixture('class')
 def util_william_r_output():
-    out = {}
+    out = [[],np.array([         np.nan,          np.nan,          np.nan,          np.nan,
+                np.nan,          np.nan,          np.nan,          np.nan,
+                np.nan,          np.nan,          np.nan,          np.nan,
+                np.nan, -17.13119444,  -2.22834464,  -6.76096889,
+        -0.78902651,  -3.79601545,  -5.33747296,  -8.43423274])]
     return out
 
-
-# test marks
-#   - stock_extractor
-#   - portfolio_extractor
-#   - util
-#   - base 
+###################### Helper Functions ########################
 
 def compare_equal(a,b):
     try:
@@ -174,12 +177,14 @@ def compare_arr_result(real, expect):
         if list(real.keys()) != list(expect.keys()):
             return False
         for key in real:
-            if not compare_equal(real[key].round(4), expect[key].round(4)):
+            if not compare_equal(np.array(real[key]).round(4), np.array(expect[key]).round(4)):
                 return False
         return True
     else:
-        return compare_equal(real[key].round(4), expect[key].round(4))
+        return compare_equal(np.array(real).round(4), np.array(expect).round(4))
 
+
+###################### Unit Test ########################
 
 class Test_stock_extractor:
 
@@ -187,47 +192,43 @@ class Test_stock_extractor:
         period = extractor_yahoo_sample['period']
         symbol = extractor_yahoo_sample['symbol']
         source = 'yahoo'
-        for i in len(symbol):
+        for i in range(len(symbol)):
             se = Stock_Extractor(symbol[i],source)
             data = se.get_stock_period(period[i])
             assert isinstance(data, Stock)
             assert data.symbol == symbol[i]
-            assert data.time_index == 'Date'
 
     def test_yahoo_stock_extractor_date(self,extractor_yahoo_sample):
         date = extractor_yahoo_sample['date']
         symbol = extractor_yahoo_sample['symbol']
         source = 'yahoo'
-        for i in len(symbol):
+        for i in range(len(symbol)):
             se = Stock_Extractor(symbol[i],source)
             data = se.get_stock_date(date[i][0], date[i][1])
             assert isinstance(data, Stock)
             assert data.symbol == symbol[i]
-            assert data.time_index == 'Date'
 
     def test_investing_stock_extractor_period(self,extractor_investing_sample):
         period = extractor_investing_sample['period']
         symbol = extractor_investing_sample['symbol']
         country = extractor_investing_sample['country']
         source = 'investing'
-        for i in len(symbol):
+        for i in range(len(symbol)):
             se = Stock_Extractor(symbol[i],source, country = country[i])
             data = se.get_stock_period(period[i])
             assert isinstance(data, Stock)
             assert data.symbol == symbol[i]
-            assert data.time_index == 'Date'
 
     def test_investing_stock_extractor_date(self,extractor_investing_sample):
         date = extractor_investing_sample['date']
         symbol = extractor_investing_sample['symbol']
         country = extractor_investing_sample['country']
         source = 'investing'
-        for i in len(symbol):
+        for i in range(len(symbol)):
             se = Stock_Extractor(symbol[i],source, country = country[i])
             data = se.get_stock_date(date[i][0], date[i][1])
             assert isinstance(data, Stock)
             assert data.symbol == symbol[i]
-            assert data.time_index == 'Date'
 
 class Test_portfolio_extractor:
 
@@ -235,7 +236,7 @@ class Test_portfolio_extractor:
         period = extractor_portfolio_yahoo_sample['period']
         stockList = extractor_portfolio_yahoo_sample['stockList']
         source = 'yahoo'
-        for i in len(stockList):
+        for i in range(len(stockList)):
             if len(stockList[i]) == 0:
                 with pytest.raises(ValueError):
                     pe = Portfolio_Extractor(stockList[i],source)
@@ -249,7 +250,7 @@ class Test_portfolio_extractor:
         date = extractor_portfolio_yahoo_sample['date']
         stockList = extractor_portfolio_yahoo_sample['stockList']
         source = 'yahoo'
-        for i in len(stockList):
+        for i in range(len(stockList)):
             if len(stockList[i]) == 0:
                 with pytest.raises(ValueError):
                     pe = Portfolio_Extractor(stockList[i],source)
@@ -264,7 +265,7 @@ class Test_portfolio_extractor:
         country = extractor_portfolio_investing_sample['country']
         stockList = extractor_portfolio_investing_sample['stockList']
         source = 'investing'
-        for i in len(stockList):
+        for i in range(len(stockList)):
             if len(stockList[i]) == 0:
                 with pytest.raises(ValueError):
                     pe = Portfolio_Extractor(stockList[i],source, country = country[i])
@@ -279,7 +280,7 @@ class Test_portfolio_extractor:
         country = extractor_portfolio_investing_sample['country']
         stockList = extractor_portfolio_investing_sample['stockList']
         source = 'investing'
-        for i in len(stockList):
+        for i in range(len(stockList)):
             if len(stockList[i]) == 0:
                 with pytest.raises(ValueError):
                     pe = Portfolio_Extractor(stockList[i],source, country = country[i])
@@ -290,14 +291,13 @@ class Test_portfolio_extractor:
                 assert isinstance(data, Portfolio)
 
 
-@pytest.mark.util
 class Test_stock_util:
     
-    def test_macd(self, util_stock_sample, util_macd_output):
+    def test_macd(self, util_scaler_sample, util_macd_output):
         return_diff = [True, False]
         for rd in return_diff:
-            for ind in range(len(util_stock_sample)):
-                ar = util_stock_sample[ind]
+            for ind in range(len(util_scaler_sample)):
+                ar = util_scaler_sample[ind]
                 out_res = util_macd_output[rd][ind]
                 macd_res = []
                 oriLen = len(ar)
@@ -310,9 +310,9 @@ class Test_stock_util:
                     
 
 
-    def test_stochastic_oscillator(self, util_stochastic_oscillator_sample, util_stochastic_oscillator_output):
-        for ind in range(len(util_stochastic_oscillator_sample)):
-            ar = util_stochastic_oscillator_sample[ind]
+    def test_stochastic_oscillator(self, util_stock_sample, util_stochastic_oscillator_output):
+        for ind in range(len(util_stock_sample)):
+            ar = util_stock_sample[ind]
             so_out = util_stochastic_oscillator_output[ind]
             so_res = []
             
@@ -323,10 +323,10 @@ class Test_stock_util:
                 so_res = stochastic_oscillator(ar)
                 assert compare_arr_result(so_res, so_out)
 
-# todo
-    def test_rsi(self, util_stock_sample, util_rsi_output):
-        for ind in range(len(util_stock_sample)):
-            ar = util_stock_sample[ind]
+    def test_rsi(self, util_scaler_sample, util_rsi_output):
+        for ind in range(len(util_scaler_sample)):
+            ar = util_scaler_sample[ind]
+            rsi_out = util_rsi_output[ind]
             rsi_res = []
             oriLen = len(ar)
             if oriLen == 0:
@@ -334,24 +334,22 @@ class Test_stock_util:
                     rsi_res = rsi(ar)
             else:
                 rsi_res = rsi(ar)
-                assert len(rsi_res.shape) == 1
-                assert rsi_res.shape[0] == oriLen
+                assert compare_arr_result(rsi_res, rsi_out)
 
     def test_williams_r(self, util_stock_sample, util_william_r_output):
         for ind in range(len(util_stock_sample)):
             ar = util_stock_sample[ind]
+            w_out = util_william_r_output[ind]
             w_res = []
-            oriLen = len(ar)
-            if oriLen == 0:
+
+            if not isinstance(ar, Time_Series_Data) and not isinstance(ar, pd.DataFrame):
                 with pytest.raises(ValueError):
                     w_res = williams_r(ar)
             else:
                 w_res = williams_r(ar)
-                assert len(w_res.shape) == 1
-                assert w_res.shape[0] == oriLen
+                assert compare_arr_result(w_res, w_out)
 
-
-@pytest.mark.base
+# todo
 class Test_base:
     @pytest.fixture(scope = 'class')
     def stock_test_sample(self):

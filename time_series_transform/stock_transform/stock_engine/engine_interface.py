@@ -1,4 +1,5 @@
 import abc
+import datetime
 
 class engine_interface(metaclass = abc.ABCMeta):
     """
@@ -63,3 +64,12 @@ class engine_interface(metaclass = abc.ABCMeta):
             dictionary of additional information, e.g. company information
         """
         return NotImplemented
+
+def valid_period_format(date_string):
+    format = "%Y-%m-%d"
+
+    try:
+        datetime.datetime.strptime(date_string, format)
+        return True
+    except ValueError:
+        return False
