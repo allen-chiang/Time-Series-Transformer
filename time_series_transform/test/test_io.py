@@ -1,12 +1,38 @@
+import os
 import copy
 import pytest
 import numpy as np
 import pandas as pd
+import pyarrow as pa
+from pyarrow import feather as pf
+from pyarrow import parquet as pq
 from time_series_transform.io.base import io_base
-from time_series_transform.io.numpy import (from_numpy, to_numpy)
-from time_series_transform.io.pandas import (from_pandas, to_pandas)
+from time_series_transform.io.numpy import (
+    from_numpy, 
+    to_numpy
+    )
+from time_series_transform.io.pandas import (
+    from_pandas, 
+    to_pandas
+    )
+from time_series_transform.io.arrow import (
+    from_arrow_record_batch, 
+    from_arrow_table, 
+    to_arrow_record_batch, 
+    to_arrow_table
+    )
 from time_series_transform.transform_core_api.base import (
-    Time_Series_Data, Time_Series_Data_Collection)
+    Time_Series_Data, 
+    Time_Series_Data_Collection
+    )
+from time_series_transform.io.parquet import (
+    from_parquet,
+    to_parquet
+    )
+from time_series_transform.io.feather import (
+    from_feather,
+    to_feather
+    )
 
 
 @pytest.fixture('class')
@@ -557,9 +583,784 @@ class Test_Numpy_IO:
         np.testing.assert_equal(x,expectedX)
         np.testing.assert_equal(y,expectedY)
 
+class Test_Arrow_IO:
+    def test_from_arrow_table_single(self,dictList_single):
+        data = dictList_single
+        df = pd.DataFrame(dictList_single)
+        table = pa.Table.from_pandas(df)
+        testData = from_arrow_table(table,'time',None)
+        tsd = Time_Series_Data(data,'time')
+        assert tsd == testData
+
+    def test_from_arrow_table_collection(self,dictList_collection):
+        data = dictList_collection
+        df = pd.DataFrame(dictList_collection)
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        table = pa.Table.from_pandas(df)
+        testData = from_arrow_table(table,'time','category')
+        assert tsc == testData
+    
+    def test_from_arrow_batch_single(self,dictList_single):
+        data = dictList_single
+        df = pd.DataFrame(dictList_single)
+        table = pa.RecordBatch.from_pandas(df,preserve_index = False)
+        testData = from_arrow_record_batch(table,'time',None)
+        tsd = Time_Series_Data(data,'time')
+        assert tsd == testData
+
+    def test_from_arrow_batch_collection(self,dictList_collection):
+        data = dictList_collection
+        df = pd.DataFrame(dictList_collection)
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        table = pa.RecordBatch.from_pandas(df,preserve_index = False)
+        testData = from_arrow_record_batch(table,'time','category')
+        assert tsc == testData
+
+#####
+    def test_to_arrow_table_single(self,dictList_single,expect_single_expandTime):
+        data = dictList_single
+        df = pd.DataFrame(data)
+        expandTime = pd.DataFrame(expect_single_expandTime)
+        tsd = Time_Series_Data(data,'time')
+        testData = to_arrow_table(
+            tsd,
+            expandCategory= None,
+            expandTime=False,
+            preprocessType= None
+            ).to_pandas()
+        pd.testing.assert_frame_equal(testData,df,check_dtype=False)
+        testData = to_arrow_table(
+            tsd,
+            expandCategory= None,
+            expandTime=True,
+            preprocessType= None
+            ).to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime,check_dtype=False)
+
+    def test_to_arrow_table_collection_expandTime(self,dictList_collection,expect_collection_expandTime):
+        data = dictList_collection
+        expandTime_pad = pd.DataFrame(expect_collection_expandTime['pad'])
+        expandTime_remove = pd.DataFrame(expect_collection_expandTime['remove'])
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = to_arrow_table(
+            tsc,
+            expandCategory= False,
+            expandTime=True,
+            preprocessType= 'pad'
+            ).to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_pad,check_dtype=False)
+        testData = to_arrow_table(
+            tsc,
+            expandCategory= False,
+            expandTime=True,
+            preprocessType= 'remove'
+            ).to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
+        with pytest.raises(ValueError):
+            timeSeries = to_pandas(tsc,False,True,'ignore')        
+
+
+    def test_to_arrow_table_collection_expandCategory(self,dictList_collection,expect_collection_expandCategory):
+        data = dictList_collection
+        expandTime_pad = pd.DataFrame(expect_collection_expandCategory['pad'])
+        expandTime_remove = pd.DataFrame(expect_collection_expandCategory['remove'])
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = to_arrow_table(
+            tsc,
+            expandCategory= True,
+            expandTime=False,
+            preprocessType= 'pad'
+            ).to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_pad,check_dtype=False)
+        testData = to_arrow_table(
+            tsc,
+            expandCategory= True,
+            expandTime=False,
+            preprocessType= 'remove'
+            ).to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
+        with pytest.raises(ValueError):
+            timeSeries = to_pandas(tsc,True,False,'ignore')    
+
+    def test_to_arrow_table_collection_expandFull(self,dictList_collection,expect_collection_expandFull):
+        data = dictList_collection
+        expandTime_pad = pd.DataFrame(expect_collection_expandFull['pad'])
+        expandTime_remove = pd.DataFrame(expect_collection_expandFull['remove'])
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = to_arrow_table(
+            tsc,
+            expandCategory= True,
+            expandTime=True,
+            preprocessType= 'pad'
+            ).to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_pad,check_dtype=False)
+        testData = to_arrow_table(
+            tsc,
+            expandCategory= True,
+            expandTime=True,
+            preprocessType= 'remove'
+            ).to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
+        with pytest.raises(ValueError):
+            timeSeries = to_pandas(tsc,True,True,'ignore')
+
+    def test_to_arrow_table_collection_noExpand(self,dictList_collection,expect_collection_noExpand):
+        data = dictList_collection
+        expandTime_ignore = pd.DataFrame(expect_collection_noExpand['ignore'])
+        expandTime_pad = pd.DataFrame(expect_collection_noExpand['pad'])
+        expandTime_remove = pd.DataFrame(expect_collection_noExpand['remove'])
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = to_arrow_table(
+            tsc,
+            expandCategory= False,
+            expandTime=False,
+            preprocessType= 'pad'
+            ).to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_pad,check_dtype=False)
+        testData = to_arrow_table(
+            tsc,
+            expandCategory= False,
+            expandTime=False,
+            preprocessType= 'remove'
+            ).to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
+        testData = to_arrow_table(
+            tsc,
+            expandCategory= False,
+            expandTime=False,
+            preprocessType= 'ignore'
+            ).to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_ignore,check_dtype=False)
+
+    def test_to_arrow_table_seperateLabels_single(self,dictList_single,expect_single_seperateLabel):
+        data = dictList_single
+        expectedX, expectedY = expect_single_seperateLabel
+        expectedX = pd.DataFrame(expectedX)
+        expectedY = pd.DataFrame(expectedY)
+        tsd = Time_Series_Data(data,'time')
+        tsd.set_labels([1,2],'data_label')
+        x, y  = to_arrow_table(tsd,False,False,'ignore',True)
+        x = x.to_pandas()
+        y = y.to_pandas()
+        print(x)
+        print(y)
+        pd.testing.assert_frame_equal(x,expectedX,check_dtype=False)
+        pd.testing.assert_frame_equal(y,expectedY,check_dtype=False)
+
+    def test_to_arrow_table_seperateLabels_collection(self,dictList_collection,expect_collection_seperateLabel):
+        data = dictList_collection
+        expectedX, expectedY = expect_collection_seperateLabel
+        expectedX = pd.DataFrame(expectedX)
+        expectedY = pd.DataFrame(expectedY)
+        tsd = Time_Series_Data(data,'time')
+        tsd = tsd.set_labels([1,2,1,2],'data_label')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        x, y  = to_arrow_table(tsc,False,False,'ignore',True)
+        x = x.to_pandas()
+        y = y.to_pandas()
+        print(y)
+        pd.testing.assert_frame_equal(x,expectedX,check_dtype=False)
+        pd.testing.assert_frame_equal(y,expectedY,check_dtype=False) 
+
+###
+
+    def record_batch_to_pandas(self,batchList):
+        df = None
+        for i in batchList:
+            if df is None:
+                df = i.to_pandas()
+                continue
+            df = df.append(i.to_pandas(),ignore_index = True)
+        return df
+
+    def test_to_arrow_batch_single(self,dictList_single,expect_single_expandTime):
+        data = dictList_single
+        df = pd.DataFrame(data)
+        expandTime = pd.DataFrame(expect_single_expandTime)
+        tsd = Time_Series_Data(data,'time')
+        testData = to_arrow_record_batch(
+            tsd,
+            expandCategory= None,
+            expandTime=False,
+            preprocessType= None,
+            max_chunksize = 1
+            )
+        testData = self.record_batch_to_pandas(testData)
+        pd.testing.assert_frame_equal(testData,df,check_dtype=False)
+        testData = to_arrow_record_batch(
+            tsd,
+            expandCategory= None,
+            expandTime=True,
+            preprocessType= None,
+            max_chunksize = 1
+            )
+        testData = self.record_batch_to_pandas(testData)
+        pd.testing.assert_frame_equal(testData,expandTime,check_dtype=False)
+
+    def test_to_arrow_batch_collection_expandTime(self,dictList_collection,expect_collection_expandTime):
+        data = dictList_collection
+        expandTime_pad = pd.DataFrame(expect_collection_expandTime['pad'])
+        expandTime_remove = pd.DataFrame(expect_collection_expandTime['remove'])
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = to_arrow_record_batch(
+            tsc,
+            expandCategory= False,
+            expandTime=True,
+            preprocessType= 'pad',
+            max_chunksize=1
+            )
+        testData = self.record_batch_to_pandas(testData)
+        pd.testing.assert_frame_equal(testData,expandTime_pad,check_dtype=False)
+        testData = to_arrow_record_batch(
+            tsc,
+            expandCategory= False,
+            expandTime=True,
+            preprocessType= 'remove',
+            max_chunksize=1
+            )
+        testData = self.record_batch_to_pandas(testData)
+        pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
+        with pytest.raises(ValueError):
+            timeSeries = to_pandas(tsc,False,True,'ignore')        
+
+
+    def test_to_arrow_batch_collection_expandCategory(self,dictList_collection,expect_collection_expandCategory):
+        data = dictList_collection
+        expandTime_pad = pd.DataFrame(expect_collection_expandCategory['pad'])
+        expandTime_remove = pd.DataFrame(expect_collection_expandCategory['remove'])
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = to_arrow_record_batch(
+            tsc,
+            expandCategory= True,
+            expandTime=False,
+            preprocessType= 'pad',
+            max_chunksize=1
+            )
+        testData = self.record_batch_to_pandas(testData)
+        pd.testing.assert_frame_equal(testData,expandTime_pad,check_dtype=False)
+        testData = to_arrow_record_batch(
+            tsc,
+            expandCategory= True,
+            expandTime=False,
+            preprocessType= 'remove',
+            max_chunksize=1
+            )
+        testData = self.record_batch_to_pandas(testData)
+        pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
+        with pytest.raises(ValueError):
+            timeSeries = to_pandas(tsc,True,False,'ignore')    
+
+    def test_to_arrow_batch_collection_expandFull(self,dictList_collection,expect_collection_expandFull):
+        data = dictList_collection
+        expandTime_pad = pd.DataFrame(expect_collection_expandFull['pad'])
+        expandTime_remove = pd.DataFrame(expect_collection_expandFull['remove'])
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = to_arrow_record_batch(
+            tsc,
+            expandCategory= True,
+            expandTime=True,
+            preprocessType= 'pad',
+            max_chunksize=1
+            )
+        testData = self.record_batch_to_pandas(testData)
+        pd.testing.assert_frame_equal(testData,expandTime_pad,check_dtype=False)
+        testData = to_arrow_record_batch(
+            tsc,
+            expandCategory= True,
+            expandTime=True,
+            preprocessType= 'remove',
+            max_chunksize=1
+            )
+        testData = self.record_batch_to_pandas(testData)
+        pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
+        with pytest.raises(ValueError):
+            timeSeries = to_pandas(tsc,True,True,'ignore')
+
+    def test_to_arrow_batch_collection_noExpand(self,dictList_collection,expect_collection_noExpand):
+        data = dictList_collection
+        expandTime_ignore = pd.DataFrame(expect_collection_noExpand['ignore'])
+        expandTime_pad = pd.DataFrame(expect_collection_noExpand['pad'])
+        expandTime_remove = pd.DataFrame(expect_collection_noExpand['remove'])
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = to_arrow_record_batch(
+            tsc,
+            expandCategory= False,
+            expandTime=False,
+            preprocessType= 'pad',
+            max_chunksize=1
+            )
+        testData = self.record_batch_to_pandas(testData)
+        pd.testing.assert_frame_equal(testData,expandTime_pad,check_dtype=False)
+        testData = to_arrow_record_batch(
+            tsc,
+            expandCategory= False,
+            expandTime=False,
+            preprocessType= 'remove',
+            max_chunksize=1
+            )
+        testData = self.record_batch_to_pandas(testData)
+        pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
+        testData = to_arrow_record_batch(
+            tsc,
+            expandCategory= False,
+            expandTime=False,
+            preprocessType= 'ignore',
+            max_chunksize=1
+            )
+        testData = self.record_batch_to_pandas(testData)
+        pd.testing.assert_frame_equal(testData,expandTime_ignore,check_dtype=False)
+
+    def test_to_arrow_batch_seperateLabels_single(self,dictList_single,expect_single_seperateLabel):
+        data = dictList_single
+        expectedX, expectedY = expect_single_seperateLabel
+        expectedX = pd.DataFrame(expectedX)
+        expectedY = pd.DataFrame(expectedY)
+        tsd = Time_Series_Data(data,'time')
+        tsd.set_labels([1,2],'data_label')
+        x, y  = to_arrow_record_batch(tsd,1,False,False,'ignore',True)
+        x = self.record_batch_to_pandas(x)
+        y = self.record_batch_to_pandas(y)
+        print(x)
+        print(y)
+        pd.testing.assert_frame_equal(x,expectedX,check_dtype=False)
+        pd.testing.assert_frame_equal(y,expectedY,check_dtype=False)
+
+    def test_to_arrow_table_seperateLabels_collection(self,dictList_collection,expect_collection_seperateLabel):
+        data = dictList_collection
+        expectedX, expectedY = expect_collection_seperateLabel
+        expectedX = pd.DataFrame(expectedX)
+        expectedY = pd.DataFrame(expectedY)
+        tsd = Time_Series_Data(data,'time')
+        tsd = tsd.set_labels([1,2,1,2],'data_label')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        x, y  = to_arrow_record_batch(tsc,1,False,False,'ignore',True)
+        x = self.record_batch_to_pandas(x)
+        y = self.record_batch_to_pandas(y)
+        print(y)
+        pd.testing.assert_frame_equal(x,expectedX,check_dtype=False)
+        pd.testing.assert_frame_equal(y,expectedY,check_dtype=False) 
+
+
+class Test_Parquet_IO:
+    def test_from_parquet_single(self,dictList_single):
+        data = dictList_single
+        df = pd.DataFrame(dictList_single)
+        table = pa.Table.from_pandas(df)
+        pq.write_table(table,'test.parquet')
+        testData = from_parquet('test.parquet','time',None)
+        tsd = Time_Series_Data(data,'time')
+        assert tsd == testData
+        os.remove('test.parquet')
+
+    def test_from_parquet_collection(self,dictList_collection):
+        data = dictList_collection
+        df = pd.DataFrame(dictList_collection)
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        table = pa.Table.from_pandas(df)
+        pq.write_table(table,'test_collection.parquet')
+        testData = from_parquet('test_collection.parquet','time','category')
+        assert tsc == testData
+        os.remove('test_collection.parquet')
+
+###########
+    def test_to_parquet_single(self,dictList_single,expect_single_expandTime):
+        data = dictList_single
+        df = pd.DataFrame(data)
+        expandTime = pd.DataFrame(expect_single_expandTime)
+        tsd = Time_Series_Data(data,'time')
+        to_parquet(
+            'test.parquet',
+            tsd,
+            expandCategory= None,
+            expandTime=False,
+            preprocessType= None
+            )
+        testData = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(testData,df,check_dtype=False)
+        to_parquet(
+            'test.parquet',
+            tsd,
+            expandCategory= None,
+            expandTime=True,
+            preprocessType= None
+            )
+        testData = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime,check_dtype=False)
+        os.remove('test.parquet')
+
+    def test_to_parquet_collection_expandTime(self,dictList_collection,expect_collection_expandTime):
+        data = dictList_collection
+        expandTime_pad = pd.DataFrame(expect_collection_expandTime['pad'])
+        expandTime_remove = pd.DataFrame(expect_collection_expandTime['remove'])
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = to_parquet(
+            'test.parquet',
+            tsc,
+            expandCategory= False,
+            expandTime=True,
+            preprocessType= 'pad'
+            )
+        testData = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_pad,check_dtype=False)
+        testData = to_parquet(
+            'test.parquet',
+            tsc,
+            expandCategory= False,
+            expandTime=True,
+            preprocessType= 'remove'
+            )
+        testData = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
+        with pytest.raises(ValueError):
+            timeSeries = to_parquet('test.parquet',tsc,False,True,'ignore')
+        os.remove('test.parquet')    
+
+
+    def test_to_parquet_collection_expandCategory(self,dictList_collection,expect_collection_expandCategory):
+        data = dictList_collection
+        expandTime_pad = pd.DataFrame(expect_collection_expandCategory['pad'])
+        expandTime_remove = pd.DataFrame(expect_collection_expandCategory['remove'])
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = to_parquet(
+            'test.parquet',
+            tsc,
+            expandCategory= True,
+            expandTime=False,
+            preprocessType= 'pad'
+            )
+        testData = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_pad,check_dtype=False)
+        testData = to_parquet(
+            'test.parquet',
+            tsc,
+            expandCategory= True,
+            expandTime=False,
+            preprocessType= 'remove'
+            )
+        testData = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
+        with pytest.raises(ValueError):
+            timeSeries = to_parquet('test.parquet',tsc,True,False,'ignore')    
+        os.remove('test.parquet')
+
+    def test_to_parquet_collection_expandFull(self,dictList_collection,expect_collection_expandFull):
+        data = dictList_collection
+        expandTime_pad = pd.DataFrame(expect_collection_expandFull['pad'])
+        expandTime_remove = pd.DataFrame(expect_collection_expandFull['remove'])
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = to_parquet(
+            'test.parquet',
+            tsc,
+            expandCategory= True,
+            expandTime=True,
+            preprocessType= 'pad'
+            )
+        testData = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_pad,check_dtype=False)
+        testData = to_parquet(
+            'test.parquet',
+            tsc,
+            expandCategory= True,
+            expandTime=True,
+            preprocessType= 'remove'
+            )
+        testData = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
+        with pytest.raises(ValueError):
+            timeSeries = to_pandas('test.parquet',tsc,True,True,'ignore')
+
+    def test_to_parquet_collection_noExpand(self,dictList_collection,expect_collection_noExpand):
+        data = dictList_collection
+        expandTime_ignore = pd.DataFrame(expect_collection_noExpand['ignore'])
+        expandTime_pad = pd.DataFrame(expect_collection_noExpand['pad'])
+        expandTime_remove = pd.DataFrame(expect_collection_noExpand['remove'])
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = to_parquet(
+            'test.parquet',
+            tsc,
+            expandCategory= False,
+            expandTime=False,
+            preprocessType= 'pad'
+            )
+        testData = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_pad,check_dtype=False)
+        testData = to_parquet(
+            'test.parquet',
+            tsc,
+            expandCategory= False,
+            expandTime=False,
+            preprocessType= 'remove'
+            )
+        testData = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
+        testData = to_parquet(
+            'test.parquet',
+            tsc,
+            expandCategory= False,
+            expandTime=False,
+            preprocessType= 'ignore'
+            )
+        testData = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_ignore,check_dtype=False)
+        os.remove('test.parquet')
+
+    def test_to_parquet_seperateLabels_single(self,dictList_single,expect_single_seperateLabel):
+        data = dictList_single
+        expectedX, expectedY = expect_single_seperateLabel
+        expectedX = pd.DataFrame(expectedX)
+        expectedY = pd.DataFrame(expectedY)
+        tsd = Time_Series_Data(data,'time')
+        tsd.set_labels([1,2],'data_label')
+        to_parquet(['test.parquet','label.parquet'],tsd,False,False,'ignore',True)
+        x = pq.read_table('test.parquet').to_pandas()
+        y = pq.read_table('label.parquet').to_pandas()
+        print(x)
+        print(y)
+        pd.testing.assert_frame_equal(x,expectedX,check_dtype=False)
+        pd.testing.assert_frame_equal(y,expectedY,check_dtype=False)
+        os.remove('test.parquet')
+        os.remove('label.parquet')
+
+    def test_to_parquet_seperateLabels_collection(self,dictList_collection,expect_collection_seperateLabel):
+        data = dictList_collection
+        expectedX, expectedY = expect_collection_seperateLabel
+        expectedX = pd.DataFrame(expectedX)
+        expectedY = pd.DataFrame(expectedY)
+        tsd = Time_Series_Data(data,'time')
+        tsd = tsd.set_labels([1,2,1,2],'data_label')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        to_parquet(['test.parquet','label.parquet'],tsc,False,False,'ignore',True)
+        x = pq.read_table('test.parquet').to_pandas()
+        y = pq.read_table('label.parquet').to_pandas()
+        print(y)
+        pd.testing.assert_frame_equal(x,expectedX,check_dtype=False)
+        pd.testing.assert_frame_equal(y,expectedY,check_dtype=False) 
+        os.remove('test.parquet')
+        os.remove('label.parquet')
+
+
+
 class Test_Generator_IO:
     def test_from_generator(self):
         pass
 
     def test_to_generator(self):
         pass
+
+
+class Test_Feather_IO:
+    def test_from_feather_single(self,dictList_single):
+        data = dictList_single
+        df = pd.DataFrame(dictList_single)
+        table = pa.Table.from_pandas(df)
+        pf.write_feather(table,'test.feather')
+        testData = from_feather('test.feather','time',None)
+        tsd = Time_Series_Data(data,'time')
+        assert tsd == testData
+        os.remove('test.feather')
+
+    def test_from_feather_collection(self,dictList_collection):
+        data = dictList_collection
+        df = pd.DataFrame(dictList_collection)
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        table = pa.Table.from_pandas(df)
+        pf.write_feather(table,'test_collection.feather')
+        testData = from_feather('test_collection.feather','time','category')
+        assert tsc == testData
+        os.remove('test_collection.feather')
+
+###########
+    def test_to_feather_single(self,dictList_single,expect_single_expandTime):
+        data = dictList_single
+        df = pd.DataFrame(data)
+        expandTime = pd.DataFrame(expect_single_expandTime)
+        tsd = Time_Series_Data(data,'time')
+        to_feather(
+            'test.feather',
+            tsd,
+            expandCategory= None,
+            expandTime=False,
+            preprocessType= None
+            )
+        testData = pf.read_table('test.feather').to_pandas()
+        pd.testing.assert_frame_equal(testData,df,check_dtype=False)
+        to_feather(
+            'test.feather',
+            tsd,
+            expandCategory= None,
+            expandTime=True,
+            preprocessType= None
+            )
+        testData = pf.read_table('test.feather').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime,check_dtype=False)
+        os.remove('test.feather')
+
+    def test_to_feather_collection_expandTime(self,dictList_collection,expect_collection_expandTime):
+        data = dictList_collection
+        expandTime_pad = pd.DataFrame(expect_collection_expandTime['pad'])
+        expandTime_remove = pd.DataFrame(expect_collection_expandTime['remove'])
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = to_feather(
+            'test.feather',
+            tsc,
+            expandCategory= False,
+            expandTime=True,
+            preprocessType= 'pad'
+            )
+        testData = pf.read_feather('test.feather')
+        pd.testing.assert_frame_equal(testData,expandTime_pad,check_dtype=False)
+        testData = to_feather(
+            'test.feather',
+            tsc,
+            expandCategory= False,
+            expandTime=True,
+            preprocessType= 'remove'
+            )
+        testData = pf.read_feather('test.feather')
+        pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
+        with pytest.raises(ValueError):
+            timeSeries = to_feather('test.feather',tsc,False,True,'ignore')
+        os.remove('test.feather')    
+
+
+    def test_to_feather_collection_expandCategory(self,dictList_collection,expect_collection_expandCategory):
+        data = dictList_collection
+        expandTime_pad = pd.DataFrame(expect_collection_expandCategory['pad'])
+        expandTime_remove = pd.DataFrame(expect_collection_expandCategory['remove'])
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = to_feather(
+            'test.feather',
+            tsc,
+            expandCategory= True,
+            expandTime=False,
+            preprocessType= 'pad'
+            )
+        testData = pf.read_table('test.feather').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_pad,check_dtype=False)
+        testData = to_feather(
+            'test.feather',
+            tsc,
+            expandCategory= True,
+            expandTime=False,
+            preprocessType= 'remove'
+            )
+        testData = pf.read_table('test.feather').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
+        with pytest.raises(ValueError):
+            timeSeries = to_feather('test.feather',tsc,True,False,'ignore')    
+        os.remove('test.feather')
+
+    def test_to_feather_collection_expandFull(self,dictList_collection,expect_collection_expandFull):
+        data = dictList_collection
+        expandTime_pad = pd.DataFrame(expect_collection_expandFull['pad'])
+        expandTime_remove = pd.DataFrame(expect_collection_expandFull['remove'])
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = to_feather(
+            'test.feather',
+            tsc,
+            expandCategory= True,
+            expandTime=True,
+            preprocessType= 'pad'
+            )
+        testData = pf.read_table('test.feather').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_pad,check_dtype=False)
+        testData = to_feather(
+            'test.feather',
+            tsc,
+            expandCategory= True,
+            expandTime=True,
+            preprocessType= 'remove'
+            )
+        testData = pf.read_table('test.feather').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
+        with pytest.raises(ValueError):
+            timeSeries = to_pandas('test.feather',tsc,True,True,'ignore')
+
+    def test_to_feather_collection_noExpand(self,dictList_collection,expect_collection_noExpand):
+        data = dictList_collection
+        expandTime_ignore = pd.DataFrame(expect_collection_noExpand['ignore'])
+        expandTime_pad = pd.DataFrame(expect_collection_noExpand['pad'])
+        expandTime_remove = pd.DataFrame(expect_collection_noExpand['remove'])
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = to_feather(
+            'test.feather',
+            tsc,
+            expandCategory= False,
+            expandTime=False,
+            preprocessType= 'pad'
+            )
+        testData = pf.read_table('test.feather').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_pad,check_dtype=False)
+        testData = to_feather(
+            'test.feather',
+            tsc,
+            expandCategory= False,
+            expandTime=False,
+            preprocessType= 'remove'
+            )
+        testData = pf.read_table('test.feather').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
+        testData = to_feather(
+            'test.feather',
+            tsc,
+            expandCategory= False,
+            expandTime=False,
+            preprocessType= 'ignore'
+            )
+        testData = pf.read_table('test.feather').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_ignore,check_dtype=False)
+        os.remove('test.feather')
+
+    def test_to_feather_seperateLabels_single(self,dictList_single,expect_single_seperateLabel):
+        data = dictList_single
+        expectedX, expectedY = expect_single_seperateLabel
+        expectedX = pd.DataFrame(expectedX)
+        expectedY = pd.DataFrame(expectedY)
+        tsd = Time_Series_Data(data,'time')
+        tsd.set_labels([1,2],'data_label')
+        to_feather(['test.feather','label.feather'],tsd,False,False,'ignore',True)
+        x = pf.read_table('test.feather').to_pandas()
+        y = pf.read_table('label.feather').to_pandas()
+        print(x)
+        print(y)
+        pd.testing.assert_frame_equal(x,expectedX,check_dtype=False)
+        pd.testing.assert_frame_equal(y,expectedY,check_dtype=False)
+        os.remove('test.feather')
+        os.remove('label.feather')
+
+    def test_to_feather_seperateLabels_collection(self,dictList_collection,expect_collection_seperateLabel):
+        data = dictList_collection
+        expectedX, expectedY = expect_collection_seperateLabel
+        expectedX = pd.DataFrame(expectedX)
+        expectedY = pd.DataFrame(expectedY)
+        tsd = Time_Series_Data(data,'time')
+        tsd = tsd.set_labels([1,2,1,2],'data_label')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        to_feather(['test.feather','label.feather'],tsc,False,False,'ignore',True)
+        x = pf.read_table('test.feather').to_pandas()
+        y = pf.read_table('label.feather').to_pandas()
+        print(y)
+        pd.testing.assert_frame_equal(x,expectedX,check_dtype=False)
+        pd.testing.assert_frame_equal(y,expectedY,check_dtype=False) 
+        os.remove('test.feather')
+        os.remove('label.feather')
