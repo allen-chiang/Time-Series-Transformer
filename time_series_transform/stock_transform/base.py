@@ -18,20 +18,35 @@ class Stock(Time_Series_Data):
         ----------
         symbol : str 
             symbol of the stock
-        data : pandas dataframe
+        data : pandas dataframe or dict
             main data of the stock, for example, Date, High, Low, Open, Close, Volume
         additionalInfo: dict, optional
             supplemental information beside the data, by default None
         timeSeriesCol: str, optional
             time series column name for sorting data
         """
+        if not isinstance(data,pd.DataFrame) and not isinstance(data,dict):
+            raise ValueError("data must be in either pandas DataFrame or dictionary")
         if isinstance(data, pd.DataFrame):
             data = data.to_dict('list')
+        
+        data = self.validate_data(data)
         super().__init__(data, {timeSeriesCol:data[timeSeriesCol]})
         self.symbol = symbol
         self.additionalInfo = additionalInfo
         self.timeSeriesCol = timeSeriesCol
         
+    def validate_data(self, data):
+        res = {}
+        for k in data:
+            res[k.capitalize()] = data[k]
+        keys = list(res.keys())
+        valid_key = ['High', 'Low', 'Open', 'Close']
+        for k in valid_key:
+            if not k in keys:
+                raise ValueError('data must contains High,Low, Open, Close')
+        return res
+
     def get_data_columns(self):
 
         return list(self.data[0].keys())
