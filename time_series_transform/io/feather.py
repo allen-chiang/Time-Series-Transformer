@@ -41,6 +41,7 @@ class Feather_IO(io_base):
                 seperateLabels = seperateLabels
                 )
             pf.write_feather(table,self.dirPaths,version = self.version,chunksize=chunksize)
+            return
         table, label_table = to_arrow_table(
                 time_series = self.time_series,
                 expandCategory = expandCategory,
@@ -48,8 +49,8 @@ class Feather_IO(io_base):
                 preprocessType = preprocessType,
                 seperateLabels = seperateLabels
                 )
-        pf.write_feather(table,self.dirPaths,version = self.version,chunksize=chunksize)
-        pf.write_feather(label_table,self.dirPaths,version = self.version,chunksize=chunksize)
+        pf.write_feather(table,self.dirPaths[0],version = self.version,chunksize=chunksize)
+        pf.write_feather(label_table,self.dirPaths[1],version = self.version,chunksize=chunksize)
 
 
 
