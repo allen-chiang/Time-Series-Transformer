@@ -1,3 +1,4 @@
+import os
 import copy
 import pytest
 import numpy as np
@@ -5,15 +6,28 @@ import pandas as pd
 import pyarrow as pa
 from pyarrow import parquet as pq
 from time_series_transform.io.base import io_base
-from time_series_transform.io.numpy import (from_numpy, to_numpy)
-from time_series_transform.io.pandas import (from_pandas, to_pandas)
+from time_series_transform.io.numpy import (
+    from_numpy, 
+    to_numpy
+    )
+from time_series_transform.io.pandas import (
+    from_pandas, 
+    to_pandas
+    )
 from time_series_transform.io.arrow import (
     from_arrow_record_batch, 
     from_arrow_table, 
     to_arrow_record_batch, 
-    to_arrow_table)
+    to_arrow_table
+    )
 from time_series_transform.transform_core_api.base import (
-    Time_Series_Data, Time_Series_Data_Collection)
+    Time_Series_Data, 
+    Time_Series_Data_Collection
+    )
+from time_series_transform.io.parquet import (
+    from_parquet,
+    to_parquet
+    )
 
 
 @pytest.fixture('class')
@@ -931,6 +945,208 @@ class Test_Arrow_IO:
         pd.testing.assert_frame_equal(x,expectedX,check_dtype=False)
         pd.testing.assert_frame_equal(y,expectedY,check_dtype=False) 
 
+
+class Test_Parquet_IO:
+    def test_from_parquet_single(self,dictList_single):
+        data = dictList_single
+        df = pd.DataFrame(dictList_single)
+        table = pa.Table.from_pandas(df)
+        pq.write_table(table,'test.parquet')
+        testData = from_parquet('test.parquet','time',None)
+        tsd = Time_Series_Data(data,'time')
+        assert tsd == testData
+        os.remove('test.parquet')
+
+    def test_from_parquet_collection(self,dictList_collection):
+        data = dictList_collection
+        df = pd.DataFrame(dictList_collection)
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        table = pa.Table.from_pandas(df)
+        pq.write_table(table,'test_collection.parquet')
+        testData = from_parquet('test_collection.parquet','time','category')
+        assert tsc == testData
+        os.remove('test_collection.parquet')
+
+###########
+    def test_to_parquet_single(self,dictList_single,expect_single_expandTime):
+        data = dictList_single
+        df = pd.DataFrame(data)
+        expandTime = pd.DataFrame(expect_single_expandTime)
+        tsd = Time_Series_Data(data,'time')
+        to_parquet(
+            'test.parquet',
+            tsd,
+            expandCategory= None,
+            expandTime=False,
+            preprocessType= None
+            )
+        testData = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(testData,df,check_dtype=False)
+        to_parquet(
+            'test.parquet',
+            tsd,
+            expandCategory= None,
+            expandTime=True,
+            preprocessType= None
+            )
+        testData = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime,check_dtype=False)
+        os.remove('test.parquet')
+
+    def test_to_parquet_collection_expandTime(self,dictList_collection,expect_collection_expandTime):
+        data = dictList_collection
+        expandTime_pad = pd.DataFrame(expect_collection_expandTime['pad'])
+        expandTime_remove = pd.DataFrame(expect_collection_expandTime['remove'])
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = to_parquet(
+            'test.parquet',
+            tsc,
+            expandCategory= False,
+            expandTime=True,
+            preprocessType= 'pad'
+            )
+        testData = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_pad,check_dtype=False)
+        testData = to_parquet(
+            'test.parquet',
+            tsc,
+            expandCategory= False,
+            expandTime=True,
+            preprocessType= 'remove'
+            )
+        testData = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
+        with pytest.raises(ValueError):
+            timeSeries = to_parquet('test.parquet',tsc,False,True,'ignore')
+        os.remove('test.parquet')    
+
+
+    def test_to_parquet_collection_expandCategory(self,dictList_collection,expect_collection_expandCategory):
+        data = dictList_collection
+        expandTime_pad = pd.DataFrame(expect_collection_expandCategory['pad'])
+        expandTime_remove = pd.DataFrame(expect_collection_expandCategory['remove'])
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = to_parquet(
+            'test.parquet',
+            tsc,
+            expandCategory= True,
+            expandTime=False,
+            preprocessType= 'pad'
+            )
+        testData = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_pad,check_dtype=False)
+        testData = to_parquet(
+            'test.parquet',
+            tsc,
+            expandCategory= True,
+            expandTime=False,
+            preprocessType= 'remove'
+            )
+        testData = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
+        with pytest.raises(ValueError):
+            timeSeries = to_parquet('test.parquet',tsc,True,False,'ignore')    
+        os.remove('test.parquet')
+
+    def test_to_parquet_collection_expandFull(self,dictList_collection,expect_collection_expandFull):
+        data = dictList_collection
+        expandTime_pad = pd.DataFrame(expect_collection_expandFull['pad'])
+        expandTime_remove = pd.DataFrame(expect_collection_expandFull['remove'])
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = to_parquet(
+            'test.parquet',
+            tsc,
+            expandCategory= True,
+            expandTime=True,
+            preprocessType= 'pad'
+            )
+        testData = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_pad,check_dtype=False)
+        testData = to_parquet(
+            'test.parquet',
+            tsc,
+            expandCategory= True,
+            expandTime=True,
+            preprocessType= 'remove'
+            )
+        testData = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
+        with pytest.raises(ValueError):
+            timeSeries = to_pandas('test.parquet',tsc,True,True,'ignore')
+
+    def test_to_parquet_collection_noExpand(self,dictList_collection,expect_collection_noExpand):
+        data = dictList_collection
+        expandTime_ignore = pd.DataFrame(expect_collection_noExpand['ignore'])
+        expandTime_pad = pd.DataFrame(expect_collection_noExpand['pad'])
+        expandTime_remove = pd.DataFrame(expect_collection_noExpand['remove'])
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        testData = to_parquet(
+            'test.parquet',
+            tsc,
+            expandCategory= False,
+            expandTime=False,
+            preprocessType= 'pad'
+            )
+        testData = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_pad,check_dtype=False)
+        testData = to_parquet(
+            'test.parquet',
+            tsc,
+            expandCategory= False,
+            expandTime=False,
+            preprocessType= 'remove'
+            )
+        testData = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
+        testData = to_parquet(
+            'test.parquet',
+            tsc,
+            expandCategory= False,
+            expandTime=False,
+            preprocessType= 'ignore'
+            )
+        testData = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(testData,expandTime_ignore,check_dtype=False)
+        os.remove('test.parquet')
+
+    def test_to_parquet_seperateLabels_single(self,dictList_single,expect_single_seperateLabel):
+        data = dictList_single
+        expectedX, expectedY = expect_single_seperateLabel
+        expectedX = pd.DataFrame(expectedX)
+        expectedY = pd.DataFrame(expectedY)
+        tsd = Time_Series_Data(data,'time')
+        tsd.set_labels([1,2],'data_label')
+        to_parquet(['test.parquet','label.parquet'],tsd,False,False,'ignore',True)
+        x = pq.read_table('test.parquet').to_pandas()
+        y = pq.read_table('label.parquet').to_pandas()
+        print(x)
+        print(y)
+        pd.testing.assert_frame_equal(x,expectedX,check_dtype=False)
+        pd.testing.assert_frame_equal(y,expectedY,check_dtype=False)
+        os.remove('test.parquet')
+        os.remove('label.parquet')
+
+    def test_to_parquet_seperateLabels_collection(self,dictList_collection,expect_collection_seperateLabel):
+        data = dictList_collection
+        expectedX, expectedY = expect_collection_seperateLabel
+        expectedX = pd.DataFrame(expectedX)
+        expectedY = pd.DataFrame(expectedY)
+        tsd = Time_Series_Data(data,'time')
+        tsd = tsd.set_labels([1,2,1,2],'data_label')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        to_parquet(['test.parquet','label.parquet'],tsc,False,False,'ignore',True)
+        x = pq.read_table('test.parquet').to_pandas()
+        y = pq.read_table('label.parquet').to_pandas()
+        print(y)
+        pd.testing.assert_frame_equal(x,expectedX,check_dtype=False)
+        pd.testing.assert_frame_equal(y,expectedY,check_dtype=False) 
+        os.remove('test.parquet')
+        os.remove('label.parquet')
 
 class Test_Generator_IO:
     def test_from_generator(self):
