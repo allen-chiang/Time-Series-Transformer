@@ -51,6 +51,8 @@ class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
     def transform(self,X,y = None):
         if self.cache_data_path is not None:
             df = pd.read_parquet(self.cache_data_path)
+        else:
+            df = to_pandas(self.time_series_data,False,False,'ignore')
         if isinstance(X,pd.DataFrame):
             X_time = X[self._time_col].tolist()
             check_list = self._check_time_not_exist(X_time)
@@ -59,11 +61,12 @@ class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
             X_time = list(X[:,self._time_col])
             check_list = self._check_time_not_exist(X_time)
             df = df.append(pd.DataFrame(X[check_list,:]),ignore_index = True)
-        return Time_Series_Transformer.from_pandas(
+        tst = Time_Series_Transformer.from_pandas(
             df,
             self._time_col,
             self._category_col
             )
+        return tst,X_time
 
     def get_time_series_index_cache (self):
         return self._time_series_cache
@@ -80,6 +83,7 @@ class Lag_Transformer(Base_Time_Series_Transformer):
         return self
 
     def transform(self,X,y=None):
+        tst, X_time = super().transform(X,y)
         return self
 
 class Lead_Transformer(Base_Time_Series_Transformer):
