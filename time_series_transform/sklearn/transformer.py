@@ -1,7 +1,10 @@
 import numpy as np
 import pandas as pd
-from time_series_transform.transform_core_api.time_series_transformer import Time_Series_Transformer
 from sklearn.base import (BaseEstimator, TransformerMixin)
+from time_series_transform.io.parquet import (from_parquet, to_parquet)
+from time_series_transform.io.pandas import (from_pandas,to_pandas)
+from time_series_transform.io.numpy import (from_numpy,to_numpy)
+from time_series_transform.transform_core_api.time_series_transformer import Time_Series_Transformer
 
 
 
@@ -14,20 +17,34 @@ class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
         self._len_preprocessing = len_preprocessing
         self._remove_time = remove_time
         self.cache_data_path = cache_data_path
- 
-    def fit( self, X, y = None ):
+        self.time_series_data = None
+
+    def _cache_data(self,time_series_data):
+        return to_parquet(self.cache_data_path,time_series_data,False,False,'ignore')
+
+    def _to_time_series_data(self,X):
         if isinstance(X, pd.DataFrame):
             self._time_series_cache = X[self._time_col].tolist()
+            time_series_data = from_pandas(X,self._time_col,self._category_col)
+        else:
+            self._time_series_cache = list(X[:,self._time_col])
+            time_series_data = from_numpy(X,self._time_col,self._category_col)
+        return time_series_data
+
+    def fit(self,X,y = None):
+        time_series_data = self._to_time_series_data(X)
+        if self.cache_data_path is not None:
+            self._cache_data(time_series_data)
             return self
-        self._time_series_cache = list(X[:,self._time_col])
+        self.time_series_data = time_series_data
         return self 
 
-    def transform( self, X, y = None ):
+    def transform( self,X,y = None):
         if isinstance(X,pd.DataFrame):
             return X.values
         return X
 
-    def get_time_series_cache (self):
+    def get_time_series_index_cache (self):
         return self._time_series_cache
 
 
