@@ -31,6 +31,15 @@ class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
             time_series_data = from_numpy(X,self._time_col,self._category_col)
         return time_series_data
 
+    def _check_time_not_exist(self,timeList):
+        checkedList = []
+        for i in timeList:
+            if i not in self._time_series_cache:
+                checkedList.append(True)
+                continue
+            checkedList.append(False)
+        return checkedList
+
     def fit(self,X,y = None):
         time_series_data = self._to_time_series_data(X)
         if self.cache_data_path is not None:
@@ -39,10 +48,22 @@ class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
         self.time_series_data = time_series_data
         return self 
 
-    def transform( self,X,y = None):
+    def transform(self,X,y = None):
+        if self.cache_data_path is not None:
+            df = pd.read_parquet(self.cache_data_path)
         if isinstance(X,pd.DataFrame):
-            return X.values
-        return X
+            X_time = X[self._time_col].tolist()
+            check_list = self._check_time_not_exist(X_time)
+            df = df.append(X[check_list],ignore_index = True)
+        else:
+            X_time = list(X[:,self._time_col])
+            check_list = self._check_time_not_exist(X_time)
+            df = df.append(pd.DataFrame(X[check_list,:]),ignore_index = True)
+        return Time_Series_Transformer.from_pandas(
+            df,
+            self._time_col,
+            self._category_col
+            )
 
     def get_time_series_index_cache (self):
         return self._time_series_cache
