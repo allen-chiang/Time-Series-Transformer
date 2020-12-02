@@ -2,6 +2,7 @@ import os
 import copy
 import pytest
 import numpy as np
+import collections
 import pandas as pd
 from time_series_transform.sklearn.transformer import (
     Base_Time_Series_Transformer,
@@ -102,6 +103,65 @@ def expected_lag_output_single():
         }
     }
 
+@pytest.fixture('class')
+def expected_func_output_single():
+    return {
+        'train_rmTime':{
+            'data1':[2,3,4],
+            'data2':[-1,-1,-1]
+        },
+        'train_withTime':{
+            'time':[1,2,3],
+            'data1':[2,3,4],
+            'data2':[-1,-1,-1]
+        }, 
+        'test_rmTime':{
+            'data1':[5,6],
+            'data2':[-1,-1]
+        },
+        'test_withTime':{
+            'time':[4,5],
+            'data1':[5,6],
+            'data2':[-1,-1]
+        }
+    }
+
+@pytest.fixture('class')
+def expected_func_output_collection():
+    return {
+        'train_withTimeCategory':{
+            'time': [1,2,1,2,3],
+            'data':[2,2,2,3,4],
+            'category':[1,1,2,2,2]
+        },
+        'test_withTimeCategory':{
+            'time': [3,4,4,5],
+            'data':[2,2,5,6],
+            'category':[1,1,2,2]
+        },
+        'train_withCategory':{
+            'data':[2,2,2,3,4],
+            'category':[1,1,2,2,2],
+        },
+        'test_withCategory':{
+            'data':[2,2,5,6],
+            'category':[1,1,2,2],
+        },
+        'train_withoutTimeCategory':{
+            'data':[2,2,2,3,4],
+        },
+        'test_withoutTimeCategory':{
+            'data':[2,2,5,6],
+        },
+        'train_withTime':{
+            'time': [1,2,1,2,3],
+            'data':[2,2,2,3,4],
+        },
+        'test_withTime':{
+            'time': [3,4,4,5],
+            'data':[2,2,5,6],
+        },
+    }
 
 class Test_sklearn_transformer:
 
@@ -214,3 +274,116 @@ class Test_sklearn_transformer:
         test = transformer.transform(df_test)
         np.testing.assert_equal(train,expectDict['train_withTimeCategory'])
         np.testing.assert_equal(test,expectDict['test_withTimeCategory'])
+
+    def test_func_single(self,data_input_single,expected_func_output_single):
+        def add_x(data,x):
+            res = collections.defaultdict(list)
+            for i in data:
+                for v in data[i]:
+                    res[i].append(v+x)
+            return pd.DataFrame(res)
+        func = add_x
+        df_train = pd.DataFrame(data_input_single['train'])
+        numpyData_train = df_train.values
+        expectDict = {}
+        for i in expected_func_output_single:
+            expectDict[i]=pd.DataFrame(expected_func_output_single[i]).values
+        df_test = pd.DataFrame(data_input_single['test'])
+        numpyData_test = df_test.values
+        transformer = Function_Transformer(func,['data1','data2'],'time',parameterDict={'x':1})
+        transformer = transformer.fit(df_train)
+        train = transformer.transform(df_train)
+        test = transformer.transform(df_test)
+        np.testing.assert_equal(train,expectDict['train_rmTime'])
+        np.testing.assert_equal(test,expectDict['test_rmTime'])
+        transformer = Function_Transformer(func,['data1','data2'],'time',remove_time=False,parameterDict={'x':1})
+        transformer = transformer.fit(df_train)
+        train = transformer.transform(df_train)
+        test = transformer.transform(df_test)
+        np.testing.assert_equal(train,expectDict['train_withTime'])
+        np.testing.assert_equal(test,expectDict['test_withTime'])
+
+##########
+    def test_func_collection(self,data_input_collection,expected_func_output_collection):
+        def add_x(data,x):
+            res = collections.defaultdict(list)
+            for i in data:
+                for v in data[i]:
+                    res[i].append(v+x)
+            return pd.DataFrame(res)
+        func = add_x
+        df_train = pd.DataFrame(data_input_collection['train'])
+        df_test = pd.DataFrame(data_input_collection['test'])
+        expectDict = {}
+        for i in expected_func_output_collection:
+            expectDict[i]=pd.DataFrame(expected_func_output_collection[i]).values
+        transformer = Function_Transformer(func,['data'],'time','category',parameterDict={'x':1})
+        transformer = transformer.fit(df_train)
+        train = transformer.transform(df_train)
+        test = transformer.transform(df_test)
+        np.testing.assert_equal(train,expectDict['train_withoutTimeCategory'])
+        np.testing.assert_equal(test,expectDict['test_withoutTimeCategory'])
+
+
+    def test_func_collection_withCategory(self,data_input_collection,expected_func_output_collection):
+        def add_x(data,x):
+            res = collections.defaultdict(list)
+            for i in data:
+                for v in data[i]:
+                    res[i].append(v+x)
+            return pd.DataFrame(res)
+        func = add_x
+
+        df_train = pd.DataFrame(data_input_collection['train'])
+        df_test = pd.DataFrame(data_input_collection['test'])
+        expectDict = {}
+        for i in expected_func_output_collection:
+            expectDict[i]=pd.DataFrame(expected_func_output_collection[i]).values
+        transformer = Function_Transformer(func,['data'],'time','category',remove_category=False,parameterDict={'x':1})
+        transformer = transformer.fit(df_train)
+        train = transformer.transform(df_train)
+        test = transformer.transform(df_test)
+        np.testing.assert_equal(train,expectDict['train_withCategory'])
+        np.testing.assert_equal(test,expectDict['test_withCategory'])
+#
+    def test_func_collection_withTime(self,data_input_collection,expected_func_output_collection):
+        def add_x(data,x):
+            res = collections.defaultdict(list)
+            for i in data:
+                for v in data[i]:
+                    res[i].append(v+x)
+            return pd.DataFrame(res)
+        func = add_x
+        df_train = pd.DataFrame(data_input_collection['train'])
+        df_test = pd.DataFrame(data_input_collection['test'])
+        expectDict = {}
+        for i in expected_func_output_collection:
+            expectDict[i]=pd.DataFrame(expected_func_output_collection[i]).values
+        transformer = Function_Transformer(func,['data'],'time','category',remove_time=False,parameterDict={'x':1})
+        transformer = transformer.fit(df_train)
+        train = transformer.transform(df_train)
+        test = transformer.transform(df_test)
+        np.testing.assert_equal(train,expectDict['train_withTime'])
+        np.testing.assert_equal(test,expectDict['test_withTime'])
+
+    def test_func_collection_withTimeCategory(self,data_input_collection,expected_func_output_collection):
+        def add_x(data,x):
+            res = collections.defaultdict(list)
+            for i in data:
+                for v in data[i]:
+                    res[i].append(v+x)
+            return pd.DataFrame(res)
+        func = add_x
+        df_train = pd.DataFrame(data_input_collection['train'])
+        df_test = pd.DataFrame(data_input_collection['test'])
+        expectDict = {}
+        for i in expected_func_output_collection:
+            expectDict[i]=pd.DataFrame(expected_func_output_collection[i]).values
+        transformer = Function_Transformer(func,['data'],'time','category',remove_time=False,remove_category=False,parameterDict={'x':1})
+        transformer = transformer.fit(df_train)
+        train = transformer.transform(df_train)
+        test = transformer.transform(df_test)
+        np.testing.assert_equal(train,expectDict['train_withTimeCategory'])
+        np.testing.assert_equal(test,expectDict['test_withTimeCategory'])
+
+    

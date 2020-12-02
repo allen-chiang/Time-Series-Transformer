@@ -103,6 +103,29 @@ class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
             return tst,X_time,X_header,None
         return tst,X_time,X_header,X_category
 
+    def _transform_output_wrapper(self,df,X_category,X_time,X_header):
+        if X_category is None:
+            df = df[df[self._time_col].isin(X_time)]
+        else:
+            tmpdf = None
+            tmpDict = collections.defaultdict(list)
+            for ix,v in zip(X_time,X_category):
+                tmpDict[v].append(ix)
+            for i in tmpDict:
+                if tmpdf is None:
+                    tmpdf = df[df[self._category_col]==i][df[self._time_col].isin(tmpDict[i])]
+                    continue
+                tmpdf = tmpdf.append(df[df[self._category_col]==i][df[self._time_col].isin(tmpDict[i])])
+            print(df)
+            df = tmpdf
+        if self.remove_category and self._category_col is not None:
+            df = df.drop(self._category_col,axis =1)
+        if self._remove_time:
+            df = df.drop(self._time_col,axis =1)
+        if self.remove_org_data:
+            df= df.drop(X_header,axis =1)
+        return df.values        
+
     def get_time_series_index_cache (self):
         return self._time_series_cache
 
@@ -124,38 +147,26 @@ class Lag_Transformer(Base_Time_Series_Transformer):
         for i in self.lag_nums:
             tst = tst.make_lag(X_header,lagNum=i,suffix=None)
         df = tst.to_pandas()
-        if X_category is None:
-            df = df[df[self._time_col].isin(X_time)]
-        else:
-            tmpdf = None
-            tmpDict = collections.defaultdict(list)
-            for ix,v in zip(X_time,X_category):
-                tmpDict[v].append(ix)
-            for i in tmpDict:
-                if tmpdf is None:
-                    tmpdf = df[df[self._category_col]==i][df[self._time_col].isin(tmpDict[i])]
-                    continue
-                tmpdf = tmpdf.append(df[df[self._category_col]==i][df[self._time_col].isin(tmpDict[i])])
-            print(df)
-            df = tmpdf
-        if self.remove_category and self._category_col is not None:
-            df = df.drop(self._category_col,axis =1)
-        if self._remove_time:
-            df = df.drop(self._time_col,axis =1)
-        if self.remove_org_data:
-            df= df.drop(X_header,axis =1)
-        return df.values
+        return self._transform_output_wrapper(df,X_category,X_time,X_header)
+
 
 class Function_Transformer(Base_Time_Series_Transformer):
-    def __init__(self,func,time_col,category_col=None,remove_org_data=True,len_preprocessing = 'ignore'):
-        super().__init__(time_col,category_col,len_preprocessing)
-        self._func = func
+    def __init__(self,func,inputLabels,time_col,category_col=None,remove_time = True,remove_category=True,remove_org_data=True,cache_data_path=None,parameterDict={}):
+        super().__init__(time_col,category_col,'ignore',remove_time,remove_category,remove_org_data,cache_data_path)
+        self.parameterDict = parameterDict
+        self.parameterDict['func']= func
+        self.parameterDict['inputLabels']= inputLabels
+        self.parameterDict['newName']='newName'
         
-    def fit(self):
+    def fit(self,X,y=None):
+        super().fit(X)
         return self
 
-    def transform(self):
-        return self
+    def transform(self,X,y=None):
+        tst,X_time,X_header,X_category = super().transform(X,y)
+        tst = tst.transform(**self.parameterDict)
+        df = tst.to_pandas()
+        return self._transform_output_wrapper(df,X_category,X_time,X_header)
 
 class Time_Padding_Transformer(Base_Time_Series_Transformer):
     def __init__(self,func,time_col,category_col=None,len_preprocessing = 'ignore'):
