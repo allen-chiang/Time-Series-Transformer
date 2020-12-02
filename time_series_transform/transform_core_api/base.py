@@ -183,6 +183,7 @@ class Time_Series_Data(object):
             info.update(self._get_dictionary_list_info(tmpInfo,ix,None))
         return info
         
+
         
 class Time_Series_Data_Collection(object):
     def __init__(self,time_series_data,time_seriesIx,categoryIx):

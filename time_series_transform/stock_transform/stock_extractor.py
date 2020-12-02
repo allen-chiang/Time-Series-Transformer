@@ -52,8 +52,9 @@ class Stock_Extractor(object):
         data = pd.DataFrame(data.to_records())
         data['Date'] = data.Date.astype(str)
         additionalInfo = self.client.getAdditionalInfo()
-        self.stock = Stock(self.symbol,data,additionalInfo,'Date')
-        return self.stock
+        # self.stock = Stock(self.symbol,data,additionalInfo,'Date')
+        return data
+        # return self.stock
 
     def get_stock_date(self,start_date,end_date):
         """
@@ -78,7 +79,7 @@ class Stock_Extractor(object):
         data = pd.DataFrame(data.to_records())
         data['Date'] = data.Date.astype(str)
         additionalInfo = self.client.getAdditionalInfo()
-        self.stock = Stock(self.symbol,data,additionalInfo,'Date')
+        self.stock = Stock(data,'Date',self.symbol)
         return self.stock
 
     # I/O
