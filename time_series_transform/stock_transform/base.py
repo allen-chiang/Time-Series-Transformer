@@ -2,6 +2,7 @@ import scipy
 import numpy as np
 import pandas as pd
 import pandas_ta as ta
+from joblib import Parallel, delayed
 from time_series_transform.io import *
 from time_series_transform.io.pandas import to_pandas
 from time_series_transform.transform_core_api.util import *
@@ -76,8 +77,18 @@ class Portfolio(Time_Series_Data_Collection):
                 )
         return stock_collection
 
+    def _get_techinal_indicator(self,category,time_series_data,strategy,*args,**kwargs):
+        return {category:time_series_data.get_technical_indicator(strategy)}
+
 
     def get_technical_indicator(self,strategy,n_jobs =1,verbose = 0,backend='loky',*args,**kwargs):
-        for i in self.time_series_data_collection:
-            self.time_series_data_collection[i] = self.time_series_data_collection[i].get_technical_indicator(strategy)
+        dctList = Parallel(n_jobs = n_jobs,backend=backend,verbose=verbose)(delayed(self._get_techinal_indicator)(
+            c, 
+            self._time_series_data_collection[c],
+            strategy,*args,**kwargs) for c in self.time_series_data_collection
+        )
+        results = {}
+        for i in dctList:
+            results.update(i)
+        self._time_series_data_collection = results
         return self
