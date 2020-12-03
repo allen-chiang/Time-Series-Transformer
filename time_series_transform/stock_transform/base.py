@@ -36,25 +36,48 @@ class Stock(Time_Series_Data):
     @classmethod
     def from_time_series_data(cls,time_series_data,symbol,High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
         ohlcva ={
-            'high':High,
-            'close':Close,
-            'open':Open,
-            'volume':Volume,
-            'low':Low,
-            'Date':self.time_index
+            'High':High,
+            'Close':Close,
+            'Open':Open,
+            'Volume':Volume,
+            'Low':Low
         }
+        return cls(
+            time_series_data[:],
+            time_series_data.time_seriesIx,
+            symbol,
+            **ohlcva
+            )
 
 class Portfolio(Time_Series_Data_Collection):
     def __init__(self,time_series_data,time_index,symbolIx,High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
         super().__init__(time_series_data,time_index,symbolIx)
         self.ohlcva ={
-            'high':High,
-            'close':Close,
-            'open':Open,
-            'volume':Volume,
-            'low':Low,
-            'Date':time_index
+            'High':High,
+            'Close':Close,
+            'Open':Open,
+            'Volume':Volume,
+            'Low':Low
         }
-    
-    def get_technial_indicator(self,strategy):
-        pass
+        self._time_series_data_collection = self._cast_stock_collection()
+        
+
+    def _cast_stock_collection (self):
+        stock_collection = {}
+        for i in self.time_series_data_collection:
+            stock_collection[i] = Stock.from_time_series_data(
+                self.time_series_data_collection[i],
+                i,
+                High=self.ohlcva['High'],
+                Close=self.ohlcva['Close'],
+                Open=self.ohlcva['Open'],
+                Volume=self.ohlcva['Volume'],
+                Low=self.ohlcva['Low'],
+                )
+        return stock_collection
+
+
+    def get_technical_indicator(self,strategy,n_jobs =1,verbose = 0,backend='loky',*args,**kwargs):
+        for i in self.time_series_data_collection:
+            self.time_series_data_collection[i] = self.time_series_data_collection[i].get_technical_indicator(strategy)
+        return self

@@ -60,11 +60,11 @@ class io_base (object):
         for i in transCollection:
             if isinstance(transCollection[i],Time_Series_Data):
                 data = transCollection[i][:]
-                categoryList = np.empty(transCollection[i].time_length)
+                categoryList = np.empty(transCollection[i].time_length,dtype = object)
             else:
                 data = transCollection[i]
                 tmpKey =list(data.keys())[0]
-                categoryList = np.empty(len(data[tmpKey]))
+                categoryList = np.empty(len(data[tmpKey]),dtype = object)
             if not expandCategory:
                 categoryList[:] = i
                 data[self.mainCategoryCol] = categoryList
