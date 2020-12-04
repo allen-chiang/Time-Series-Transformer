@@ -52,7 +52,12 @@ class Stock_Extractor(object):
         data = pd.DataFrame(data.to_records())
         data['Date'] = data.Date.astype(str)
         additionalInfo = self.client.getAdditionalInfo()
-        self.stock = Stock(self.symbol,data,additionalInfo,'Date')
+        self.stock = Stock(
+            self.symbol,data,
+            symbol = self.symbol,
+            symbolIx='symbol',
+            time_index='Date'
+            )
         return self.stock
 
     def get_stock_date(self,start_date,end_date):
@@ -78,52 +83,13 @@ class Stock_Extractor(object):
         data = pd.DataFrame(data.to_records())
         data['Date'] = data.Date.astype(str)
         additionalInfo = self.client.getAdditionalInfo()
-        self.stock = Stock(data,'Date',self.symbol)
+        self.stock = Stock(
+            self.symbol,data,
+            symbol = self.symbol,
+            symbolIx='symbol',
+            time_index='Date'
+            )
         return self.stock
-
-    # I/O
-    @classmethod
-    def get_stock_from_csv(cls, symbol, path, *args, **kwargs):
-        """
-        get_stock_from_csv extracts data from a local csv file
-
-        Parameters
-        ----------
-        symbol : str
-            symbol of the given stock data
-        path : str
-            path of the csv file
-
-        Returns
-        -------
-        Stock
-            The stock data extracted from the csv file
-        """
-        data = pd.read_csv(path)
-        stock_data = Stock(symbol, data, *args, **kwargs)
-        return stock_data
-
-
-    @classmethod
-    def get_stock_from_parquet(cls, symbol, path, *args, **kwargs):
-        """
-        get_stock_from_parquet extracts data from a local parquet file
-
-        Parameters
-        ----------
-        symbol : str
-            symbol of the given stock data
-        path : str
-            path of the parquet file
-
-        Returns
-        -------
-        Stock
-            The stock data extracted from the parquet file
-        """
-        data = pd.read_parquet(path, engin = 'pyarrow')
-        stock_data = Stock(symbol, data, *args, **kwargs)
-        return stock_data
 
 class Portfolio_Extractor(object):
     def __init__(self,symbolList,engine, *args, **kwargs):
@@ -164,7 +130,11 @@ class Portfolio_Extractor(object):
             portfolio data of the given stock list 
         """
         stockList = self._get_stock_list_multi(n_threads,'get_stock_period', [period])
-        self.portfolio = Portfolio(stockList)
+        self.portfolio = Portfolio(
+            stockList,
+            time_index='Date',
+            symbolIx='symbol'
+            )
         return self.portfolio
 
     def get_portfolio_date(self,start_date, end_date, n_threads = 8):
@@ -190,7 +160,11 @@ class Portfolio_Extractor(object):
             portfolio data of the given stock list 
         """
         stockList = self._get_stock_list_multi(n_threads,'get_stock_date', [start_date, end_date])
-        self.portfolio = Portfolio(stockList)
+        self.portfolio = Portfolio(
+            stockList,
+            time_index='Date',
+            symbolIx='symbol'
+            )
         return self.portfolio
 
     def _get_stock_list_multi(self, n_threads, func, time_val):
@@ -200,7 +174,6 @@ class Portfolio_Extractor(object):
                 n_threads = len(self.symbolList)
 
             bins = np.array_split(self.symbolList, n_threads)
-
             for bn in bins:
                 thread = threading.Thread(target=self._get_stock_data, args= [stockList, bn, func, time_val])
                 tasks.append(thread)
