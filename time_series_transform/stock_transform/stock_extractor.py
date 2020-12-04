@@ -32,9 +32,9 @@ class Stock_Extractor(object):
         }
         return engineDict[engine]
 
-    def get_stock_period(self,period):
+    def get_period(self,period):
         """
-        get_stock_period extracts the stock data of the selected
+        get_period extracts the stock data of the selected
         period
 
         Parameters
@@ -53,16 +53,16 @@ class Stock_Extractor(object):
         data['Date'] = data.Date.astype(str)
         additionalInfo = self.client.getAdditionalInfo()
         self.stock = Stock(
-            self.symbol,data,
+            data,
+            time_index='Date',
             symbol = self.symbol,
             symbolIx='symbol',
-            time_index='Date'
             )
         return self.stock
 
-    def get_stock_date(self,start_date,end_date):
+    def get_date(self,start_date,end_date):
         """
-        get_stock_period extracts the stock data of the selected
+        get_period extracts the stock data of the selected
         period
 
         Parameters
@@ -84,7 +84,7 @@ class Stock_Extractor(object):
         data['Date'] = data.Date.astype(str)
         additionalInfo = self.client.getAdditionalInfo()
         self.stock = Stock(
-            self.symbol,data,
+            data,
             symbol = self.symbol,
             symbolIx='symbol',
             time_index='Date'
@@ -110,9 +110,9 @@ class Portfolio_Extractor(object):
         self.args = args
         self.kwargs = kwargs
 
-    def get_portfolio_period(self,period, n_threads= 8):
+    def get_period(self,period, n_threads= 8):
         """
-        get_portfolio_period extracts the list of stock
+        get_period extracts the list of stock
         by the given period
 
         Parameters
@@ -129,7 +129,7 @@ class Portfolio_Extractor(object):
         portfolio
             portfolio data of the given stock list 
         """
-        stockList = self._get_stock_list_multi(n_threads,'get_stock_period', [period])
+        stockList = self._get_stock_list_multi(n_threads,'get_period', [period])
         self.portfolio = Portfolio(
             stockList,
             time_index='Date',
@@ -137,7 +137,7 @@ class Portfolio_Extractor(object):
             )
         return self.portfolio
 
-    def get_portfolio_date(self,start_date, end_date, n_threads = 8):
+    def get_date(self,start_date, end_date, n_threads = 8):
         """
         get_portfolio_date extracts the list of stock
         by the date period
@@ -159,7 +159,7 @@ class Portfolio_Extractor(object):
         portfolio
             portfolio data of the given stock list 
         """
-        stockList = self._get_stock_list_multi(n_threads,'get_stock_date', [start_date, end_date])
+        stockList = self._get_stock_list_multi(n_threads,'get_date', [start_date, end_date])
         self.portfolio = Portfolio(
             stockList,
             time_index='Date',
@@ -181,7 +181,11 @@ class Portfolio_Extractor(object):
 
             for task in tasks:
                 task.join()
-            return stockList
+            
+            stockDict = {}
+            for i in stockList:
+                stockDict[i.symbol] = i
+            return stockDict
 
     def _get_stock_data(self, stockList, symbolList, func, time_val, *args, **kwargs):
         for symbol in symbolList:

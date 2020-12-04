@@ -19,8 +19,8 @@ class Stock(Time_Series_Data):
             'low':Low,
             'Date':time_index
         }
-        if symbol is not None:
-            self.set_data([symbol]*self.time_length,symbolIx)
+        self.symbol = symbol
+        self.symbolIx = symbolIx
 
     def get_technical_indicator(self,strategy):
         dct = {}
