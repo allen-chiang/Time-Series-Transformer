@@ -1,9 +1,9 @@
-import pandas as pd
 import threading
 import numpy as np
+import pandas as pd
 from time_series_transform.stock_transform.base import *
-from time_series_transform.stock_transform.stock_engine._yahoo_stock import yahoo_stock
 from time_series_transform.stock_transform.stock_engine._investing import investing
+from time_series_transform.stock_transform.stock_engine._yahoo_stock import yahoo_stock
 
 class Stock_Extractor(object):
     def __init__(self,symbol,engine, *args, **kwargs):
@@ -52,9 +52,8 @@ class Stock_Extractor(object):
         data = pd.DataFrame(data.to_records())
         data['Date'] = data.Date.astype(str)
         additionalInfo = self.client.getAdditionalInfo()
-        # self.stock = Stock(self.symbol,data,additionalInfo,'Date')
-        return data
-        # return self.stock
+        self.stock = Stock(self.symbol,data,additionalInfo,'Date')
+        return self.stock
 
     def get_stock_date(self,start_date,end_date):
         """

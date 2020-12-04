@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import pandas_ta as ta
 from joblib import Parallel, delayed
-from time_series_transform.io import *
+from time_series_transform.io.base import io_base
 from time_series_transform.io.pandas import to_pandas
 from time_series_transform.transform_core_api.util import *
 from time_series_transform.transform_core_api.base import *
@@ -92,3 +92,23 @@ class Portfolio(Time_Series_Data_Collection):
             results.update(i)
         self._time_series_data_collection = results
         return self
+
+    @classmethod
+    def from_time_series_collection(cls,time_series_data_collection,High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
+        iobase = io_base(
+            time_series_data_collection,
+            time_series_data_collection._time_series_Ix,
+            time_series_data_collection._categoryIx
+            )
+        return cls(
+            time_series_data= iobase.from_collection(False,False,'ignore'),
+            time_index = time_series_data_collection._time_series_Ix,
+            symbolIx= time_series_data_collection._categoryIx,
+            High= High,
+            Low = Low,
+            Close = Close,
+            Open = Open,
+            Volume = Volume
+        )
+
+

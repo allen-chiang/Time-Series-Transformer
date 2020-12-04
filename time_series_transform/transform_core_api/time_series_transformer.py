@@ -7,7 +7,7 @@ import pyarrow as pa
 from pyarrow import parquet as pq
 from collections import defaultdict
 from time_series_transform import io
-from time_series_transform.transform_core_api.base import *
+from time_series_transform.transform_core_api.base import (Time_Series_Data,Time_Series_Data_Collection)
 
 
 class Time_Series_Transformer(object):
