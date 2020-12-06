@@ -29,7 +29,7 @@ class Stock(Time_Series_Data):
             dct[i] = all_info[self.ohlcva[i]]
         df = pd.DataFrame(dct)
         df.ta.strategy(strategy)
-        keys = list(self._get_all_info().keys())
+        keys = list(map(lambda x: x.lower(),list(self._get_all_info().keys())))
         for i in df.columns:
             if i in keys:
                 continue
@@ -104,8 +104,9 @@ class Portfolio(Time_Series_Data_Collection):
             time_series_data_collection._time_series_Ix,
             time_series_data_collection._categoryIx
             )
+        
         return cls(
-            time_series_data= iobase.from_collection(False,False,'ignore'),
+            time_series_data= Time_Series_Data(iobase.from_collection(False,False,'ignore'),time_series_data_collection._time_series_Ix),
             time_index = time_series_data_collection._time_series_Ix,
             symbolIx= time_series_data_collection._categoryIx,
             High= High,
