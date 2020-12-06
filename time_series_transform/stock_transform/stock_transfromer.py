@@ -59,7 +59,6 @@ class Stock_Transformer(Time_Series_Transformer):
         return self
 
 
-
 def _time_series_data_to_stock_data(time_series_data,mainCategoryCol,High,Low,Close,Open,Volume):
     res = None
     if isinstance(time_series_data,Time_Series_Data):
