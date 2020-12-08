@@ -54,9 +54,7 @@ class Stock_Extractor(object):
         additionalInfo = self.client.getAdditionalInfo()
         self.stock = Stock(
             data,
-            time_index='Date',
-            symbol = self.symbol,
-            symbolIx='symbol',
+            time_index='Date'
             )
         return self.stock
 
@@ -85,8 +83,6 @@ class Stock_Extractor(object):
         additionalInfo = self.client.getAdditionalInfo()
         self.stock = Stock(
             data,
-            symbol = self.symbol,
-            symbolIx='symbol',
             time_index='Date'
             )
         return self.stock
@@ -184,7 +180,7 @@ class Portfolio_Extractor(object):
             
             stockDict = {}
             for i in stockList:
-                stockDict[i.symbol] = i
+                stockDict.update(i)
             return stockDict
 
     def _get_stock_data(self, stockList, symbolList, func, time_val, *args, **kwargs):
@@ -196,7 +192,7 @@ class Portfolio_Extractor(object):
             else:
                 stock_data = extract_func(time_val[0])
             
-            stockList.append(stock_data)
+            stockList.append({symbol:stock_data})
         return stockList
 
 

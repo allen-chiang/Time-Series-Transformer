@@ -9,7 +9,7 @@ from time_series_transform.transform_core_api.util import *
 from time_series_transform.transform_core_api.base import *
 
 class Stock(Time_Series_Data):
-    def __init__(self,data,time_index,symbol=None,symbolIx = 'symbol',High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
+    def __init__(self,data,time_index,High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
         super().__init__(data,time_index)
         self.ohlcva ={
             'high':High,
@@ -19,8 +19,6 @@ class Stock(Time_Series_Data):
             'low':Low,
             'Date':time_index
         }
-        self.symbol = symbol
-        self.symbolIx = symbolIx
 
     def get_technical_indicator(self,strategy):
         dct = {}
@@ -37,7 +35,7 @@ class Stock(Time_Series_Data):
         return self
     
     @classmethod
-    def from_time_series_data(cls,time_series_data,symbol,symbolIx='symbol',High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
+    def from_time_series_data(cls,time_series_data,High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
         ohlcva ={
             'High':High,
             'Close':Close,
@@ -48,8 +46,6 @@ class Stock(Time_Series_Data):
         return cls(
             time_series_data[:],
             time_series_data.time_seriesIx,
-            symbol,
-            symbolIx,
             **ohlcva
             )
 
@@ -71,8 +67,6 @@ class Portfolio(Time_Series_Data_Collection):
         for i in self.time_series_data_collection:
             stock_collection[i] = Stock.from_time_series_data(
                 self.time_series_data_collection[i],
-                i,
-                self._categoryIx,
                 High=self.ohlcva['High'],
                 Close=self.ohlcva['Close'],
                 Open=self.ohlcva['Open'],

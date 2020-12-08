@@ -33,8 +33,15 @@ def dictList_portfolio():
 
 class Test_Stock_Transform:
 
-    def test_stock_dtype(self):
-        pass
+    def test_stock_dtype(self,dictList_stock,dictList_portfolio):
+        data = dictList_stock
+        stock = Stock(data,'Date')
+        st = Stock_Transformer(data,'Date',None,'symbol')
+        assert stock == st.time_series_data
+        data = dictList_portfolio
+        port = Portfolio(Stock(data,'Date'),'Date','symbol')
+        st = Stock_Transformer(data,'Date','symbol')
+        assert port == st.time_series_data
 
     def test_single_from_pandas(self):
         pass

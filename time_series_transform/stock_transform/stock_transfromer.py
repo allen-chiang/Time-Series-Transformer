@@ -30,7 +30,7 @@ class Stock_Transformer(Time_Series_Transformer):
             return cls(data,'Date','symbol')
         se = Stock_Extractor(symbols,engine,*args,**kwargs)
         data = se.get_period(start_date,end_date)
-        return cls(data,'Date','symbol')
+        return cls(data,'Date',None)
 
     @classmethod
     def from_pandas(cls, pandasFrame,timeSeriesCol,mainCategoryCol,High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
@@ -64,7 +64,6 @@ def _time_series_data_to_stock_data(time_series_data,mainCategoryCol,High,Low,Cl
     if isinstance(time_series_data,Time_Series_Data):
         res = Stock.from_time_series_data(
             time_series_data= time_series_data,
-            symbol = time_series_data[:,[mainCategoryCol]][mainCategoryCol][0],
             High = High,
             Low = Low,
             Close = Close,

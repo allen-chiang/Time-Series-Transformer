@@ -307,3 +307,10 @@ class Test_time_series_transform:
         tst = tst.make_label('data')
         _,df= tst.to_pandas(sepLabel=True)
         assert df.data.tolist() == data['data']
+
+
+    def test_single_dropna(self):
+        raise
+
+    def test_collection_dropna(self):
+        raise

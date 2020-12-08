@@ -195,6 +195,14 @@ class Time_Series_Transformer(object):
         self.time_series_data.remove(colName)
         return self
 
+    def dropna(self,categoryKey=None):
+        if isinstance(self.time_series_data,Time_Series_Data):
+            self.time_series_data = self.time_series_data.dropna()
+            return self
+        self.time_series_data = self.time_series_data.dropna(categoryKey)
+        return self
+
+
     @classmethod
     def from_pandas(cls, pandasFrame,timeSeriesCol,mainCategoryCol):
         data = io.from_pandas(pandasFrame,timeSeriesCol,mainCategoryCol)

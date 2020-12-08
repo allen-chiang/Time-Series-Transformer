@@ -2,6 +2,7 @@ import copy
 import numpy as np
 import pandas as pd
 import pprint
+import collections
 from joblib import Parallel, delayed
 from collections import ChainMap
 from collections import Counter
@@ -31,6 +32,12 @@ class Time_Series_Data(object):
             for i in data:
                 self.set_data(data[i],i)
         self._labels = {}
+
+    def _validate_time_index(self,time_index):
+        ctn = collections.Counter(time_index)
+        for i in ctn:
+            if ctn[i] > 1:
+                raise('time index item must be unique')
 
     @property
     def data(self):
@@ -63,6 +70,32 @@ class Time_Series_Data(object):
         if key in self.labels and (remove_type is None or remove_type == 'label'):
             self._labels.pop(key)
         return self
+
+
+    def dropna(self):
+        ixList = []
+        notNaList=[]
+        for i in self.data:
+            tmp = np.argwhere(np.isnan(np.asarray(self.data[i]))).tolist()
+            for t in tmp:
+                ixList.extend(t)
+        for i in self.labels:
+            tmp = np.argwhere(np.isnan(np.asarray(self.labels[i]))).tolist()
+            for t in tmp:
+                ixList.extend(t)
+        if len(ixList) == 0:
+            return
+        ixList = list(set(ixList))
+        for i in range(self.time_length):
+            if i in ixList:
+                notNaList.append(False)
+                continue
+            notNaList.append(True)
+        tsd = Time_Series_Data(self[notNaList],self.time_seriesIx)
+        for i in self.labels:
+            tsd = tsd.set_labels(tsd[:,[i]][i],i)
+            tsd = tsd.remove(i,'data')
+        return tsd
 
 
     def set_time_index(self,inputData,label):
@@ -344,4 +377,8 @@ class Time_Series_Data_Collection(object):
                 return False
         return True
         
-
+    def dropna(self,categoryKey = None):
+        for i in self.time_series_data_collection:
+            if categoryKey is None or i == categoryKey:
+                self._time_series_data_collection[i] = self._time_series_data_collection[i].dropna()
+        return self
