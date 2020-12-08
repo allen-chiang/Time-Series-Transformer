@@ -20,7 +20,7 @@ class Stock_Transformer(Time_Series_Transformer):
             return cls(data,'Date','symbol')
         se = Stock_Extractor(symbols,engine,*args,**kwargs)
         data = se.get_period(period)
-        return cls(data,'Date','symbol')
+        return cls(data,'Date',None)
 
     @classmethod
     def from_stock_engine_date(cls,symbols,start_date,end_date,engine,n_threads=8,*args,**kwargs):

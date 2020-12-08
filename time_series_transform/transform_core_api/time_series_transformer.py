@@ -156,16 +156,16 @@ class Time_Series_Transformer(object):
             if collectionKey is None:
                 for i in self.time_series_data:
                     data = self.time_series_data[i][:,[key]][key]
-                    self.time_series_data[i].set_labels(key)
-                    self.time_series_data[i].remove(key)
+                    self.time_series_data[i].set_labels(data,key)
+                    self.time_series_data[i].remove(key,'data')
             else:
                 data = self.time_series_data[collectionKey][:,[key]][key]
-                self.time_series_data[collectionKey].set_labels(key)
-                self.time_series_data[collectionKey].remove(key)
+                self.time_series_data[collectionKey].set_labels(data,key)
+                self.time_series_data[collectionKey].remove(key,'data')
         else:
             data = self.time_series_data[:,[key]][key]
-            self.time_series_data.set_labels(key)
-            self.time_series_data.remove(key)
+            self.time_series_data.set_labels(data,key)
+            self.time_series_data.remove(key,'data')
         return self
 
     def remove_different_category_time(self):
@@ -206,19 +206,17 @@ class Time_Series_Transformer(object):
         return cls(data,timeSeriesCol,mainCategoryCol)
 
     def to_pandas(self,expandCategory=False,expandTime=False,preprocessType='ignore',sepLabel = False):
-        if sepLabel == False:
-            return io.to_pandas(
-                self.time_series_data,
-                expandCategory = expandCategory,
-                expandTime = expandTime,
-                preprocessType=preprocessType,
-                seperateLabels = sepLabel
-                )
+        return io.to_pandas(
+            self.time_series_data,
+            expandCategory = expandCategory,
+            expandTime = expandTime,
+            preprocessType=preprocessType,
+            seperateLabels = sepLabel
+            )
         
 
     def to_numpy(self,expandCategory=False,expandTime=False,preprocessType='ignore',sepLabel = False):
-        if sepLabel == False:
-            return io.to_numpy(self.time_series_data,expandCategory,expandTime,preprocessType,sepLabel)
+        return io.to_numpy(self.time_series_data,expandCategory,expandTime,preprocessType,sepLabel)
 
     def to_dict(self):
         return self.time_series_data[:]

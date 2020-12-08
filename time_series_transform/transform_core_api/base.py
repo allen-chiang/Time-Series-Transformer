@@ -57,10 +57,10 @@ class Time_Series_Data(object):
         self._labels[label] = np.array(inputData)
         return self
 
-    def remove(self,key):
-        if key in self.data:
+    def remove(self,key,remove_type=None):
+        if key in self.data and (remove_type is None or remove_type == 'data'):
             self._data.pop(key)
-        if key in self.labels:
+        if key in self.labels and (remove_type is None or remove_type == 'label'):
             self._labels.pop(key)
         return self
 
