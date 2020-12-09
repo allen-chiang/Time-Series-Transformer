@@ -4,40 +4,139 @@ from time_series_transform.stock_transform.stock_extractor import *
 from time_series_transform.stock_transform.util import *
 
 ###################### Data and Result ########################
-
 @pytest.fixture('class')
-def extractor_yahoo_sample():
+def extractor_sample():
     return {
         'period': ["1y", "max", "1d"],
-        'date': [["2020-01-01", "2020-07-01"], ["2020-01-01", "2020-03-01"],["2020-01-01", "2020-02-01"]],
-        'symbol': ["aapl", "0050.TW", "MSFT"]
+        'date': [["2020-07-27", "2020-08-26"]],
+        'symbol': ["aapl"],
+        'country': ['united states']
     }
 
 @pytest.fixture('class')
-def extractor_investing_sample():
-    return {
-        'period': ["1y", "max", "1d"],
-        'date': [["2020-01-01", "2020-07-01"], ["2020-01-01", "2020-03-01"],["2020-01-01", "2020-02-01"]],
-        'symbol': ["aapl", "1310", "2206"],
-        'country': ["united states", "taiwan", "japan"]
-    }
+def extractor_yahoo_expect():
+    aapl = {'Date': np.array(['2020-07-27', '2020-07-28', '2020-07-29', '2020-07-30',
+       '2020-07-31', '2020-08-03', '2020-08-04', '2020-08-05',
+       '2020-08-06', '2020-08-07', '2020-08-10', '2020-08-11',
+       '2020-08-12', '2020-08-13', '2020-08-14', '2020-08-17',
+       '2020-08-18', '2020-08-19', '2020-08-20', '2020-08-21',
+       '2020-08-24', '2020-08-25', '2020-08-26'], dtype=object), 'Open': np.array([ 93.38023652,  94.03542883,  93.42009733,  93.85606094,
+       102.52296174, 107.81924563, 108.74847112, 108.99260671,
+       110.01648845, 113.01002984, 112.40607286, 111.77715445,
+       110.30719128, 114.23291727, 114.63223644, 115.86260637,
+       114.15555683, 115.78274476, 115.55064397, 119.05709074,
+       128.47584458, 124.48274064, 125.96268704]), 'High': np.array([ 94.57103105,  94.21728937,  94.89489261,  95.95863661,
+       106.04053887, 111.24464921, 110.40013973, 110.00403435,
+       114.00988593, 113.47922158, 113.57905226, 112.28876872,
+       113.07991164, 115.84264311, 114.80194183, 115.88756483,
+       115.8002185 , 116.96071278, 118.18859463, 124.65244058,
+       128.56320302, 124.96440782, 126.77378771]), 'Low': np.array([ 93.15105014,  92.91936728,  93.38273081,  93.43754072,
+       100.47020548, 107.51283258, 108.00608998, 108.51429247,
+       109.41112804, 110.10254753, 109.81055224, 108.91958151,
+       110.10753878, 113.73128029, 112.85030699, 113.7662247 ,
+       113.81114979, 115.41088874, 115.53317228, 119.04461532,
+       123.724048  , 122.84056949, 124.86707355]), 'Close': np.array([ 94.47636414,  92.92435455,  94.70555878,  95.85151672,
+       105.88608551, 108.55415344, 109.27909851, 109.67519379,
+       113.50167847, 110.92113495, 112.53335571, 109.18662262,
+       112.81536865, 114.81192017, 114.70960236, 114.41011047,
+       115.36347198, 115.50821686, 118.07129669, 124.15579987,
+       125.64073944, 124.61001587, 126.30459595]), 'Volume': np.array([121214000, 103625600,  90329200, 158130000, 374336800, 308151200,
+       173071600, 121992000, 202428800, 198045600, 212403600, 187902400,
+       165944800, 210082000, 165565200, 119561600, 105633600, 145538000,
+       126907200, 338054800, 345937600, 211495600, 163022400], dtype=int), 'Dividends': np.array([0.   , 0.   , 0.   , 0.   , 0.   , 0.   , 0.   , 0.   , 0.   ,
+       0.205, 0.   , 0.   , 0.   , 0.   , 0.   , 0.   , 0.   , 0.   ,
+       0.   , 0.   , 0.   , 0.   , 0.   ]), 'Stock Splits': np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0], dtype=int)}
+    msft = {'Date': np.array(['2020-07-27', '2020-07-28', '2020-07-29', '2020-07-30',
+       '2020-07-31', '2020-08-03', '2020-08-04', '2020-08-05',
+       '2020-08-06', '2020-08-07', '2020-08-10', '2020-08-11',
+       '2020-08-12', '2020-08-13', '2020-08-14', '2020-08-17',
+       '2020-08-18', '2020-08-19', '2020-08-20', '2020-08-21',
+       '2020-08-24', '2020-08-25', '2020-08-26'], dtype=object), 'Open': np.array([200.45934207, 202.58861208, 201.48417448, 199.9917051 ,
+       203.37464204, 210.45894367, 213.09563743, 213.82197027,
+       211.27481549, 213.77224513, 210.60816415, 206.12080856,
+       204.26017979, 208.3893542 , 207.71276894, 208.54856189,
+       209.47390145, 210.93775445, 208.99283592, 213.30156329,
+       214.22912227, 212.54355925, 217.31107464]), 'High': np.array([202.94680101, 203.67314057, 203.6233831 , 203.43435506,
+       204.0711427 , 216.54823869, 213.69263367, 213.92147471,
+       215.28459821, 214.61797213, 210.81711738, 206.60834082,
+       209.2251535 , 210.28977639, 208.53860715, 210.13058212,
+       211.2947233 , 211.5461622 , 214.43858529, 215.68532185,
+       214.95722702, 216.04438846, 221.51007292]), 'Low': np.array([199.85240148, 200.7279976 , 200.99662706, 198.56888583,
+       198.01168103, 209.38435952, 209.2550001 , 210.50868823,
+       210.48878512, 209.87189583, 205.31485961, 202.1209702 ,
+       203.72289532, 207.10581693, 206.46903946, 207.87196517,
+       208.16053096, 208.70359815, 208.36449135, 212.29420611,
+       211.87528422, 212.54355925, 216.7924282 ]), 'Close': np.array([202.82740784, 201.0065918 , 203.03634644, 202.87715149,
+       203.98158264, 215.45375061, 212.220047  , 211.87181091,
+       215.26470947, 211.41412354, 207.20532227, 202.35977173,
+       208.140625  , 207.65306091, 207.85206604, 209.22514343,
+       210.42909241, 209.15242004, 214.01968384, 212.46376038,
+       213.13200378, 215.90475464, 220.57252502]), 'Volume': np.array([30160900, 23251400, 19632600, 25079600, 51248000, 78983000,
+       49280100, 28858600, 32656800, 27789600, 36716500, 36446500,
+       28041400, 22588900, 17958900, 20184800, 21336200, 27627600,
+       26981500, 36249300, 25460100, 23043700, 39600800], dtype=int), 'Dividends': np.array([0.  , 0.  , 0.  , 0.  , 0.  , 0.  , 0.  , 0.  , 0.  , 0.  , 0.  ,
+       0.  , 0.  , 0.  , 0.  , 0.  , 0.  , 0.51, 0.  , 0.  , 0.  , 0.  ,
+       0.  ]), 'Stock Splits': np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0], dtype=int)}
+    res = {'aapl': Time_Series_Data(aapl,'Date'),
+            'msft':Time_Series_Data(msft,'Date')}
+    return res
 
 @pytest.fixture('class')
-def extractor_portfolio_yahoo_sample():
-    return {
-        'period': ["1y", "max", "1d"],
-        'date': [["2020-01-01", "2020-07-01"], ["2020-01-01", "2020-03-01"],["2020-01-01", "2020-02-01"]],
-        "stockList": [["aapl", "0050.TW", "MSFT"],[],["aapl"]]
-    }
+def extractor_investing_expect():
+    aapl = {'Date': np.array(['2020-07-27', '2020-07-28', '2020-07-29', '2020-07-30',
+       '2020-07-31', '2020-08-03', '2020-08-04', '2020-08-05',
+       '2020-08-06', '2020-08-07', '2020-08-10', '2020-08-11',
+       '2020-08-12', '2020-08-13', '2020-08-14', '2020-08-17',
+       '2020-08-18', '2020-08-19', '2020-08-20', '2020-08-21',
+       '2020-08-24', '2020-08-25', '2020-08-26'], dtype=object), 'Open': np.array([ 93.71,  94.37,  93.75,  94.19, 102.88, 108.2 , 109.13, 109.38,
+       110.41, 113.2 , 112.6 , 111.97, 110.5 , 114.43, 114.83, 116.06,
+       114.35, 115.98, 115.75, 119.26, 128.7 , 124.7 , 126.18]), 'High': np.array([ 94.91,  94.55,  95.23,  96.3 , 106.42, 111.64, 110.79, 110.39,
+       114.41, 113.67, 113.78, 112.48, 113.28, 116.04, 115.  , 116.09,
+       116.  , 117.16, 118.39, 124.87, 128.78, 125.18, 126.99]), 'Low': np.array([ 93.48,  93.25,  93.71,  93.77, 100.83, 107.89, 108.39, 108.9 ,
+       109.8 , 110.29, 110.  , 109.11, 110.3 , 113.93, 113.05, 113.96,
+       114.01, 115.61, 115.73, 119.25, 123.94, 123.05, 125.08]), 'Close': np.array([ 94.81,  93.25,  95.04,  96.19, 106.26, 108.94, 109.67, 110.06,
+       113.9 , 111.11, 112.73, 109.38, 113.01, 115.01, 114.91, 114.61,
+       115.56, 115.71, 118.28, 124.37, 125.86, 124.83, 126.52]), 'Volume': np.array([121214192, 103625504,  90329256, 158130016, 374295456, 308151392,
+       172792368, 121991952, 202428896, 198045616, 212403424, 187902368,
+       165944816, 210082064, 165565216, 119561440, 105633536, 145538016,
+       126907184, 338054656, 345937760, 211495792, 163022272], dtype=int), 'Currency': np.array(['USD', 'USD', 'USD', 'USD', 'USD', 'USD', 'USD', 'USD', 'USD',
+       'USD', 'USD', 'USD', 'USD', 'USD', 'USD', 'USD', 'USD', 'USD',
+       'USD', 'USD', 'USD', 'USD', 'USD'], dtype=object)}
+    msft = {'Date': np.array(['2020-07-27', '2020-07-28', '2020-07-29', '2020-07-30',
+       '2020-07-31', '2020-08-03', '2020-08-04', '2020-08-05',
+       '2020-08-06', '2020-08-07', '2020-08-10', '2020-08-11',
+       '2020-08-12', '2020-08-13', '2020-08-14', '2020-08-17',
+       '2020-08-18', '2020-08-19', '2020-08-20', '2020-08-21',
+       '2020-08-24', '2020-08-25', '2020-08-26'], dtype=object), 'Open': np.array([201.87, 203.87, 202.5 , 201.07, 204.4 , 211.69, 214.27, 214.65,
+       212.45, 214.85, 211.38, 207.16, 205.37, 209.57, 208.76, 209.68,
+       210.63, 211.56, 209.54, 213.86, 214.8 , 213.1 , 217.85]), 'High': np.array([203.97, 204.67, 204.65, 204.41, 205.1 , 217.62, 214.76, 214.65,
+       216.37, 215.7 , 211.38, 207.62, 210.25, 211.33, 209.59, 211.18,
+       212.35, 212.09, 214.99, 216.25, 215.51, 216.52, 222.08]), 'Low': np.array([200.89, 201.95, 202.01, 199.64, 199.01, 210.54, 210.36, 211.57,
+       211.61, 210.93, 206.35, 203.14, 204.82, 208.21, 207.51, 208.94,
+       209.22, 209.39, 208.96, 212.85, 212.49, 213.1 , 217.4 ]), 'Close': np.array([203.85, 202.02, 204.06, 203.9 , 205.01, 216.54, 213.29, 212.94,
+       216.35, 212.48, 208.25, 203.38, 209.19, 208.7 , 208.9 , 210.28,
+       211.49, 209.7 , 214.58, 213.02, 213.69, 216.47, 221.15]), 'Volume': np.array([30160868, 23251388, 19632602, 25079596, 51247968, 78983008,
+       49280056, 28858620, 32656844, 27820420, 36716464, 36446460,
+       28041364, 22588870, 17958936, 20184756, 21336168, 27627560,
+       26981478, 36249320, 25460148, 23043696, 39600828], dtype=int), 'Currency': np.array(['USD', 'USD', 'USD', 'USD', 'USD', 'USD', 'USD', 'USD', 'USD',
+       'USD', 'USD', 'USD', 'USD', 'USD', 'USD', 'USD', 'USD', 'USD',
+       'USD', 'USD', 'USD', 'USD', 'USD'], dtype=object)}
+
+    res = {'aapl': Time_Series_Data(aapl,'Date'),
+            'msft':Time_Series_Data(msft,'Date')}
+    return res
 
 @pytest.fixture('class')
-def extractor_portfolio_investing_sample():
+def extractor_portfolio_sample():
     return {
         'period': ["1y", "max", "1d"],
-        'date': [["2020-01-01", "2020-07-01"], ["2020-01-01", "2020-03-01"],["2020-01-01", "2020-02-01"]],
-        "stockList": [["aapl", "1310", "2206"],[],["aapl"]],
-        'country': [["united states", "taiwan", "japan"],[],["united states"]]
+        'date': [["2020-07-27", "2020-08-26"]],
+        'symbol': ["aapl",'msft'],
+        'country': ['united states', 'united states']
     }
+
 
 @pytest.fixture('class')
 def util_scaler_sample():
@@ -165,13 +264,13 @@ def util_william_r_output():
 
 @pytest.fixture(scope = 'class')
 def base_stock_test_sample():
-    se = Stock_Extractor('aapl','yahoo').get_stock_period('1y')
+    se = Stock_Extractor('aapl','yahoo').get_period('1y')
     return se
 
 @pytest.fixture(scope = 'class')
 def base_portfolio_test_sample():
     stockList = ["aapl", "0050.TW", "MSFT"]
-    pe = Portfolio_Extractor(stockList,'yahoo').get_portfolio_period('1y')
+    pe = Portfolio_Extractor(stockList,'yahoo').get_period('1y')
     return pe
 
 ###################### Helper Functions ########################
@@ -199,107 +298,75 @@ def compare_arr_result(real, expect):
 
 class Test_stock_extractor:
 
-    def test_yahoo_stock_extractor_period(self,extractor_yahoo_sample):
-        period = extractor_yahoo_sample['period']
-        symbol = extractor_yahoo_sample['symbol']
-        source = 'yahoo'
-        for i in range(len(symbol)):
-            se = Stock_Extractor(symbol[i],source)
-            data = se.get_stock_period(period[i])
-            assert isinstance(data, Stock)
-            assert data.symbol == symbol[i]
+    def test_yahoo_extractor_data(self,extractor_sample, extractor_yahoo_expect):
+        date = extractor_sample['date'][0]
+        symbol = extractor_sample['symbol'][0]
+        se = Stock_Extractor(symbol, 'yahoo')
+        data = se.get_date(date[0],date[1])
+        assert data == extractor_yahoo_expect[symbol]
+    
+    def test_investing_extractor_data(self,extractor_sample, extractor_investing_expect):
+        date = extractor_sample['date'][0]
+        symbol = extractor_sample['symbol'][0]
+        country = extractor_sample['country'][0]
+        se = Stock_Extractor(symbol, 'investing', country = country)
+        data = se.get_date(date[0],date[1])
+        assert data == extractor_investing_expect[symbol]
 
-    def test_yahoo_stock_extractor_date(self,extractor_yahoo_sample):
-        date = extractor_yahoo_sample['date']
-        symbol = extractor_yahoo_sample['symbol']
-        source = 'yahoo'
-        for i in range(len(symbol)):
-            se = Stock_Extractor(symbol[i],source)
-            data = se.get_stock_date(date[i][0], date[i][1])
-            assert isinstance(data, Stock)
-            assert data.symbol == symbol[i]
-
-    def test_investing_stock_extractor_period(self,extractor_investing_sample):
-        period = extractor_investing_sample['period']
-        symbol = extractor_investing_sample['symbol']
-        country = extractor_investing_sample['country']
-        source = 'investing'
-        for i in range(len(symbol)):
-            se = Stock_Extractor(symbol[i],source, country = country[i])
-            data = se.get_stock_period(period[i])
-            assert isinstance(data, Stock)
-            assert data.symbol == symbol[i]
-
-    def test_investing_stock_extractor_date(self,extractor_investing_sample):
-        date = extractor_investing_sample['date']
-        symbol = extractor_investing_sample['symbol']
-        country = extractor_investing_sample['country']
-        source = 'investing'
-        for i in range(len(symbol)):
-            se = Stock_Extractor(symbol[i],source, country = country[i])
-            data = se.get_stock_date(date[i][0], date[i][1])
-            assert isinstance(data, Stock)
-            assert data.symbol == symbol[i]
+    def test_stock_extractor_period(self,extractor_sample):
+        period = extractor_sample['period']
+        symbol = extractor_sample['symbol']
+        country = extractor_sample['country']
+        sources = ['yahoo','investing']
+        for source in sources:
+            for i in range(len(period)):
+                for j in range(len(symbol)):
+                    if source == 'investing':
+                        se = Stock_Extractor(symbol[j],source,country = country[j])
+                    else:
+                        se = Stock_Extractor(symbol[j],source)
+                    data = se.get_period(period[i])
+                    assert isinstance(data, Stock)
 
 class Test_portfolio_extractor:
 
-    def test_yahoo_portfolio_period(self,extractor_portfolio_yahoo_sample):
-        period = extractor_portfolio_yahoo_sample['period']
-        stockList = extractor_portfolio_yahoo_sample['stockList']
-        source = 'yahoo'
-        for i in range(len(stockList)):
-            if len(stockList[i]) == 0:
-                with pytest.raises(ValueError):
-                    pe = Portfolio_Extractor(stockList[i],source)
-                    data = pe.get_portfolio_period(period[i])
-            else:
-                pe = Portfolio_Extractor(stockList[i],source)
-                data = pe.get_portfolio_period(period[i])
-                assert isinstance(data, Portfolio)
+    def test_yahoo_portfolio_extractor_data(self,extractor_portfolio_sample,extractor_yahoo_expect):
+        date = extractor_portfolio_sample['date'][0]
+        symbol = extractor_portfolio_sample['symbol']
+        pe = Portfolio_Extractor(symbol, 'yahoo')
+        data = pe.get_date(date[0],date[1])
+        for sym in data:
+            assert data[sym] == extractor_yahoo_expect[sym]
 
-    def test_yahoo_portfolio_date(self,extractor_portfolio_yahoo_sample):
-        date = extractor_portfolio_yahoo_sample['date']
-        stockList = extractor_portfolio_yahoo_sample['stockList']
-        source = 'yahoo'
-        for i in range(len(stockList)):
-            if len(stockList[i]) == 0:
-                with pytest.raises(ValueError):
-                    pe = Portfolio_Extractor(stockList[i],source)
-                    data = pe.get_portfolio_date(date[i][0], date[i][1])
-            else:
-                pe = Portfolio_Extractor(stockList[i],source)
-                data = pe.get_portfolio_date(date[i][0], date[i][1])
-                assert isinstance(data, Portfolio)
+    def test_investing_portfolio_extractor_data(self,extractor_portfolio_sample,extractor_investing_expect):
+        date = extractor_portfolio_sample['date'][0]
+        symbol = extractor_portfolio_sample['symbol']
+        country = extractor_portfolio_sample['country']
+        pe = Portfolio_Extractor(symbol, 'yahoo', country = country)
+        data = pe.get_date(date[0],date[1])
+        for sym in data:
+            assert data[sym] == extractor_investing_expect[sym]
 
-    def test_investing_portfolio_period(self,extractor_portfolio_investing_sample):
-        period = extractor_portfolio_investing_sample['period']
-        country = extractor_portfolio_investing_sample['country']
-        stockList = extractor_portfolio_investing_sample['stockList']
+    def test_yahoo_portfolio_period(self,extractor_portfolio_sample):
+        period = extractor_portfolio_sample['period']
+        stockList = extractor_portfolio_sample['symbol']
+        source = 'yahoo'
+        for i in range(len(period)):
+            pe = Portfolio_Extractor(stockList,source)
+            data = pe.get_period(period[i])
+            assert isinstance(data, Portfolio)
+
+
+    def test_investing_portfolio_period(self,extractor_portfolio_sample):
+        period = extractor_portfolio_sample['period']
+        country = extractor_portfolio_sample['country']
+        stockList = extractor_portfolio_sample['symbol']
         source = 'investing'
         for i in range(len(stockList)):
-            if len(stockList[i]) == 0:
-                with pytest.raises(ValueError):
-                    pe = Portfolio_Extractor(stockList[i],source, country = country[i])
-                    data = pe.get_portfolio_period(period[i])
-            else:
-                pe = Portfolio_Extractor(stockList[i],source, country = country[i])
-                data = pe.get_portfolio_period(period[i])
-                assert isinstance(data, Portfolio)
+            pe = Portfolio_Extractor(stockList,source, country = country)
+            data = pe.get_period(period[i])
+            assert isinstance(data, Portfolio)
 
-    def test_investing_portfolio_date(self,extractor_portfolio_investing_sample):
-        date = extractor_portfolio_investing_sample['date']
-        country = extractor_portfolio_investing_sample['country']
-        stockList = extractor_portfolio_investing_sample['stockList']
-        source = 'investing'
-        for i in range(len(stockList)):
-            if len(stockList[i]) == 0:
-                with pytest.raises(ValueError):
-                    pe = Portfolio_Extractor(stockList[i],source, country = country[i])
-                    data = pe.get_portfolio_date(date[i][0], date[i][1])
-            else:
-                pe = Portfolio_Extractor(stockList[i],source, country = country[i])
-                data = pe.get_portfolio_date(date[i][0], date[i][1])
-                assert isinstance(data, Portfolio)
 
 
 class Test_stock_util:
@@ -359,69 +426,3 @@ class Test_stock_util:
             else:
                 w_res = williams_r(ar)
                 assert compare_arr_result(w_res, w_out)
-
-# todo
-class Test_base:
-    
-    def test_stock_make_technical_indicator(self, base_stock_test_sample):
-        colNames = ['Close']
-        funcList = [macd, stochastic_oscillator, rsi, williams_r]
-        labels = ['macd', 'so', 'rsi', 'williams']
-
-        outkeyList = list(base_stock_test_sample[0].keys())
-
-        for col in colNames:
-            for i in range(len(funcList)):
-                base_stock_test_sample.make_technical_indicator(col, labels[i],funcList[i])
-                if labels[i]=="macd":
-                    outkeyList.extend(['macd_EMA_12',
-                        'macd_EMA_26',
-                        'macd_DIF',
-                        'macd_DEM',
-                        'macd_OSC'])
-                elif labels[i] == 'so':
-                    outkeyList.extend(['so_k_val','so_d_val'])
-                else: 
-                    outkeyList.append(labels[i])
-        
-        assert np.array_equal(list(base_stock_test_sample[0].keys()), outkeyList)
-        
-    def test_portfolio_get_portfolio_dataFrame(self,base_portfolio_test_sample):
-        df = base_portfolio_test_sample.get_portfolio_dataFrame()
-        outkeyList = ['Date','Open','High','Low','Close','Volume','Dividends','Stock Splits','symbol']
-        assert np.array_equal(list(df.keys()), outkeyList)
-
-    def test_portfolio_make_technical_indicator(self,base_portfolio_test_sample):
-        colNames = ['Close']
-        funcList = [macd, stochastic_oscillator, rsi, williams_r]
-        labels = ['macd', 'so', 'rsi', 'williams']
-
-        outkeyList = list(base_portfolio_test_sample.get_portfolio_dataFrame().keys())
-
-        for col in colNames:
-            for i in range(len(funcList)):
-                base_portfolio_test_sample.make_technical_indicator(col, labels[i],funcList[i],1,50)
-                if labels[i]=="macd":
-                    outkeyList.extend(['macd_EMA_12',
-                        'macd_EMA_26',
-                        'macd_DIF',
-                        'macd_DEM',
-                        'macd_OSC'])
-                elif labels[i] == 'so':
-                    outkeyList.extend(['so_k_val','so_d_val'])
-                else: 
-                    outkeyList.append(labels[i])
-        assert np.array_equal(list(base_portfolio_test_sample.get_portfolio_dataFrame().keys()), outkeyList)
-
-
-    def test_portfolio_remove_different_date(self):
-        se = Stock_Extractor('MSFT', 'yahoo')
-        stock = se.get_stock_date('2020-06-24', '2020-07-23')
-        se2 = Stock_Extractor('aapl', 'yahoo')
-        stock2 = se2.get_stock_date('2020-07-01', '2020-07-23')
-
-        pt = Portfolio([stock,stock2])
-        pt.remove_different_time_index()
-
-        assert pt.get_portfolio_dataFrame().Date.min() == '2020-07-01'
-        assert pt.get_portfolio_dataFrame().Date.max() == '2020-07-23'

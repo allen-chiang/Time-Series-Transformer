@@ -62,7 +62,7 @@ class Portfolio(Time_Series_Data_Collection):
         self._time_series_data_collection = self._cast_stock_collection()
         
 
-    def _cast_stock_collection (self):
+    def _cast_stock_collection(self):
         stock_collection = {}
         for i in self.time_series_data_collection:
             stock_collection[i] = Stock.from_time_series_data(

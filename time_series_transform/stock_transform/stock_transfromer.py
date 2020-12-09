@@ -29,7 +29,7 @@ class Stock_Transformer(Time_Series_Transformer):
             data = se.get_date(start_date,end_date,n_threads = n_threads)
             return cls(data,'Date','symbol')
         se = Stock_Extractor(symbols,engine,*args,**kwargs)
-        data = se.get_period(start_date,end_date)
+        data = se.get_date(start_date,end_date)
         return cls(data,'Date',None)
 
     @classmethod
