@@ -288,3 +288,29 @@ class Test_time_series_transform:
         tst = tst.make_stack_sequence(['data_lag_1','data_lag_1'],'stack_data',-1)
         df = tst.to_pandas()
         pd.testing.assert_frame_equal(df,expectResults,False)
+
+    def test_single_make_label(self,dictList_single):
+        data = dictList_single
+        tst = Time_Series_Transformer(data,'time',None)
+        tst = tst.make_lag('data',1,'_lag_')
+        tst = tst.make_label('data')
+        print(tst.time_series_data)
+        print(tst.time_series_data.labels)
+        _,df= tst.to_pandas(sepLabel=True)
+        assert df.data.tolist() == data['data']
+
+
+    def test_collection_make_label(self,dictList_collection):
+        data = dictList_collection
+        tst = Time_Series_Transformer(data,'time','category')
+        tst = tst.make_lag('data',1,'_lag_')
+        tst = tst.make_label('data')
+        _,df= tst.to_pandas(sepLabel=True)
+        assert df.data.tolist() == data['data']
+
+
+    def test_single_dropna(self):
+        raise
+
+    def test_collection_dropna(self):
+        raise

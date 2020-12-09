@@ -60,13 +60,14 @@ class io_base (object):
         for i in transCollection:
             if isinstance(transCollection[i],Time_Series_Data):
                 data = transCollection[i][:]
-                categoryList = np.empty(transCollection[i].time_length)
+                catLen = transCollection[i].time_length
             else:
                 data = transCollection[i]
                 tmpKey =list(data.keys())[0]
-                categoryList = np.empty(len(data[tmpKey]))
+                catLen = len(data[tmpKey])
             if not expandCategory:
-                categoryList[:] = i
+                # categoryList[:] = i
+                categoryList = [i for _ in range(catLen)]
                 data[self.mainCategoryCol] = categoryList
             for key in data:
                 if key not in res:
