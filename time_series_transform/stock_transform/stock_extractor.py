@@ -1,9 +1,9 @@
-import pandas as pd
 import threading
 import numpy as np
+import pandas as pd
 from time_series_transform.stock_transform.base import *
-from time_series_transform.stock_transform.stock_engine._yahoo_stock import yahoo_stock
 from time_series_transform.stock_transform.stock_engine._investing import investing
+from time_series_transform.stock_transform.stock_engine._yahoo_stock import yahoo_stock
 
 class Stock_Extractor(object):
     def __init__(self,symbol,engine, *args, **kwargs):
@@ -32,9 +32,9 @@ class Stock_Extractor(object):
         }
         return engineDict[engine]
 
-    def get_stock_period(self,period):
+    def get_period(self,period):
         """
-        get_stock_period extracts the stock data of the selected
+        get_period extracts the stock data of the selected
         period
 
         Parameters
@@ -52,12 +52,15 @@ class Stock_Extractor(object):
         data = pd.DataFrame(data.to_records())
         data['Date'] = data.Date.astype(str)
         additionalInfo = self.client.getAdditionalInfo()
-        self.stock = Stock(self.symbol,data,additionalInfo,'Date')
+        self.stock = Stock(
+            data,
+            time_index='Date'
+            )
         return self.stock
 
-    def get_stock_date(self,start_date,end_date):
+    def get_date(self,start_date,end_date):
         """
-        get_stock_period extracts the stock data of the selected
+        get_period extracts the stock data of the selected
         period
 
         Parameters
@@ -78,52 +81,11 @@ class Stock_Extractor(object):
         data = pd.DataFrame(data.to_records())
         data['Date'] = data.Date.astype(str)
         additionalInfo = self.client.getAdditionalInfo()
-        self.stock = Stock(self.symbol,data,additionalInfo,'Date')
+        self.stock = Stock(
+            data,
+            time_index='Date'
+            )
         return self.stock
-
-    # I/O
-    @classmethod
-    def get_stock_from_csv(cls, symbol, path, *args, **kwargs):
-        """
-        get_stock_from_csv extracts data from a local csv file
-
-        Parameters
-        ----------
-        symbol : str
-            symbol of the given stock data
-        path : str
-            path of the csv file
-
-        Returns
-        -------
-        Stock
-            The stock data extracted from the csv file
-        """
-        data = pd.read_csv(path)
-        stock_data = Stock(symbol, data, *args, **kwargs)
-        return stock_data
-
-
-    @classmethod
-    def get_stock_from_parquet(cls, symbol, path, *args, **kwargs):
-        """
-        get_stock_from_parquet extracts data from a local parquet file
-
-        Parameters
-        ----------
-        symbol : str
-            symbol of the given stock data
-        path : str
-            path of the parquet file
-
-        Returns
-        -------
-        Stock
-            The stock data extracted from the parquet file
-        """
-        data = pd.read_parquet(path, engin = 'pyarrow')
-        stock_data = Stock(symbol, data, *args, **kwargs)
-        return stock_data
 
 class Portfolio_Extractor(object):
     def __init__(self,symbolList,engine, *args, **kwargs):
@@ -144,9 +106,9 @@ class Portfolio_Extractor(object):
         self.args = args
         self.kwargs = kwargs
 
-    def get_portfolio_period(self,period, n_threads= 8):
+    def get_period(self,period, n_threads= 8):
         """
-        get_portfolio_period extracts the list of stock
+        get_period extracts the list of stock
         by the given period
 
         Parameters
@@ -163,11 +125,15 @@ class Portfolio_Extractor(object):
         portfolio
             portfolio data of the given stock list 
         """
-        stockList = self._get_stock_list_multi(n_threads,'get_stock_period', [period])
-        self.portfolio = Portfolio(stockList)
+        stockList = self._get_stock_list_multi(n_threads,'get_period', [period])
+        self.portfolio = Portfolio(
+            stockList,
+            time_index='Date',
+            symbolIx='symbol'
+            )
         return self.portfolio
 
-    def get_portfolio_date(self,start_date, end_date, n_threads = 8):
+    def get_date(self,start_date, end_date, n_threads = 8):
         """
         get_portfolio_date extracts the list of stock
         by the date period
@@ -189,8 +155,12 @@ class Portfolio_Extractor(object):
         portfolio
             portfolio data of the given stock list 
         """
-        stockList = self._get_stock_list_multi(n_threads,'get_stock_date', [start_date, end_date])
-        self.portfolio = Portfolio(stockList)
+        stockList = self._get_stock_list_multi(n_threads,'get_date', [start_date, end_date])
+        self.portfolio = Portfolio(
+            stockList,
+            time_index='Date',
+            symbolIx='symbol'
+            )
         return self.portfolio
 
     def _get_stock_list_multi(self, n_threads, func, time_val):
@@ -200,7 +170,6 @@ class Portfolio_Extractor(object):
                 n_threads = len(self.symbolList)
 
             bins = np.array_split(self.symbolList, n_threads)
-
             for bn in bins:
                 thread = threading.Thread(target=self._get_stock_data, args= [stockList, bn, func, time_val])
                 tasks.append(thread)
@@ -208,7 +177,11 @@ class Portfolio_Extractor(object):
 
             for task in tasks:
                 task.join()
-            return stockList
+            
+            stockDict = {}
+            for i in stockList:
+                stockDict.update(i)
+            return stockDict
 
     def _get_stock_data(self, stockList, symbolList, func, time_val, *args, **kwargs):
         for symbol in symbolList:
@@ -219,7 +192,7 @@ class Portfolio_Extractor(object):
             else:
                 stock_data = extract_func(time_val[0])
             
-            stockList.append(stock_data)
+            stockList.append({symbol:stock_data})
         return stockList
 
 

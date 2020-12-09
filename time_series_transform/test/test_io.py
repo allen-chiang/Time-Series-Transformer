@@ -34,7 +34,6 @@ from time_series_transform.io.feather import (
     to_feather
     )
 
-
 @pytest.fixture('class')
 def dictList_single():
     return {
