@@ -6,7 +6,6 @@ import collections
 from joblib import Parallel, delayed
 from collections import ChainMap
 from collections import Counter
-import binstar_client.commands.copy
 import uuid
 
 class Time_Series_Data(object):
