@@ -43,12 +43,17 @@ class io_base (object):
             transCollection = transCollection.pad_time_index()
         elif preprocessType == 'ignore':
             tmp = None
+            diffTime = False
             for i in transCollection:
+                if tmp is None:
+                    tmp = transCollection[i].time_index[transCollection._time_series_Ix].tolist()
+                    continue
                 timeList = transCollection[i].time_index[transCollection._time_series_Ix].tolist()
-                if tmp == 0:
-                    tmp = timeList
-                if tmp !=timeList and (False == (expandCategory == expandTimeIx == False)):
-                    raise ValueError('category time length should be in consist. otherwise, use pad or ignore pre-process type. ')
+                if set(tmp) != set(timeList):
+                    diffTime = True
+                tmp = timeList
+                if diffTime and (False == (expandCategory == expandTimeIx)):
+                    raise ValueError('category time length should be in consist. otherwise, use pad or remove pre-process type. ')
         else:
             raise KeyError('preprocess type must be remove, pad, or ignore')
 
@@ -66,7 +71,6 @@ class io_base (object):
                 tmpKey =list(data.keys())[0]
                 catLen = len(data[tmpKey])
             if not expandCategory:
-                # categoryList[:] = i
                 categoryList = [i for _ in range(catLen)]
                 data[self.mainCategoryCol] = categoryList
             for key in data:

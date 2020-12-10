@@ -144,6 +144,30 @@ def expect_collection_noExpand():
         }        
     }
 
+@pytest.fixture('class')
+def seq_single():
+    return {
+        'time':[1,2,3],
+        'data':[[1,2,3],[11,12,13],[21,22,23]]
+    }
+
+@pytest.fixture('class')
+def seq_collection():
+    return {
+        'time':[1,2,1,2],
+        'data':[[1,2],[1,2],[2,2],[2,2]],
+        'category':[1,1,2,2]
+    }
+
+@pytest.fixture('class')
+def expect_seq_collection():
+    return {
+        'data_1_1':[[1,2]],
+        'data_2_1':[[2,2]],
+        'data_1_2':[[1,2]],
+        'data_2_2':[[2,2]]
+    }
+
 
 
 class Test_base_io:
@@ -221,8 +245,6 @@ class Test_base_io:
         ts = ts.set_data(data['category'],'category')
         tsc = Time_Series_Data_Collection(ts,'time','category')
         io = io_base(tsc, 'time', 'category')
-        with pytest.raises(ValueError):
-            timeSeries = io.from_collection(True,True,'ignore')
         timeSeries = io.from_collection(True,True,'pad')
         for i in timeSeries:
            np.testing.assert_equal(timeSeries[i],expand['pad'][i])
@@ -361,8 +383,6 @@ class Test_Pandas_IO:
             preprocessType= 'remove'
             )
         pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
-        with pytest.raises(ValueError):
-            timeSeries = to_pandas(tsc,True,True,'ignore')
 
     def test_to_pandas_collection_noExpand(self,dictList_collection,expect_collection_noExpand):
         data = dictList_collection
@@ -418,6 +438,27 @@ class Test_Pandas_IO:
         print(y)
         pd.testing.assert_frame_equal(x,expectedX,check_dtype=False)
         pd.testing.assert_frame_equal(y,expectedY,check_dtype=False) 
+
+    def test_to_pandas_single_sequence(self,seq_single):
+        data = seq_single
+        df= pd.DataFrame(data)
+        tsd = Time_Series_Data(data,'time')
+        test = to_pandas(tsd,False,False,'ignore',False)
+        pd.testing.assert_frame_equal(test,df,False)
+
+    def test_to_pandas_collection_sequence(self,seq_collection,expect_seq_collection):
+        data = seq_collection
+        df = pd.DataFrame(data)
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        test = to_pandas(tsc,False,False,'ignore')
+        pd.testing.assert_frame_equal(df,test,False)
+        test = to_pandas(tsc,True,True,'ignore')
+        full = pd.DataFrame(expect_seq_collection)
+        print(test)
+        print(full)
+        pd.testing.assert_frame_equal(test,full,False)
+
 
 
 class Test_Numpy_IO:
@@ -526,8 +567,6 @@ class Test_Numpy_IO:
             preprocessType='remove'
             )
         np.testing.assert_equal(remove_numpy,pd.DataFrame(results['remove']).values)
-        with pytest.raises(ValueError):
-            timeSeries = to_numpy(tsc,True,True,'ignore')
 
     def test_to_numpy_collection_noExpand(self,dictList_collection,expect_collection_noExpand):
         data = dictList_collection
@@ -581,6 +620,14 @@ class Test_Numpy_IO:
         x, y  = to_numpy(tsc,False,False,'ignore',True)
         np.testing.assert_equal(x,expectedX)
         np.testing.assert_equal(y,expectedY)
+
+    def test_to_numpy_single_seq(self,seq_single):
+        data = seq_single
+        tsd = Time_Series_Data(data,'time')
+        test = to_numpy(tsd,False,False,'ignore')
+        npData = pd.DataFrame(data).values
+        np.testing.assert_equal(test,npData)
+        
 
 class Test_Arrow_IO:
     def test_from_arrow_table_single(self,dictList_single):
@@ -659,6 +706,7 @@ class Test_Arrow_IO:
             ).to_pandas()
         pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
         with pytest.raises(ValueError):
+            tsc = Time_Series_Data_Collection(tsd,'time','category')
             timeSeries = to_pandas(tsc,False,True,'ignore')        
 
 
@@ -705,8 +753,6 @@ class Test_Arrow_IO:
             preprocessType= 'remove'
             ).to_pandas()
         pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
-        with pytest.raises(ValueError):
-            timeSeries = to_pandas(tsc,True,True,'ignore')
 
     def test_to_arrow_table_collection_noExpand(self,dictList_collection,expect_collection_noExpand):
         data = dictList_collection
@@ -881,8 +927,6 @@ class Test_Arrow_IO:
             )
         testData = self.record_batch_to_pandas(testData)
         pd.testing.assert_frame_equal(testData,expandTime_remove,check_dtype=False)
-        with pytest.raises(ValueError):
-            timeSeries = to_pandas(tsc,True,True,'ignore')
 
     def test_to_arrow_batch_collection_noExpand(self,dictList_collection,expect_collection_noExpand):
         data = dictList_collection

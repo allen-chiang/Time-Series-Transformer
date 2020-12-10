@@ -25,8 +25,12 @@ class Numpy_IO (io_base):
             data = self.from_single(expandTime)
         if isinstance(self.time_series,Time_Series_Data_Collection):
             data = self.from_collection(expandCategory,expandTime,preprocessType)
+        for i in data:
+            if isinstance(data[i],np.ndarray):
+                data[i] = data[i].tolist()
         if labelList is None:
-            return np.asarray(list(data.values())).T
+            print(list(data.values()))
+            return np.array(list(data.values())).T
         labelDict = {}
         dataDict = {}
         print(f"label {labelList}")
@@ -35,7 +39,7 @@ class Numpy_IO (io_base):
                 labelDict[i] = data[i]
                 continue
             dataDict[i] = data[i]
-        return np.asarray(list(dataDict.values())).T,np.asarray(list(labelDict.values())).T
+        return np.array(list(dataDict.values())).T,np.array(list(labelDict.values())).T
 
 
 def from_numpy(numpyArray,timeSeriesCol,mainCategoryCol=None):
