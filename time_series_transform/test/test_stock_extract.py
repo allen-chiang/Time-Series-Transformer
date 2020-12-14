@@ -283,6 +283,16 @@ def compare_equal(a,b):
     return True
 
 def compare_arr_result(real, expect):
+    if isinstance(real, Time_Series_Data):
+        indx = 0
+        for _ in real:
+            for key in real[indx]:
+                if real[indx][key] != expect[indx][key]:
+                    if real[indx][key].round(4) != expect[indx][key].round(4):
+                        return False
+            indx += 1
+        return True
+
     if isinstance(real, dict):
         if list(real.keys()) != list(expect.keys()):
             return False
@@ -303,7 +313,7 @@ class Test_stock_extractor:
         symbol = extractor_sample['symbol'][0]
         se = Stock_Extractor(symbol, 'yahoo')
         data = se.get_date(date[0],date[1])
-        assert data == extractor_yahoo_expect[symbol]
+        assert compare_arr_result(data, extractor_yahoo_expect[symbol])
     
     def test_investing_extractor_data(self,extractor_sample, extractor_investing_expect):
         date = extractor_sample['date'][0]
@@ -336,7 +346,7 @@ class Test_portfolio_extractor:
         pe = Portfolio_Extractor(symbol, 'yahoo')
         data = pe.get_date(date[0],date[1])
         for sym in data:
-            assert data[sym] == extractor_yahoo_expect[sym]
+            assert compare_arr_result(data[sym], extractor_yahoo_expect[sym])
 
     def test_investing_portfolio_extractor_data(self,extractor_portfolio_sample,extractor_investing_expect):
         date = extractor_portfolio_sample['date'][0]
