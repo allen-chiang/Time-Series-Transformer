@@ -55,8 +55,22 @@ class Test_Stock_Transform:
         test = Stock_Transformer(pd.DataFrame(df),0,None,1,2,3,4,5)
         assert stockTrans == test
 
-    def test_single_make_technical_indicator(self):
-        pass
+    def test_single_make_technical_indicator(self,dictList_stock):
+        MyStrategy = ta.Strategy(
+            name="DCSMA10",
+            ta=[
+               {"kind": "sma", "length": 1}
+            ]
+        )
+        df = pd.DataFrame(dictList_stock)
+        stockTrans = Stock_Transformer.from_pandas(df,'Date',None)
+        stockTrans = stockTrans.get_technial_indicator(MyStrategy)
+        df.ta.strategy(MyStrategy)
+        test = stockTrans.to_pandas(False,False,'ignore')
+        test.columns = test.columns.str.lower()
+        df.columns = df.columns.str.lower()
+        df = df[test.columns]
+        pd.testing.assert_frame_equal(test,df,False)
 
     def test_collection_from_pandas(self,dictList_portfolio):
         df = pd.DataFrame(dictList_portfolio)
@@ -70,5 +84,22 @@ class Test_Stock_Transform:
         test = Stock_Transformer(pd.DataFrame(df),0,6,1,2,3,4,5)
         assert stockTrans == test
 
-    def test_collection_make_technical_indicator(self):
-        pass
+    def test_collection_make_technical_indicator(self,dictList_portfolio):
+        MyStrategy = ta.Strategy(
+            name="DCSMA10",
+            ta=[
+               {"kind": "sma", "length": 1}
+            ]
+        )
+        df = pd.DataFrame(dictList_portfolio)
+        stockTrans = Stock_Transformer.from_pandas(df,'Date',None)
+        stockTrans = stockTrans.get_technial_indicator(MyStrategy)
+        test = stockTrans.to_pandas(False,False,'ignore')
+        test.columns = test.columns.str.lower()
+        for i in test.symbol.unique():
+            tmp_df = df[df.symbol == i]
+            tmp_test = test[test.symbol==i]
+            tmp_df.ta.strategy(MyStrategy)
+            tmp_df.columns = tmp_df.columns.str.lower()
+            tmp_df = tmp_df[tmp_test.columns]
+            pd.testing.assert_frame_equal(tmp_test,tmp_df,False)
