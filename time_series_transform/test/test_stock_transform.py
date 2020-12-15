@@ -43,20 +43,32 @@ class Test_Stock_Transform:
         st = Stock_Transformer(data,'Date','symbol')
         assert port == st.time_series_data
 
-    def test_single_from_pandas(self):
-        pass
+    def test_single_from_pandas(self,dictList_stock):
+        df = pd.DataFrame(dictList_stock)
+        stockTrans = Stock_Transformer.from_pandas(df,'Date',None)
+        test = Stock_Transformer(dictList_stock,'Date',None)
+        assert stockTrans == test
 
-    def test_single_from_numpy(self):
-        pass
+    def test_single_from_numpy(self,dictList_stock):
+        df = pd.DataFrame(dictList_stock).values
+        stockTrans = Stock_Transformer.from_numpy(df,0,None,1,2,3,4,5)
+        test = Stock_Transformer(pd.DataFrame(df),0,None,1,2,3,4,5)
+        assert stockTrans == test
 
     def test_single_make_technical_indicator(self):
         pass
 
-    def test_collection_from_pandas(self):
-        pass
+    def test_collection_from_pandas(self,dictList_portfolio):
+        df = pd.DataFrame(dictList_portfolio)
+        st = Stock_Transformer.from_pandas(df,'Date','symbol')
+        test = Stock_Transformer(dictList_portfolio,'Date','symbol')
+        assert test == st
 
-    def test_collection_from_numpy(self):
-        pass
+    def test_collection_from_numpy(self,dictList_portfolio):
+        df = pd.DataFrame(dictList_portfolio).values
+        stockTrans = Stock_Transformer.from_numpy(df,0,6,1,2,3,4,5)
+        test = Stock_Transformer(pd.DataFrame(df),0,6,1,2,3,4,5)
+        assert stockTrans == test
 
     def test_collection_make_technical_indicator(self):
         pass

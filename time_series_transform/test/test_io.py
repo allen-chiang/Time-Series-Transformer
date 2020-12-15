@@ -457,9 +457,9 @@ class Test_Pandas_IO:
         full = pd.DataFrame(expect_seq_collection)
         print(test)
         print(full)
+        test = test.reindex(sorted(df.columns), axis=1)
+        full = full.reindex(sorted(df.columns), axis=1)
         pd.testing.assert_frame_equal(test,full,False)
-
-
 
 class Test_Numpy_IO:
     def test_from_numpy_single(self,dictList_single):
@@ -621,12 +621,29 @@ class Test_Numpy_IO:
         np.testing.assert_equal(x,expectedX)
         np.testing.assert_equal(y,expectedY)
 
-    def test_to_numpy_single_seq(self,seq_single):
+    def test_to_numpy_single_sequence(self,seq_single):
         data = seq_single
+        df= pd.DataFrame(data).values
         tsd = Time_Series_Data(data,'time')
-        test = to_numpy(tsd,False,False,'ignore')
-        npData = pd.DataFrame(data).values
-        np.testing.assert_equal(test,npData)
+        test = to_numpy(tsd,False,False,'ignore',False)
+        np.testing.assert_equal(df,test)
+
+    def test_to_numpy_collection_sequence(self,seq_collection,expect_seq_collection):
+        data = seq_collection
+        df = pd.DataFrame(data).values
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        test = to_numpy(tsc,False,False,'ignore')
+        for i in range(len(test)):
+            if isinstance(test[i][1],np.ndarray):
+                test[i][1] = test[i][1].tolist()
+        np.testing.assert_equal(df,test)
+        test = to_numpy(tsc,True,True,'ignore')
+        full = pd.DataFrame(expect_seq_collection).values
+        for i in range(len(test[0])):
+            if isinstance(test[0][i],np.ndarray):
+                test[0][i] = test[0][i].tolist()
+        np.testing.assert_equal(full,test)
         
 
 class Test_Arrow_IO:
@@ -664,7 +681,6 @@ class Test_Arrow_IO:
         testData = from_arrow_record_batch(table,'time','category')
         assert tsc == testData
 
-#####
     def test_to_arrow_table_single(self,dictList_single,expect_single_expandTime):
         data = dictList_single
         df = pd.DataFrame(data)
@@ -811,7 +827,29 @@ class Test_Arrow_IO:
         y = y.to_pandas()
         print(y)
         pd.testing.assert_frame_equal(x,expectedX,check_dtype=False)
-        pd.testing.assert_frame_equal(y,expectedY,check_dtype=False) 
+        pd.testing.assert_frame_equal(y,expectedY,check_dtype=False)
+
+    def test_to_arrow_table_single_sequence(self,seq_single):
+        data = seq_single
+        df= pd.DataFrame(data)
+        tsd = Time_Series_Data(data,'time')
+        test = to_arrow_table(tsd,False,False,'ignore',False).to_pandas()
+        pd.testing.assert_frame_equal(test,df,False)
+
+    def test_to_arrow_table_collection_sequence(self,seq_collection,expect_seq_collection):
+        data = seq_collection
+        df = pd.DataFrame(data)
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        test = to_arrow_table(tsc,False,False,'ignore').to_pandas()
+        pd.testing.assert_frame_equal(df,test,False)
+        test = to_arrow_table(tsc,True,True,'ignore').to_pandas()
+        full = pd.DataFrame(expect_seq_collection)
+        print(test)
+        print(full)
+        test = test.reindex(sorted(df.columns), axis=1)
+        full = full.reindex(sorted(df.columns), axis=1)
+        pd.testing.assert_frame_equal(test,full,False)
 
 ###
 
@@ -991,7 +1029,7 @@ class Test_Arrow_IO:
         y = self.record_batch_to_pandas(y)
         print(y)
         pd.testing.assert_frame_equal(x,expectedX,check_dtype=False)
-        pd.testing.assert_frame_equal(y,expectedY,check_dtype=False) 
+        pd.testing.assert_frame_equal(y,expectedY,check_dtype=False)
 
 
 class Test_Parquet_IO:
@@ -1196,6 +1234,32 @@ class Test_Parquet_IO:
         os.remove('test.parquet')
         os.remove('label.parquet')
 
+    def test_to_parquet_single_sequence(self,seq_single):
+        data = seq_single
+        df= pd.DataFrame(data)
+        tsd = Time_Series_Data(data,'time')
+        to_parquet('test.parquet',tsd,False,False,'ignore',False)
+        test = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(test,df,False)
+        os.remove('test.parquet')
+
+    def test_to_parquet_collection_sequence(self,seq_collection,expect_seq_collection):
+        data = seq_collection
+        df = pd.DataFrame(data)
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        to_parquet('test.parquet',tsc,False,False,'ignore')
+        test = pq.read_table('test.parquet').to_pandas()
+        pd.testing.assert_frame_equal(df,test,False)
+        to_parquet('test.parquet',tsc,True,True,'ignore')
+        test = pq.read_table('test.parquet').to_pandas()
+        full = pd.DataFrame(expect_seq_collection)
+        print(test)
+        print(full)
+        test = test.reindex(sorted(df.columns), axis=1)
+        full = full.reindex(sorted(df.columns), axis=1)
+        pd.testing.assert_frame_equal(test,full,False)
+        os.remove('test.parquet')
 
 
 class Test_Generator_IO:
@@ -1407,3 +1471,28 @@ class Test_Feather_IO:
         pd.testing.assert_frame_equal(y,expectedY,check_dtype=False) 
         os.remove('test.feather')
         os.remove('label.feather')
+
+    def test_to_feather_single_sequence(self,seq_single):
+        data = seq_single
+        df= pd.DataFrame(data)
+        tsd = Time_Series_Data(data,'time')
+        to_feather('test.feather',tsd,False,False,'ignore',False,2)
+        test = pf.read_table('test.feather').to_pandas()
+        pd.testing.assert_frame_equal(test,df,False)
+        os.remove('test.feather')
+
+    def test_to_feather_collection_sequence(self,seq_collection,expect_seq_collection):
+        data = seq_collection
+        df = pd.DataFrame(data)
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        to_feather('test.feather',tsc,False,False,'ignore',False,2)
+        test = pf.read_table('test.feather').to_pandas()
+        pd.testing.assert_frame_equal(df,test,False)
+        to_feather('test.feather',tsc,True,True,'ignore',False,2)
+        test = pf.read_table('test.feather').to_pandas()
+        full = pd.DataFrame(expect_seq_collection)
+        test = test.reindex(sorted(df.columns), axis=1)
+        full = full.reindex(sorted(df.columns), axis=1)
+        pd.testing.assert_frame_equal(test,full,False)
+        os.remove('test.feather')

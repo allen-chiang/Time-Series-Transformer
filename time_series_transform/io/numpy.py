@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from time_series_transform.io.base import io_base
 from time_series_transform.transform_core_api.base import (
     Time_Series_Data_Collection,
@@ -29,8 +30,7 @@ class Numpy_IO (io_base):
             if isinstance(data[i],np.ndarray):
                 data[i] = data[i].tolist()
         if labelList is None:
-            print(list(data.values()))
-            return np.array(list(data.values())).T
+            return pd.DataFrame(data).values
         labelDict = {}
         dataDict = {}
         print(f"label {labelList}")
@@ -39,7 +39,7 @@ class Numpy_IO (io_base):
                 labelDict[i] = data[i]
                 continue
             dataDict[i] = data[i]
-        return np.array(list(dataDict.values())).T,np.array(list(labelDict.values())).T
+        return pd.DataFrame(dataDict).values,pd.DataFrame(labelDict).values
 
 
 def from_numpy(numpyArray,timeSeriesCol,mainCategoryCol=None):

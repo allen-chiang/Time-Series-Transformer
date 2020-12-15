@@ -44,6 +44,7 @@ class Stock_Transformer(Time_Series_Transformer):
         data = _time_series_data_to_stock_data(data,mainCategoryCol,High,Low,Close,Open,Volume)
         return cls(data,timeSeriesCol,mainCategoryCol)
 
+
     def get_technial_indicator(self,strategy,n_jobs=1,verbose=10,backend='loky'):
         if isinstance(self.time_series_data,Portfolio):
             self.time_series_data= self.time_series_data.get_technical_indicator(
