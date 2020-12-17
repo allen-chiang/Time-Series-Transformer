@@ -10,7 +10,7 @@ import collections
 
 class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
 
-    def __init__(self,time_col,category_col=None,len_preprocessing = 'ignore',remove_time=True,remove_category=True,remove_org_data=True,cache_data_path = None):
+    def __init__(self,time_col,category_col=None,len_preprocessing = 'ignore',remove_time=True,remove_category=True,remove_org_data=True,cache_data_path = None,transformLagNum=None):
         self._time_col = time_col 
         self._category_col = category_col
         self._time_series_cache = None
@@ -21,6 +21,7 @@ class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
         self.remove_category = remove_category
         self.time_series_data = None
         self.category_cache= None
+        self.transformLagNum = transformLagNum
 
     def _cache_data(self,time_series_data):
         return to_parquet(self.cache_data_path,time_series_data,False,False,'ignore')
@@ -40,7 +41,6 @@ class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
 
     def _check_time_not_exist(self,timeList,categoryList):
         checkedList = []
-        print(categoryList)
         if categoryList is None:
             for i in timeList:
                 if i not in self._time_series_cache:
@@ -66,12 +66,19 @@ class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
         self.time_series_data = time_series_data
         return self 
 
+    def _transform_data_prep(self,X,X_time,X_category):
+        # pass all past data if no new time
+        # else pass data with lag slice and new data as a dataframe
+        df = None
+        return df
+
     def transform(self,X,y = None):
         X_category = None
         if self.cache_data_path is not None:
             df = pd.read_parquet(self.cache_data_path)
         else:
             df = to_pandas(self.time_series_data,False,False,'ignore')
+
         if isinstance(X,pd.DataFrame):
             X_time = X[self._time_col].tolist()
             if self._category_col is None:
@@ -94,6 +101,7 @@ class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
                     X_header.append(i)   
             check_list = self._check_time_not_exist(X_time,X_category)
             df = df.append(pd.DataFrame(X[check_list,:]),ignore_index = True)
+
         tst = Time_Series_Transformer.from_pandas(
             df,
             self._time_col,
@@ -168,13 +176,7 @@ class Function_Transformer(Base_Time_Series_Transformer):
         df = tst.to_pandas()
         return self._transform_output_wrapper(df,X_category,X_time,X_header)
 
-class Time_Padding_Transformer(Base_Time_Series_Transformer):
-    def __init__(self,func,time_col,category_col=None,len_preprocessing = 'ignore'):
-        super().__init__(time_col,category_col,len_preprocessing)
-        self._func = func
-        
-    def fit(self):
-        return self
 
-    def transform(self):
-        return self
+class Stock_Technical_Indicator_Transformer(Base_Time_Series_Transformer):
+    def __init__(self,lag_nums,time_col,category_col=None,remove_time = True,remove_category=True,remove_org_data=True,cache_data_path=None):
+        super().__init__(time_col,category_col,'ignore',remove_time,remove_category,remove_org_data,cache_data_path)
