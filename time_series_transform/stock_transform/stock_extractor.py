@@ -54,7 +54,8 @@ class Stock_Extractor(object):
         additionalInfo = self.client.getAdditionalInfo()
         self.stock = Stock(
             data,
-            time_index='Date'
+            time_index='Date',
+            symbol=self.symbol
             )
         return self.stock
 
@@ -83,7 +84,8 @@ class Stock_Extractor(object):
         additionalInfo = self.client.getAdditionalInfo()
         self.stock = Stock(
             data,
-            time_index='Date'
+            time_index='Date',
+            symbol = self.symbol
             )
         return self.stock
 

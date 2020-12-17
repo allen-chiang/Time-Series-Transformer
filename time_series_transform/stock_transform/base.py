@@ -9,7 +9,7 @@ from time_series_transform.transform_core_api.util import *
 from time_series_transform.transform_core_api.base import *
 
 class Stock(Time_Series_Data):
-    def __init__(self,data,time_index,High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
+    def __init__(self,data,time_index,symbol='Default',High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
         super().__init__(data,time_index)
         self.ohlcva ={
             'high':High,
@@ -19,6 +19,7 @@ class Stock(Time_Series_Data):
             'low':Low,
             'Date':time_index
         }
+        self.symbol = symbol
 
     def get_technical_indicator(self,strategy):
         dct = {}
