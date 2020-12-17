@@ -129,6 +129,37 @@ def expect_collection_stack_sequence():
     }
 
 
+@pytest.fixture('class')
+def single_na_test():
+    return {
+        'test':{
+            'time':[1,2,3,4],
+            'data':[np.nan,1,1,1],
+            'data_seq':[[1,2],[np.nan,1],[1,2],[1,2]]
+        },
+        'res':{
+            'time':[3,4],
+            'data':[1,1],
+            'data_seq':[[1,2],[1,2]]
+        }
+    }
+
+@pytest.fixture('class')
+def collection_na_test():
+    return {
+        'test':{
+            'time':[1,2,3,1,2,3],
+            'data':[1,2,3,1,np.nan,3],
+            'data_seq':[[1,2],[np.nan,1],[1,2],[1,2],[np.nan,1],[1,2]],
+            'category':[1,1,1,2,2,2]
+        },
+        'res':{
+            'time':[1,3,1,3],
+            'data':[1,3,1,3],
+            'data_seq':[[1,2],[1,2],[1,2],[1,2]],
+            'category':[1,1,2,2]
+        }
+    }
 
 class Test_time_series_transform:
     def test_from_pandas(self,dictList_single,dictList_collection):
@@ -309,8 +340,17 @@ class Test_time_series_transform:
         assert df.data.tolist() == data['data']
 
 
-    def test_single_dropna(self):
-        raise
+    def test_single_dropna(self,single_na_test):
+        data = single_na_test['test']
+        res = pd.DataFrame(single_na_test['res'])
+        tst = Time_Series_Transformer(data,'time',None)
+        tst = tst.dropna()
+        pd.testing.assert_frame_equal(tst.to_pandas(),res,False)
 
-    def test_collection_dropna(self):
-        raise
+    def test_collection_dropna(self,collection_na_test):
+        data = collection_na_test['test']
+        res = pd.DataFrame(collection_na_test['res'])
+        tst = Time_Series_Transformer(data,'time','category')
+        tst = tst.dropna()
+        print(tst.to_pandas())
+        pd.testing.assert_frame_equal(tst.to_pandas(),res,False)
