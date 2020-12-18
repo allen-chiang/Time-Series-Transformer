@@ -7,7 +7,7 @@ from time_series_transform.stock_transform.base import *
 from time_series_transform.stock_transform.util import *
 from time_series_transform.transform_core_api.util import *
 
-class Plot(object):
+class StockPlot(object):
     def __init__(self, stock):
         """
         Plot uses the stock data to create various plots
@@ -19,6 +19,7 @@ class Plot(object):
         """
         self._checkStock(stock)
         self.stock = stock
+        self.data = stock[:]
         self.fig = self._candleplot()
         self._plots = {
             'y' : ['candleplot'],
@@ -33,7 +34,7 @@ class Plot(object):
             raise ValueError('object is not stock')
 
     def _candleplot(self):
-        df = self.stock.df
+        df = self.data
         colors = []
         INCREASING_COLOR = '#008000'
         DECREASING_COLOR = '#FF0000'
@@ -119,13 +120,13 @@ class Plot(object):
             raise ValueError("subplot does not exist")
 
         if data is None:
-            data = self.stock.df[colName]
+            data = self.data[colName]
         
         self._plots[subplot].append(legendName)
 
         self.fig.add_trace(
             go.Scatter(
-                x= self.stock.df['Date'],
+                x= self.data['Date'],
                 y= data,
                 mode="lines",
                 line=go.scatter.Line(color=color),
@@ -145,13 +146,13 @@ class Plot(object):
         """
         if 'macd' in list(self._subplots.keys()):
             raise ValueError("macd already exists")
-        macd_data = macd(self.stock.df['Close'])
+        macd_data = macd(self.data['Close'])
         macd_line_data = {'DIF':macd_data['DIF'], 'DEM':macd_data['DEM'], 'macdBase1': np.zeros(macd_data['DEM'].shape[0])}
         
         axis_num = self._find_next_layer()
         self._add_subplot_layer()
         self._add_multi_trace(macd_line_data, ['#a0bbe8', '#ff6767', 'grey'], axis_num)
-        self.fig.add_trace(dict( x=self.stock.df['Date'], y=macd_data['OSC'],                         
+        self.fig.add_trace(dict( x=self.data['Date'], y=macd_data['OSC'],                         
                                 showlegend = False,
                                 type='bar', yaxis=axis_num, name='osc' ))
         self._plots[axis_num].append('osc')
@@ -168,7 +169,7 @@ class Plot(object):
         """
         if 'stochastic_oscillator' in list(self._subplots.keys()):
             raise ValueError("stochastic_oscillator already exists")
-        so_data = stochastic_oscillator(self.stock.df['Close'])
+        so_data = stochastic_oscillator(self.data['Close'])
         
         axis_num = self._find_next_layer()
         self._add_subplot_layer()

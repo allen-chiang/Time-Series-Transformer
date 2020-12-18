@@ -1,5 +1,5 @@
 import yfinance as yf
-from time_series_transform.stock_transform.stock_engine.engine_interface import engine_interface
+from time_series_transform.stock_transform.stock_engine.engine_interface import *
 from datetime import datetime, timedelta
 
 class yahoo_stock(engine_interface):
@@ -65,8 +65,11 @@ class yahoo_stock(engine_interface):
         return self.ticker.history(period)
 
     def getHistoricalByRange(self, start_date, end_date):
-        end_date = (datetime.strptime(end_date, '%Y-%m-%d') + timedelta(days=1)).strftime('%Y-%m-%d')
-        return self.ticker.history(start = start_date, end = end_date)
+        if valid_period_format(start_date) and valid_period_format(end_date):
+            end_date = (datetime.strptime(end_date, '%Y-%m-%d') + timedelta(days=1)).strftime('%Y-%m-%d')
+            return self.ticker.history(start = start_date, end = end_date)
+        else:
+            raise ValueError('date format must be YYYY-mm-dd')
 
     def getActions(self):
         try:

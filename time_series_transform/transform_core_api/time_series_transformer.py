@@ -1,351 +1,308 @@
 import gc
 import uuid
+import warnings
 import numpy as np
 import pandas as pd
 import pyarrow as pa
 from pyarrow import parquet as pq
 from collections import defaultdict
-from time_series_transform.transform_core_api.base import *
+from time_series_transform import io
+from time_series_transform.transform_core_api.base import (Time_Series_Data,Time_Series_Data_Collection)
 
 
+class Time_Series_Transformer(object):
 
-class Pandas_Time_Series_Tensor_Dataset(object):
-    def __init__(self, pandasFrame, config=None):
-        """
-        Pandas_Time_Series_Tensor_Dataset prepared pandas data into sequence data type
-        
-        This class will follow the configuration to transform the pandas dataframe into sequence data
-        the restriction for using this interface:
-            - the column of data frame has to be [dim1, dim2,dim....., t0,t1,t2,t....], and the index has to be the item or id
-            - the configuration data has to be a dictionary and follow by this template
-            {
-                "colName": str,
-                "tensorType":{'sequence','label','category'},
-                "param": {"windowSize":int,"seqSize":int,"outType":numpy datatype}
-                "sequence_stack": other colName [option]
-                "responseVariable": {True,False} [optional]
-            }
-
-        Parameters
-        ----------
-        pandasFrame : pandas DataFrame
-            input data
-        config : dict, optional
-            the configuration to transform pandas dataFrame, by default {}
-        """
-        self.df = pandasFrame
-        self.ixDict= None
-        if config is None:
-            self.config = {}
+    def __init__(self,data,timeSeriesCol,mainCategoryCol):
+        super().__init__()
+        if isinstance(data,(Time_Series_Data,Time_Series_Data_Collection)):
+            self.time_series_data = data
         else:
-            self.config = config
+            self.time_series_data = self._setup_time_series_data(data,timeSeriesCol,mainCategoryCol)
+        self.timeSeriesCol = timeSeriesCol
+        self._isCollection = [True if mainCategoryCol is not None else False][0]
+        self.mainCategoryCol = mainCategoryCol
 
-
-    def set_config(self, name, colNames, tensorType, sequence_stack, isResponseVar, windowSize, seqSize, outType):
-        """
-        set_config the setter of config
-        
-        this setter provide an quick entry point to setup configuration
-        
-        Parameters
-        ----------
-        name : str
-            the name of the output sequence or output column
-        colNames : list of string
-            the name of pandas frame used for transformation
-        tensorType : {'sequence','label','category','same'}
-            provide different type of transformation
-        sequence_stack : string of name for stacking
-            the target name for stacking
-        isResponseVar : bool
-            whether the data is response variable or predictor
-        windowSize: int
-            sequence grouping size
-        seqSize: int
-            total length of sequence
-        outType: numpy data type
-            output data type
-        """
-        self.config[name] = {
-            'colNames': colNames,
-            'tensorType': tensorType,
-            'param': {
-                "windowSize": windowSize, 
-                "seqSize": seqSize, 
-                "outType": outType
-                },
-            'sequence_stack': sequence_stack,
-            'responseVariable': isResponseVar
-        }
-
-    def _dict_keys_values(self, data, keys):
-        res = []
-        for k in keys:
-            res.append(data[k])
-        return np.array(res)
-
-    def _make_time_series_dataset(self, data):
-        tensorDict = {}
-        for i in self.config:
-            process_data = self._dict_keys_values(
-                data, self.config[i]['colNames'])
-            tsf = Time_Series_Tensor_Factory(
-                process_data,
-                self.config[i]['tensorType']
-            )
-            tensor = tsf.get_time_series_tensor(
-                name=i,
-                **self.config[i]['param']
-            )
-            if self.config[i].get('sequence_stack') is not None:
-                sequence_stack = self.config[i].get('sequence_stack')
-                tensorDict[sequence_stack].stack_time_series_tensors(tensor)
-            else:
-                tensorDict[i] = tensor
-        tensorList = [v for v in tensorDict.values()]
-        return Time_Series_Dataset(tensorList).make_dataset()
-
-    def make_data_generator(self):
-        """
-        make_data_generator prepare an generator to output the transformed data
-        
-        
-        Yields
-        -------
-        tuple
-            it will output X data and Y data
-        """
-        data = self.df.to_dict('records')
-        for i in data:
-            res = self._make_time_series_dataset(i)
-            Xtensor = {}
-            Ytensor = None
-            for c in self.config:
-                if self.config[c].get("sequence_stack") is not None:
-                    continue
-                if self.config[c].get("responseVariable"):
-                    Ytensor = res['data'][c]
-                else:
-                    Xtensor[c] = res['data'][c]
-            yield (Xtensor, Ytensor)
-
-
-    def expand_dataFrame_by_date(self, categoryCol,timeSeriesCol,newIX=True,byCategory=True,dropna=False):
-        """
-        expand_dataFrame_by_date A help function to prepare dataFrame for tensor transformation
-        
-        It will change the original dataFrame of
-        byCategory is set to be True [x1,x2,x3,time series,category] -> [x1_t1,x1_t2...x3_t|index->category]
-        byCategory is set to be False [x1,x2,x3,time series,category] -> [category_x1_t1,category_x1_t2...category_x3_t]
-        
-        Note: 
-        x is column name 
-        t represent time series column i.e. Date --> YYYY-MM-DD format is recommended
-        
-        Parameters
-        ----------
-        categoryCol : str
-            column name of category
-        timeSeriesCol : str
-            column name of time series
-        newIX : bool, optional
-            if True, time series column will be converted into 1,2,3,....len(timeSeriesCol), by default True
-        byCategory : bool, optional
-            if True, the dataFrame will create new row instead of different column for categories, by default True
-        dropna : bool, optional
-            if True, nan column will be dropped, by default False
-        
-        Returns
-        -------
-        iterable
-            the index of time series columns
-        """
-        if newIX:
-            self.df = self.df.sort_values(timeSeriesCol,ascending = True)
-            ixDict = dict(zip(self.df[timeSeriesCol].unique(),list(range(1,len(self.df[timeSeriesCol].unique())+1))))
-            self.df[timeSeriesCol] = self.df[timeSeriesCol].apply(lambda x: ixDict[x])
+    def _setup_time_series_data(self,data,timeSeriesCol,mainCategoryCol):
+        if timeSeriesCol is None:
+            raise KeyError("time series index is required")
+        tsd = Time_Series_Data(data,timeSeriesCol)
+        if mainCategoryCol is None:
+            return tsd
+        tsc = Time_Series_Data_Collection(tsd,timeSeriesCol,mainCategoryCol)
+        return tsc
+    
+    def transform(self,inputLabels,newName,func,n_jobs =1,verbose = 0,backend='loky',*args,**kwargs):
+        if isinstance(self.time_series_data,Time_Series_Data_Collection):
+            self.time_series_data = self.time_series_data.transform(inputLabels,newName,func,n_jobs =1,verbose = 0,backend='loky',*args,**kwargs)
         else:
-            ixDict = self.df[timeSeriesCol].values
-
-        if byCategory:
-            self.df = self._pivot_df(self.df,categoryCol,timeSeriesCol,dropna)
-        else:
-            self.df = self._flatten_df(self.df,categoryCol,timeSeriesCol,dropna)
-        self.ixDict = ixDict
+            self.time_series_data = self.time_series_data.transform(inputLabels,newName,func,*args,**kwargs)
         return self
 
-    def _pivot_df(self,df,categoryCol,timeSeriesCol,dropna):
-        df = df.pivot(categoryCol,timeSeriesCol,df.columns.drop([categoryCol,timeSeriesCol]))
-        df.columns = list(map(lambda x: f"{x[0]}_{x[1]}",df.columns))
-        if dropna:
-            df = df.dropna(axis =1)
-        return df
 
-    def _flatten_df(self,df,categoryCol,timeSeriesCol,dropna):
-        categoryList = df[categoryCol].unique()
-        resDf = None
-        for i in categoryList:
-            subDf = df[df[categoryCol]==i]
-            subDf = self._pivot_df(subDf,categoryCol,timeSeriesCol,dropna)
-            subDf.columns = list(map(lambda x: f"{i}_{x}",subDf.columns))
-            subDf = subDf.reset_index(drop=True)
-            if resDf is None:
-                resDf = subDf
+    def _transform_wrapper(self,inputLabels,newName,func,suffix,suffixNum,inputAsList,n_jobs,verbose,*args,**kwargs):
+        if isinstance(inputLabels,list) == False:
+            inputLabels = [inputLabels]
+        if self._isCollection:
+            if inputAsList == False:
+                for i in inputLabels:
+                    labelName = [f'{i}{suffix}{str(suffixNum)}' if suffix is not None else f"{i}{str(suffixNum)}"][0]
+                    self.time_series_data.transform(i,labelName,func,n_jobs =n_jobs,verbose = verbose,*args,**kwargs)
+                return
+            labelName = newName
+            self.time_series_data.transform(inputLabels,labelName,func,n_jobs =n_jobs,verbose = verbose,*args,**kwargs)
+        else:
+            if inputAsList == False:
+                for i in inputLabels:
+                    labelName = [f'{i}{suffix}{str(suffixNum)}' if suffix is not None else f"{i}{str(suffixNum)}"][0]
+                    self.time_series_data.transform(i,labelName,func,*args,**kwargs)
+                return
+            labelName = newName
+            self.time_series_data.transform(inputLabels,labelName,func,*args,**kwargs)
+
+
+    def make_lag(self,inputLabels,lagNum,suffix=None,fillMissing=np.nan,verbose=0,n_jobs=1):
+        self._transform_wrapper(
+            inputLabels,
+            None,
+            make_lag,
+            suffix,
+            lagNum,
+            False,
+            n_jobs,
+            verbose,
+            lagNum=lagNum,
+            fillMissing=fillMissing
+            )
+        return self
+
+    def make_lead(self,inputLabels,leadNum,suffix=None,fillMissing=np.nan,verbose=0,n_jobs=1):
+        self._transform_wrapper(
+            inputLabels,
+            None,
+            make_lead,
+            suffix,
+            leadNum,
+            False,
+            n_jobs,
+            verbose,
+            leadNum=leadNum,
+            fillMissing=fillMissing
+            )
+        return self
+                
+    def make_lag_sequence(self,inputLabels,windowSize,lagNum,suffix=None,fillMissing=np.nan,verbose=0,n_jobs=1):
+        self._transform_wrapper(
+            inputLabels,
+            None,
+            make_lag_sequnece,
+            suffix,
+            windowSize,
+            False,
+            n_jobs,
+            verbose,
+            windowSize=windowSize,
+            lagNum = lagNum,
+            fillMissing=fillMissing
+            )
+        return self
+
+    def make_lead_sequence(self,inputLabels,windowSize,leadNum,suffix=None,fillMissing=np.nan,verbose=0,n_jobs=1):
+        self._transform_wrapper(
+            inputLabels,
+            None,
+            lead_sequence,
+            suffix,
+            windowSize,
+            False,
+            n_jobs,
+            verbose,
+            windowSize=windowSize,
+            leadNum=leadNum,
+            fillMissing=fillMissing
+            )
+        return self
+
+    def make_identical_sequence(self,inputLabels,windowSize,suffix=None,verbose=0,n_jobs=1):
+        self._transform_wrapper(
+            inputLabels,
+            None,
+            identity_window,
+            suffix,
+            windowSize,
+            False,
+            n_jobs,
+            verbose,
+            windowSize=windowSize
+            )
+        return self
+
+    def make_stack_sequence(self,inputLabels,newName,axis =-1,verbose=0,n_jobs=1):
+        self._transform_wrapper(
+            inputLabels,
+            newName,
+            stack_sequence,
+            None,
+            '',
+            True,
+            n_jobs,
+            verbose,
+            axis =axis
+            )
+        return self
+
+
+    def make_label(self,key,collectionKey=None):
+        if self._isCollection:
+            if collectionKey is None:
+                for i in self.time_series_data:
+                    data = self.time_series_data[i][:,[key]][key]
+                    self.time_series_data[i].set_labels(data,key)
+                    self.time_series_data[i].remove(key,'data')
             else:
-                resDf = pd.concat([resDf,subDf],axis =1)
-        return resDf
+                data = self.time_series_data[collectionKey][:,[key]][key]
+                self.time_series_data[collectionKey].set_labels(data,key)
+                self.time_series_data[collectionKey].remove(key,'data')
+        else:
+            data = self.time_series_data[:,[key]][key]
+            self.time_series_data.set_labels(data,key)
+            self.time_series_data.remove(key,'data')
+        return self
+
+    def remove_different_category_time(self):
+        if self._isCollection:
+            self.time_series_data.remove_different_time_index()
+        else:
+            warnings.warn('Setup mainCategoryCol is necessary for this function')
+        return self
+
+    def pad_different_category_time(self,fillMissing= np.nan):
+        if self._isCollection:
+            self.time_series_data.pad_time_index(fillMissing)
+        else:
+            warnings.warn('Setup mainCategoryCol is necessary for this function')
+        return self
+
+    def remove_category(self,categoryName):
+        if self._isCollection:
+            self.time_series_data.remove(categoryName)
+        return self
+
+    def remove_feature(self,colName):
+        if isinstance(self._isCollection):
+            for i in self.time_series_data:
+                self.time_series_data[i].remove(colName)
+                return self
+        self.time_series_data.remove(colName)
+        return self
+
+    def dropna(self,categoryKey=None):
+        if isinstance(self.time_series_data,Time_Series_Data):
+            self.time_series_data = self.time_series_data.dropna()
+            return self
+        self.time_series_data = self.time_series_data.dropna(categoryKey)
+        return self
+
+
+    @classmethod
+    def from_pandas(cls, pandasFrame,timeSeriesCol,mainCategoryCol):
+        data = io.from_pandas(pandasFrame,timeSeriesCol,mainCategoryCol)
+        return cls(data,timeSeriesCol,mainCategoryCol)
+
+    @classmethod
+    def from_numpy(cls,numpyData,timeSeriesCol,mainCategoryCol):
+        data = io.from_numpy(numpyData,timeSeriesCol,mainCategoryCol)
+        return cls(data,timeSeriesCol,mainCategoryCol)
+
+    def to_pandas(self,expandCategory=False,expandTime=False,preprocessType='ignore',sepLabel = False):
+        return io.to_pandas(
+            self.time_series_data,
+            expandCategory = expandCategory,
+            expandTime = expandTime,
+            preprocessType=preprocessType,
+            seperateLabels = sepLabel
+            )
+        
+
+    def to_numpy(self,expandCategory=False,expandTime=False,preprocessType='ignore',sepLabel = False):
+        return io.to_numpy(self.time_series_data,expandCategory,expandTime,preprocessType,sepLabel)
+
+    def to_dict(self):
+        return self.time_series_data[:]
+
+    def __eq__(self,other):
+        if isinstance(other,Time_Series_Transformer):
+            return self.time_series_data == other.time_series_data
+        return False
 
 
     def __repr__(self):
-        return f"Tensor Transformer Config: {repr(self.config)}"
+        return super().__repr__()
+
+def make_sequence(arr, window,fillMissing=np.nan):
+    """
+    rolling_window create an rolling window tensor
+    
+    this function create a rolling window numpy tensor given its original sequence and window size
+    
+    Parameters
+    ----------
+    arr : numpy 1D array
+        the original data sequence
+    window : int
+        aggregation window size
+    
+    Returns
+    -------
+    numpy 2d array
+        the rolling window array
+    """
+    shape = arr.shape[:-1] + (arr.shape[-1] - window + 1, window)
+    strides = arr.strides + (arr.strides[-1],)
+    seq = np.lib.stride_tricks.as_strided(arr, shape=shape, strides=strides)
+    empty = np.empty(((len(arr)-seq.shape[0],seq.shape[1])))
+    empty[:] = fillMissing
+    res = np.vstack([empty,seq])
+    return res
 
 
+def make_lag_sequnece(data,windowSize,lagNum,fillMissing):
+    lagdata = np.array(make_lag(data,lagNum,fillMissing))
+    return make_sequence(lagdata,windowSize,fillMissing)
 
-class Pandas_Time_Series_Panel_Dataset(object):
+def identity_window(arr,windowSize):
+    return np.repeat(arr,windowSize).reshape((-1,windowSize))
 
-    def __init__(self,pandasFrame):
-        """
-        Pandas_Time_Series_Panel_Dataset prepares the dataset for traditional machine learning problem.
-        
-        It can convert the pandas Frame into multiple lagging features or create a lead feature as label.
-        
-        Parameters
-        ----------
-        pandasFrame : pandas dataFrame
-            the dataFrame for preprocessing
-        """
-        self.df = pandasFrame
+def make_lead(data,leadNum,fillMissing):
+    res = np.empty((leadNum))
+    res[:] = fillMissing
+    res = res.tolist()        
+    leadValues = data[leadNum:].tolist()
+    leadValues.extend(res)        
+    return leadValues        
 
-    def expand_dataFrame_by_category(self,indexCol,keyCol):
-        """
-        expand_dataFrame_by_category to create columns for different categories
-        
-        it convert the dataFrame from [x1,x2,x3,...,category] -> [category_x1,category_x2,category_x3,....]
-        
-        Parameters
-        ----------
-        indexCol : str
-            the time series column
-        keyCol : str
-            the category column
-        
-        """
-        keys = self.df[keyCol].unique()
-        tmpDf = None
-        for ix,k in enumerate(keys):
-            if ix == 0:
-                tmpDf = self.df[self.df[keyCol]==k]
-                tmpDf = tmpDf.set_index(indexCol)
-                tmpDf = tmpDf.drop(keyCol,axis=1)
-                tmpDf.columns = list(map(lambda x: f'{x}_{k}',tmpDf.columns))
-            else:
-                df2 = self.df[self.df[keyCol]==k]
-                df2 = df2.drop(keyCol,axis=1).set_index(indexCol)
-                df2.columns = list(map(lambda x: f'{x}_{k}',df2.columns))
-                tmpDf = tmpDf.join(df2,how='outer')
-        self.df = pd.DataFrame(tmpDf.to_records())
-        return self
+def make_lag(data,lagNum,fillMissing):
+    res = np.empty((lagNum))
+    res[:] = fillMissing
+    res = res.tolist()        
+    lagValues = data[:-lagNum]
+    res.extend(lagValues)        
+    return res
 
+def lead_sequence(arr,leadNum,windowSize,fillMissing=np.nan):
+    shape = arr.shape[:-1] + (arr.shape[-1] - windowSize + 1, windowSize)
+    strides = arr.strides + (arr.strides[-1],)
+    seq = np.lib.stride_tricks.as_strided(arr, shape=shape, strides=strides)
+    seq = seq[leadNum:]
+    empty = np.empty(((len(arr)-seq.shape[0],seq.shape[1])))
+    empty[:] = fillMissing
+    res = np.vstack([seq,empty])
+    return res
 
-    def make_slide_window(self,indexCol,windowSize,colList=None,groupby=None):
-        """
-        make_slide_window make lag features given with the range of window size
-        
-        this function will create lag features along with the given window size.
-        if colList set to be None, all column will be used to create lag features.
-        groupby is for category columns. This paramemter for dataFrame which did not
-        expand by categories.
-        
-        Parameters
-        ----------
-        indexCol : str
-            time series column
-        windowSize : int
-            lag number created
-        colList : list, optional
-            the columns used to create lag features, by default None
-        groupby : str, optional
-            category column, by default None
-
-        """
-        if colList is None:
-            self.df = self.df.sort_values(indexCol,ascending = True)
-            colList = self.df.columns.drop(indexCol).tolist()
-        for col in colList:
-            for i in range(1,windowSize+1):
-                if groupby is None:
-                    self.df[f'{col}_lag{str(i)}'] = self.df[col].shift(i)
-                else:
-                    if col == groupby:
-                        continue
-                    self.df[f'{col}_lag{str(i)}'] = self.df.groupby(groupby)[col].shift(i)
-        return self
-
-
-    def make_lead_column(self,indexCol,baseCol,leadNum,groupby=None):
-        """
-        make_lead_column this function will create lead feature along with the lead number
-        
-        this function is for creating label for supervised learning
-        groupby is for category columns. This paramemter for dataFrame which did not
-        expand by categories.
-
-        Parameters
-        ----------
-        indexCol : str
-            time series column
-        baseCol : str
-            the column for lead feature
-        leadNum : int
-            the lead time unit
-        groupby : str, optional
-            category column, by default None
-        
-        Returns
-        -------
-        [type]
-            [description]
-        """
-        self.df = self.df.sort_values(indexCol,ascending = False)
-        if groupby is None:
-            self.df[f'{baseCol}_lead{str(leadNum)}'] = self.df[baseCol].shift(leadNum)
-        else:
-            self.df[f'{baseCol}_lead{str(leadNum)}'] = self.df.groupby(groupby)[baseCol].shift(leadNum)            
-        return self
-
-    def transform_dataFrame(self,colName,targetCol,timeSeriesCol,groupby,transformFunc,*args,**kwargs):
-        """
-        transform_dataFrame this function use apply method to transfrom dataFrame
-        Note: the inpupt and output of transformFunc must be list or numpy array
-        
-        Parameters
-        ----------
-        colName : str
-            target column for transformation
-        targetCol : str
-            the column to store new data
-        timeSeriesCol : str
-            time series column for sorting before apply function
-        groupby: str
-            the category column used for grouping data during transformation
-            if this column is None, no grouping will be applied
-        transformFunc : func
-            the function implmented in the apply function
-        axis : int, optional
-            0 for row 1 for column, by default 1
-
-        """
-        if groupby is not None:
-            manipulateList = []
-            self.df = self.df.sort_values([groupby,timeSeriesCol])
-            for i in self.df[groupby].unique():
-                manipulateList.extend(transformFunc(self.df[self.df[groupby]==i][colName].values,*args,**kwargs))
-            self.df[targetCol] = manipulateList
-        else:
-            self.df = self.df.sort_values(timeSeriesCol,ascending = True)
-            self.df[targetCol] = transformFunc(self.df[colName],*args,**kwargs)
-        return self
-
-    def __repr__(self):
-        return repr(self.df)
-        
+def stack_sequence(arrDict, axis = -1):
+    res = None
+    for ix, v in enumerate(arrDict):
+        if ix == 0:
+            res = arrDict[v]
+            continue
+        res = np.stack([res,arrDict[v]],axis = axis )
+    return res

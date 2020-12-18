@@ -1,8 +1,9 @@
 import investpy
 from datetime import date, timedelta
 from dateutil.relativedelta import *
+from time_series_transform.stock_transform.stock_engine.engine_interface import *
 
-class investing(object):
+class investing(engine_interface):
 
     """
     Fetching finance data from investing.com
@@ -50,10 +51,17 @@ class investing(object):
             t_delta[period[indx:]] = int(period[:indx])
 
         start_date = end_date - relativedelta(years=t_delta['y'], months=t_delta['mo'], days=t_delta['d'])
-        return self.getHistoricalData(start_date.strftime("%d/%m/%Y"), end_date.strftime("%d/%m/%Y"))
+        start = start_date.strftime('%d/%m/%Y')
+        end = end_date.strftime('%d/%m/%Y')
+        return self.getHistoricalData(start, end)
 
     def getHistoricalByRange(self, start_date, end_date):
-        return self.getHistoricalData(start_date, end_date)
+        if valid_period_format(start_date) and valid_period_format(end_date):
+            start = datetime.datetime.strptime(start_date, '%Y-%m-%d').strftime('%d/%m/%Y')
+            end = datetime.datetime.strptime(end_date, '%Y-%m-%d').strftime('%d/%m/%Y')
+            return self.getHistoricalData(start, end)
+        else:
+            raise ValueError('date format must be YYYY-mm-dd')
 
     def getAdditionalInfo(self):
         info_dict = {
@@ -85,8 +93,12 @@ class investing(object):
 
 
     def getCompanyInfo(self, as_json = False):
-        return investpy.stocks.get_stock_information(self.symbol, self.country, as_json = as_json)
-    
+        data = investpy.stocks.get_stock_information(self.symbol, self.country, as_json = as_json)
+        data = data.set_index('Stock Symbol')
+        data = data.to_dict('r')
+        return data[0]
+
+
     def getHistoricalData(self, start_date, end_date, as_json = False, order = 'ascending', interval = 'Daily'):
         return investpy.stocks.get_stock_historical_data(self.symbol, self.country, start_date, end_date, as_json, order, interval)
 
