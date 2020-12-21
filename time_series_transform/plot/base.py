@@ -11,5 +11,6 @@ class plot_base(object):
             self.time_series = time_series
             self.data = time_series[:]
             self.time_index_data = time_series.time_index[time_series.time_seriesIx]
+            self.fig = go.Figure()
         else:
             raise ValueError("Input data is not Time_Series_Data")
