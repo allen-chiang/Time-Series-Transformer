@@ -6,9 +6,9 @@ class TimeSeriesPlot(plot_base):
     def __init__(self, time_series_data):
         super().__init__(time_series_data)
 
-    def create_plot(self, dataCols,title = "", type='Scatter'):
+    def create_plot(self, dataCols,title = "", lineType='scatter'):
         for col in dataCols:
-            self.add_line(col, type)
+            self.add_line(col, lineType)
         
         self.fig.update_layout(
             title = title,
@@ -19,28 +19,15 @@ class TimeSeriesPlot(plot_base):
 
         return self
 
-    def add_line(self, col, type):
-        fig = self.fig
-        data = self.data[col]
-        time_indx = self.time_index_data
-
-        fig_data = (dict(type = type,
-                        x = time_indx, 
-                        y = data, 
-                        mode= 'lines', 
-                        name = col,
-                        showlegend=True))
-
-        
-        fig.add_trace(fig_data)
+    
 
     def __repr__(self):
         self.fig.show()
         return ""
     
-def create_plot(time_series_data, dataCols, type='Scatter'):
+def create_plot(time_series_data, dataCols,title = "", type='scatter'):
     tsp = TimeSeriesPlot(time_series_data)
-    tsp.create_plot(dataCols,type= type)
+    tsp.create_plot(dataCols,lineType= type)
     return tsp
 
     

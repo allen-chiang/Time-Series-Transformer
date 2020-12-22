@@ -14,3 +14,18 @@ class plot_base(object):
             self.fig = go.Figure()
         else:
             raise ValueError("Input data is not Time_Series_Data")
+
+    def add_line(self, col, lineType):
+        fig = self.fig
+        data = self.data[col]
+        time_indx = self.time_index_data
+
+        fig_data = (dict(type = lineType.lower(),
+                        x = time_indx, 
+                        y = data, 
+                        mode= 'lines', 
+                        name = col,
+                        showlegend=True))
+
+        
+        fig.add_trace(fig_data)
