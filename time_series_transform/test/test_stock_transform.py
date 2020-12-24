@@ -6,6 +6,7 @@ from time_series_transform.io.pandas import (to_pandas,from_pandas)
 from time_series_transform.stock_transform.base import (Stock,Portfolio)
 from time_series_transform.stock_transform.stock_transfromer import Stock_Transformer
 from time_series_transform.transform_core_api.base import (Time_Series_Data,Time_Series_Data_Collection)
+from time_series_transform.transform_core_api.time_series_transformer import Time_Series_Transformer
 
 @pytest.fixture('class')
 def dictList_stock():
@@ -103,3 +104,16 @@ class Test_Stock_Transform:
             tmp_df.columns = tmp_df.columns.str.lower()
             tmp_df = tmp_df[tmp_test.columns]
             pd.testing.assert_frame_equal(tmp_test,tmp_df,False)
+
+
+    def test_from_time_series_transform(self,dictList_stock,dictList_portfolio):
+        data = pd.DataFrame(dictList_stock)
+        tst = Time_Series_Transformer.from_pandas(data,'Date',None)
+        stockTrans = Stock_Transformer.from_pandas(data,'Date',None)
+        test = Stock_Transformer.from_time_series_transformer(tst)
+        assert test == stockTrans
+        data = pd.DataFrame(dictList_portfolio)
+        tst = Time_Series_Transformer.from_pandas(data,'Date','symbol')
+        stockTrans = Stock_Transformer.from_pandas(data,'Date','symbol')
+        test = Stock_Transformer.from_time_series_transformer(tst)
+        assert stockTrans == test

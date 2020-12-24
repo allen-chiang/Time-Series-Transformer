@@ -1,16 +1,17 @@
 import numpy as np
+import collections
 import pandas as pd
 from sklearn.base import (BaseEstimator, TransformerMixin)
 from time_series_transform.io.parquet import (from_parquet, to_parquet)
 from time_series_transform.io.pandas import (from_pandas,to_pandas)
 from time_series_transform.io.numpy import (from_numpy,to_numpy)
 from time_series_transform.transform_core_api.time_series_transformer import Time_Series_Transformer
-import collections
+from time_series_transform.stock_transform.stock_transfromer import Stock_Transformer
 
 
 class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
 
-    def __init__(self,time_col,category_col=None,len_preprocessing = 'ignore',remove_time=True,remove_category=True,remove_org_data=True,cache_data_path = None,transformLagNum=None):
+    def __init__(self,time_col,category_col=None,len_preprocessing = 'ignore',remove_time=True,remove_category=True,remove_org_data=True,cache_data_path = None):
         self._time_col = time_col 
         self._category_col = category_col
         self._time_series_cache = None
@@ -21,7 +22,6 @@ class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
         self.remove_category = remove_category
         self.time_series_data = None
         self.category_cache= None
-        self.transformLagNum = transformLagNum
 
     def _cache_data(self,time_series_data):
         return to_parquet(self.cache_data_path,time_series_data,False,False,'ignore')
@@ -66,11 +66,6 @@ class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
         self.time_series_data = time_series_data
         return self 
 
-    def _transform_data_prep(self,X,X_time,X_category):
-        # pass all past data if no new time
-        # else pass data with lag slice and new data as a dataframe
-        df = None
-        return df
 
     def transform(self,X,y = None):
         X_category = None
@@ -78,7 +73,18 @@ class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
             df = pd.read_parquet(self.cache_data_path)
         else:
             df = to_pandas(self.time_series_data,False,False,'ignore')
+        X_time, X_category, X_header,new_df,check_list = self._prep_transform_data(X, X_category)   
+        df = df.append(pd.DataFrame(new_df),ignore_index = True)
+        tst = Time_Series_Transformer.from_pandas(
+            df,
+            self._time_col,
+            self._category_col
+            )
+        if self._category_col is None:
+            return tst,X_time,X_header,None
+        return tst,X_time,X_header,X_category
 
+    def _prep_transform_data(self, X, X_category):
         if isinstance(X,pd.DataFrame):
             X_time = X[self._time_col].tolist()
             if self._category_col is None:
@@ -87,7 +93,7 @@ class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
                 X_header = X.drop(self._time_col,axis =1).drop(self._category_col,axis =1).columns.tolist()
                 X_category = X[self._category_col].tolist()
             check_list = self._check_time_not_exist(X_time,X_category)
-            df = df.append(X[check_list],ignore_index = True)
+            new_df = X[check_list]
         else:
             X_time = list(X[:,self._time_col])
             if self._category_col is not None:
@@ -100,16 +106,8 @@ class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
                             continue
                     X_header.append(i)   
             check_list = self._check_time_not_exist(X_time,X_category)
-            df = df.append(pd.DataFrame(X[check_list,:]),ignore_index = True)
-
-        tst = Time_Series_Transformer.from_pandas(
-            df,
-            self._time_col,
-            self._category_col
-            )
-        if self._category_col is None:
-            return tst,X_time,X_header,None
-        return tst,X_time,X_header,X_category
+            new_df = pd.DataFrame(X[check_list,:])
+        return X_time, X_category, X_header,new_df, check_list
 
     def _transform_output_wrapper(self,df,X_category,X_time,X_header):
         if X_category is None:
@@ -124,7 +122,6 @@ class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
                     tmpdf = df[df[self._category_col]==i][df[self._time_col].isin(tmpDict[i])]
                     continue
                 tmpdf = tmpdf.append(df[df[self._category_col]==i][df[self._time_col].isin(tmpDict[i])])
-            print(df)
             df = tmpdf
         if self.remove_category and self._category_col is not None:
             df = df.drop(self._category_col,axis =1)
@@ -177,6 +174,63 @@ class Function_Transformer(Base_Time_Series_Transformer):
         return self._transform_output_wrapper(df,X_category,X_time,X_header)
 
 
-class Stock_Technical_Indicator_Transformer(Base_Time_Series_Transformer):
-    def __init__(self,lag_nums,time_col,category_col=None,remove_time = True,remove_category=True,remove_org_data=True,cache_data_path=None):
-        super().__init__(time_col,category_col,'ignore',remove_time,remove_category,remove_org_data,cache_data_path)
+class Base_Stock_Time_Series_Transform(Base_Time_Series_Transformer):
+    def __init__(self,time_col,category_col=None,len_preprocessing = 'ignore',remove_time=True,remove_category=True,remove_org_data=True,cache_data_path = None,High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
+        super().__init__(time_col,category_col,len_preprocessing,remove_time,remove_category,remove_org_data,cache_data_path)
+        self.high = High
+        self.low = Low
+        self.open = Open
+        self.close = Close
+        self.volume = Volume
+
+
+    def transform(self,X,y= None):
+        tst,X_time,X_header,X_category = super().transform(X,y)
+        tst = Stock_Transformer.from_time_series_transformer(
+            tst,
+            High = self.high,
+            Low = self.low,
+            Close = self.close,
+            Open = self.open,
+            Volume = self.volume
+            )        
+        return tst, X_time,X_header,X_category
+
+
+
+class Stock_Technical_Indicator_Transformer(Base_Stock_Time_Series_Transform):
+    def __init__(
+                self,
+                strategy,
+                time_col,
+                symbol_col=None,
+                remove_time = True,
+                remove_category=True,
+                remove_org_data=True,
+                cache_data_path=None,
+                High='High',
+                Low='Low',
+                Close='Close',
+                Open='Open',
+                Volume='Volume',
+                n_jobs = 1,
+                verbose = 0,
+                backend='loky'):
+
+        super().__init__(time_col,symbol_col,'ignore',remove_time,remove_category,remove_org_data,cache_data_path,High,Low,Close,Open,Volume)
+        self.strategy = strategy
+        self.n_jobs = n_jobs
+        self.verbose = verbose
+        self.backend = backend
+
+    def fit(self,X,y=None):
+        super().fit(X,y)
+        return self
+
+    def transform(self,X,y=None):
+        tst, X_time,X_header,X_category = super().transform(X,y)
+        tst = tst.get_technial_indicator(self.strategy,self.n_jobs,self.verbose,self.backend)
+        df = tst.to_pandas()
+        return self._transform_output_wrapper(df,X_category,X_time,X_header)
+
+
