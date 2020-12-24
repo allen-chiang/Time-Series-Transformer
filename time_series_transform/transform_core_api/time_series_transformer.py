@@ -213,6 +213,68 @@ class Time_Series_Transformer(object):
         data = io.from_numpy(numpyData,timeSeriesCol,mainCategoryCol)
         return cls(data,timeSeriesCol,mainCategoryCol)
 
+    @classmethod
+    def from_feather(cls,feather_dir,timeSeriesCol,mainCategoryCol,columns=None):
+        data = io.from_feather(
+            feather_dir,
+            timeSeriesCol,
+            mainCategoryCol,
+            columns
+            )
+        return cls(data,timeSeriesCol,mainCategoryCol)
+    
+    @classmethod
+    def from_parquet(cls,parquet_dir,timeSeriesCol,mainCategoryCol,columns = None,partitioning='hive',filters=None,filesystem=None):
+        data = io.from_parquet(
+            parquet_dir,
+            timeSeriesCol,
+            mainCategoryCol,
+            columns,
+            partitioning,
+            filters,
+            filesystem
+            )
+        return cls(data,timeSeriesCol,mainCategoryCol)
+    
+    @classmethod
+    def from_arrow_table(cls,arrow_table,timeSeriesCol,mainCategoryCol):
+        data = io.from_arrow_table(arrow_table,timeSeriesCol,mainCategoryCol)
+        return cls(data,timeSeriesCol,mainCategoryCol)
+
+    def to_feather(self,dirPaths,expandCategory=False,expandTime=False,preprocessType='ignore',sepLabel = False,version = 1,chunksize=None):
+        return io.to_feather(
+            dirPaths= dirPaths,
+            time_series_data= self.time_series_data,
+            expandCategory = expandCategory,
+            expandTime = expandTime,
+            preprocessType = preprocessType,
+            seperateLabels= sepLabel,
+            version= version,
+            chunksize= chunksize
+        )
+    
+    def to_parquet(self,dirPaths,expandCategory=False,expandTime=False,preprocessType='ignore',sepLabel = False,version = '1.0',isDataset=False,partition_cols= None):
+        return io.to_parquet(
+            dirPaths= dirPaths,
+            time_series_data= self.time_series_data,
+            expandCategory=expandCategory,
+            expandTime =expandTime,
+            preprocessType= preprocessType,
+            seperateLabels= sepLabel,
+            version = version,
+            isDataset = isDataset,
+            partition_cols = partition_cols
+        )
+
+    def to_arrow_table(self,expandCategory=False,expandTime=False,preprocessType='ignore',sepLabel = False):
+        return io.to_arrow_table(
+            time_series= self.time_series_data,
+            expandCategory= expandCategory,
+            expandTime= expandTime,
+            preprocessType = preprocessType,
+            seperateLabels= sepLabel
+        )
+
     def to_pandas(self,expandCategory=False,expandTime=False,preprocessType='ignore',sepLabel = False):
         return io.to_pandas(
             self.time_series_data,
@@ -222,7 +284,6 @@ class Time_Series_Transformer(object):
             seperateLabels = sepLabel
             )
         
-
     def to_numpy(self,expandCategory=False,expandTime=False,preprocessType='ignore',sepLabel = False):
         return io.to_numpy(self.time_series_data,expandCategory,expandTime,preprocessType,sepLabel)
 

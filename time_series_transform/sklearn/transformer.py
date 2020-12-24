@@ -2,11 +2,11 @@ import numpy as np
 import collections
 import pandas as pd
 from sklearn.base import (BaseEstimator, TransformerMixin)
-from time_series_transform.io.parquet import (from_parquet, to_parquet)
-from time_series_transform.io.pandas import (from_pandas,to_pandas)
 from time_series_transform.io.numpy import (from_numpy,to_numpy)
-from time_series_transform.transform_core_api.time_series_transformer import Time_Series_Transformer
+from time_series_transform.io.pandas import (from_pandas,to_pandas)
+from time_series_transform.io.parquet import (from_parquet, to_parquet)
 from time_series_transform.stock_transform.stock_transfromer import Stock_Transformer
+from time_series_transform.transform_core_api.time_series_transformer import Time_Series_Transformer
 
 
 class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
@@ -136,7 +136,15 @@ class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
 
 
 class Lag_Transformer(Base_Time_Series_Transformer):
-    def __init__(self,lag_nums,time_col,category_col=None,remove_time = True,remove_category=True,remove_org_data=True,cache_data_path=None):
+    def __init__(
+                self,
+                lag_nums,
+                time_col,
+                category_col=None,
+                remove_time = True,
+                remove_category=True,
+                remove_org_data=True,
+                cache_data_path=None):
         super().__init__(time_col,category_col,'ignore',remove_time,remove_category,remove_org_data,cache_data_path)
         if not isinstance(lag_nums,list):
             self.lag_nums = [lag_nums]
@@ -156,7 +164,17 @@ class Lag_Transformer(Base_Time_Series_Transformer):
 
 
 class Function_Transformer(Base_Time_Series_Transformer):
-    def __init__(self,func,inputLabels,time_col,category_col=None,remove_time = True,remove_category=True,remove_org_data=True,cache_data_path=None,parameterDict={}):
+    def __init__(
+                self,
+                func,
+                inputLabels,
+                time_col,
+                category_col=None,
+                remove_time = True,
+                remove_category=True,
+                remove_org_data=True,
+                cache_data_path=None,
+                parameterDict={}):
         super().__init__(time_col,category_col,'ignore',remove_time,remove_category,remove_org_data,cache_data_path)
         self.parameterDict = parameterDict
         self.parameterDict['func']= func
@@ -175,7 +193,20 @@ class Function_Transformer(Base_Time_Series_Transformer):
 
 
 class Base_Stock_Time_Series_Transform(Base_Time_Series_Transformer):
-    def __init__(self,time_col,category_col=None,len_preprocessing = 'ignore',remove_time=True,remove_category=True,remove_org_data=True,cache_data_path = None,High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
+    def __init__(
+                self,
+                time_col,
+                category_col=None,
+                len_preprocessing = 'ignore',
+                remove_time=True,
+                remove_category=True,
+                remove_org_data=True,
+                cache_data_path = None,
+                High='High',
+                Low='Low',
+                Close='Close',
+                Open='Open',
+                Volume='Volume'):
         super().__init__(time_col,category_col,len_preprocessing,remove_time,remove_category,remove_org_data,cache_data_path)
         self.high = High
         self.low = Low
