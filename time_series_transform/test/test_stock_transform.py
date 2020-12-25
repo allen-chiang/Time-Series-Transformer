@@ -1,7 +1,9 @@
 import pytest
 import numpy as np
 import pandas as pd
+import os
 import pandas_ta as ta
+import pyarrow as pa
 from time_series_transform.io.pandas import (to_pandas,from_pandas)
 from time_series_transform.stock_transform.base import (Stock,Portfolio)
 from time_series_transform.stock_transform.stock_transfromer import Stock_Transformer
@@ -117,3 +119,42 @@ class Test_Stock_Transform:
         stockTrans = Stock_Transformer.from_pandas(data,'Date','symbol')
         test = Stock_Transformer.from_time_series_transformer(tst)
         assert stockTrans == test
+
+
+    def test_from_arrow_table(self,dictList_stock,dictList_portfolio):
+        data = pd.DataFrame(dictList_stock)
+        table = pa.Table.from_pandas(data)
+        stockTrans = Stock_Transformer.from_pandas(data,'Date',None)
+        test = Stock_Transformer.from_arrow_table(table,'Date',None)
+        assert test == stockTrans
+        data = pd.DataFrame(dictList_portfolio)
+        table = pa.Table.from_pandas(data)
+        stockTrans = Stock_Transformer.from_pandas(data,'Date','symbol')
+        test = Stock_Transformer.from_arrow_table(table,'Date','symbol')
+        assert stockTrans == test
+
+    def test_from_parquet(self,dictList_stock,dictList_portfolio):
+        data = pd.DataFrame(dictList_stock)
+        data.to_parquet('./data.parquet')
+        stockTrans = Stock_Transformer.from_pandas(data,'Date',None)
+        test = Stock_Transformer.from_parquet('./data.parquet','Date',None)
+        assert test == stockTrans
+        data = pd.DataFrame(dictList_portfolio)
+        data.to_parquet('./data.parquet')
+        stockTrans = Stock_Transformer.from_pandas(data,'Date','symbol')
+        test = Stock_Transformer.from_parquet('./data.parquet','Date','symbol')
+        assert stockTrans == test
+        os.remove('./data.parquet')
+
+    def test_from_feather(self,dictList_stock,dictList_portfolio):
+        data = pd.DataFrame(dictList_stock)
+        data.to_feather('./data.feather')
+        stockTrans = Stock_Transformer.from_pandas(data,'Date',None)
+        test = Stock_Transformer.from_feather('./data.feather','Date',None)
+        assert test == stockTrans
+        data = pd.DataFrame(dictList_portfolio)
+        data.to_feather('./data.feather')
+        stockTrans = Stock_Transformer.from_pandas(data,'Date','symbol')
+        test = Stock_Transformer.from_feather('./data.feather','Date','symbol')
+        assert stockTrans == test
+        os.remove('./data.feather')

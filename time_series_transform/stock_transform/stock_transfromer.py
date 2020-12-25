@@ -33,25 +33,111 @@ class Stock_Transformer(Time_Series_Transformer):
         return cls(data,'Date',None)
 
     @classmethod
-    def from_pandas(cls, pandasFrame,timeSeriesCol,mainCategoryCol,High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
+    def from_pandas(
+                cls, 
+                pandasFrame,
+                timeSeriesCol,
+                mainCategoryCol,
+                High='High',
+                Low='Low',
+                Close='Close',
+                Open='Open',
+                Volume='Volume'):
         data = io.from_pandas(pandasFrame,timeSeriesCol,mainCategoryCol)
         data = _time_series_data_to_stock_data(data,mainCategoryCol,High,Low,Close,Open,Volume)
         return cls(data,timeSeriesCol,mainCategoryCol)
 
     @classmethod
-    def from_numpy(cls,numpyData,timeSeriesCol,mainCategoryCol,High,Low,Close,Open,Volume):
+    def from_numpy(
+                cls,
+                numpyData,
+                timeSeriesCol,
+                mainCategoryCol,
+                High,
+                Low,
+                Close,
+                Open,
+                Volume):
         data = io.from_numpy(numpyData,timeSeriesCol,mainCategoryCol)
         data = _time_series_data_to_stock_data(data,mainCategoryCol,High,Low,Close,Open,Volume)
         return cls(data,timeSeriesCol,mainCategoryCol)
 
 
     @classmethod
-    def from_time_series_transformer(cls,time_series_transformer,High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
+    def from_time_series_transformer(
+                cls,
+                time_series_transformer,
+                High='High',
+                Low='Low',
+                Close='Close',
+                Open='Open',
+                Volume='Volume'):
         data = time_series_transformer.time_series_data
         timeCol = time_series_transformer.timeSeriesCol
         symbolIx = time_series_transformer.mainCategoryCol
         return cls(data,timeCol,symbolIx,High,Low,Close,Open,Volume)
         
+
+    @classmethod
+    def from_feather(
+                cls,
+                feather_dir,
+                timeSeriesCol,
+                symbolIx,
+                columns=None,
+                High='High',
+                Low='Low',
+                Close='Close',
+                Open='Open',
+                Volume='Volume'):
+        data = io.from_feather(
+            feather_dir,
+            timeSeriesCol,
+            symbolIx,
+            columns
+            )
+        return cls(data,timeSeriesCol,symbolIx,High,Low,Close,Open,Volume)
+    
+    @classmethod
+    def from_parquet(
+                cls,
+                parquet_dir,
+                timeSeriesCol,
+                symbolIx,
+                columns = None,
+                partitioning='hive',
+                filters=None,
+                filesystem=None,
+                High='High',
+                Low='Low',
+                Close='Close',
+                Open='Open',
+                Volume='Volume'):
+        data = io.from_parquet(
+            parquet_dir,
+            timeSeriesCol,
+            symbolIx,
+            columns,
+            partitioning,
+            filters,
+            filesystem
+            )
+        return cls(data,timeSeriesCol,symbolIx,High,Low,Close,Open,Volume)
+    
+    @classmethod
+    def from_arrow_table(
+                cls,
+                arrow_table,
+                timeSeriesCol,
+                symbolIx,
+                High='High',
+                Low='Low',
+                Close='Close',
+                Open='Open',
+                Volume='Volume'):
+        data = io.from_arrow_table(arrow_table,timeSeriesCol,symbolIx)
+        return cls(data,timeSeriesCol,symbolIx,High,Low,Close,Open,Volume)
+
 
     def get_technial_indicator(self,strategy,n_jobs=1,verbose=10,backend='loky'):
         if isinstance(self.time_series_data,Portfolio):
