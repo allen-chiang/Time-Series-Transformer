@@ -10,7 +10,7 @@ class TimeSeriesPlot(plot_base):
         for col in dataCols:
             self.add_line(col, lineType)
         
-        self.fig.update_layout(
+        self.update_layout(
             title = title,
             xaxis_title = self.time_series.time_seriesIx,
             yaxis_title = "value",
@@ -18,8 +18,6 @@ class TimeSeriesPlot(plot_base):
         )
 
         return self
-
-    
 
     def __repr__(self):
         self.fig.show()

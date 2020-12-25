@@ -33,6 +33,16 @@ class Stock_Transformer(Time_Series_Transformer):
         return cls(data,'Date',None)
 
     @classmethod
+    def from_stock_engine_intraday(cls,symbols,start_date,end_date,engine, interval = '1m',n_threads=8,*args,**kwargs):
+        if isinstance(symbols,list):
+            se = Portfolio_Extractor(symbols,engine,*args,**kwargs)
+            data = se.get_intra_day(start_date,end_date, interval=interval,n_threads = n_threads)
+            return cls(data,'Date','symbol')
+        se = Stock_Extractor(symbols,engine,*args,**kwargs)
+        data = se.get_intra_day(start_date,end_date, interval=interval)
+        return cls(data,'Date',None)
+
+    @classmethod
     def from_pandas(cls, pandasFrame,timeSeriesCol,mainCategoryCol,High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
         data = io.from_pandas(pandasFrame,timeSeriesCol,mainCategoryCol)
         data = _time_series_data_to_stock_data(data,mainCategoryCol,High,Low,Close,Open,Volume)

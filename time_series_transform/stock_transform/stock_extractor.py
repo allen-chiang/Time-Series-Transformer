@@ -89,6 +89,39 @@ class Stock_Extractor(object):
             )
         return self.stock
 
+    def get_intra_day(self,start_date,end_date,interval = '1m'):
+        """
+        get_intra_day extracts the intraday stock data of the selected
+        period
+
+        Parameters
+        ----------
+        start_date : str
+            start of the data
+            format: "%Y-%m-%d", eg "2020-02-20"
+
+        end_date : str
+            end of the data
+        
+        interval : str
+            interval of the data
+            Valid intervals: [1m, 2m, 5m, 15m, 30m, 60m, 90m, 1h]
+         
+        Returns
+        -------
+        stock data
+            The stock data of selected period
+        """
+        data = self.client.getIntraDayData(start_date,end_date,interval)
+        data = pd.DataFrame(data.to_records())
+        data['Datetime'] = data.Datetime.astype(str)
+        self.stock= Stock(
+            data,
+            time_index = 'Datetime',
+            symbol = self.symbol
+        )
+        return self.stock
+
 class Portfolio_Extractor(object):
     def __init__(self,symbolList,engine, *args, **kwargs):
         """
@@ -165,25 +198,59 @@ class Portfolio_Extractor(object):
             )
         return self.portfolio
 
+    def get_intra_day(self,start_date, end_date, interval = '1m', n_threads = 8):
+        """
+        get_intra_day extracts the intraday data of the list of stock data
+        by the date period
+
+        Parameters
+        ----------
+        start_date : str
+            start of the data
+            format: "%Y-%m-%d", eg "2020-02-20"
+
+        end_date : str
+            end of the data
+        
+        interval : str
+            interval of the data
+            Valid intervals: [1m, 2m, 5m, 15m, 30m, 60m, 90m, 1h]
+        
+        n_threads : int
+            number of thread of multi-thread processing
+
+        Returns
+        -------
+        portfolio
+            portfolio data of the given stock list 
+        """
+        stockList = self._get_stock_list_multi(n_threads,'get_intra_day', [start_date, end_date, interval])
+        self.portfolio = Portfolio(
+            stockList,
+            time_index='Datetime',
+            symbolIx='symbol'
+            )
+        return self.portfolio
+
     def _get_stock_list_multi(self, n_threads, func, time_val):
-            stockList = []
-            tasks = []
-            if len(self.symbolList) < n_threads:
-                n_threads = len(self.symbolList)
+        stockList = []
+        tasks = []
+        if len(self.symbolList) < n_threads:
+            n_threads = len(self.symbolList)
 
-            bins = np.array_split(self.symbolList, n_threads)
-            for bn in bins:
-                thread = threading.Thread(target=self._get_stock_data, args= [stockList, bn, func, time_val])
-                tasks.append(thread)
-                thread.start()
+        bins = np.array_split(self.symbolList, n_threads)
+        for bn in bins:
+            thread = threading.Thread(target=self._get_stock_data, args= [stockList, bn, func, time_val])
+            tasks.append(thread)
+            thread.start()
 
-            for task in tasks:
-                task.join()
-            
-            stockDict = {}
-            for i in stockList:
-                stockDict.update(i)
-            return stockDict
+        for task in tasks:
+            task.join()
+        
+        stockDict = {}
+        for i in stockList:
+            stockDict.update(i)
+        return stockDict
 
     def _get_stock_data(self, stockList, symbolList, func, time_val, *args, **kwargs):
         for i in range(len(symbolList)):
