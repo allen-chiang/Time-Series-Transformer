@@ -2,10 +2,10 @@ import copy
 import numpy as np
 import pandas as pd
 import pprint
+import collections
 from joblib import Parallel, delayed
 from collections import ChainMap
 from collections import Counter
-import binstar_client.commands.copy
 import uuid
 
 class Time_Series_Data(object):
@@ -32,6 +32,12 @@ class Time_Series_Data(object):
                 self.set_data(data[i],i)
         self._labels = {}
 
+    def _validate_time_index(self,time_index):
+        ctn = collections.Counter(time_index)
+        for i in ctn:
+            if ctn[i] > 1:
+                raise('time index item must be unique')
+
     @property
     def data(self):
         return self._data
@@ -57,12 +63,47 @@ class Time_Series_Data(object):
         self._labels[label] = np.array(inputData)
         return self
 
-    def remove(self,key):
-        if key in self.data:
+    def remove(self,key,remove_type=None):
+        if key in self.data and (remove_type is None or remove_type == 'data'):
             self._data.pop(key)
-        if key in self.labels:
+        if key in self.labels and (remove_type is None or remove_type == 'label'):
             self._labels.pop(key)
         return self
+
+
+    def _nan_pos(self,dataArray):
+        if isinstance(dataArray[0],(list,np.ndarray)):
+            res = []
+            for i in dataArray:
+                res.append(np.isnan(i).any())
+            return np.argwhere(res).tolist()
+        return np.argwhere(np.isnan(np.asarray(dataArray))).tolist()
+
+
+    def dropna(self):
+        ixList = []
+        notNaList=[]
+        for i in self.data:
+            tmp = self._nan_pos(self.data[i])
+            for t in tmp:
+                ixList.extend(t)
+        for i in self.labels:
+            tmp =  self._nan_pos(self.labels[i])
+            for t in tmp:
+                ixList.extend(t)
+        if len(ixList) == 0:
+            return self
+        ixList = list(set(ixList))
+        for i in range(self.time_length):
+            if i in ixList:
+                notNaList.append(False)
+                continue
+            notNaList.append(True)
+        tsd = Time_Series_Data(self[notNaList],self.time_seriesIx)
+        for i in self.labels:
+            tsd = tsd.set_labels(tsd[:,[i]][i],i)
+            tsd = tsd.remove(i,'data')
+        return tsd
 
 
     def set_time_index(self,inputData,label):
@@ -183,6 +224,7 @@ class Time_Series_Data(object):
             info.update(self._get_dictionary_list_info(tmpInfo,ix,None))
         return info
         
+
         
 class Time_Series_Data_Collection(object):
     def __init__(self,time_series_data,time_seriesIx,categoryIx):
@@ -343,4 +385,8 @@ class Time_Series_Data_Collection(object):
                 return False
         return True
         
-
+    def dropna(self,categoryKey = None):
+        for i in self.time_series_data_collection:
+            if categoryKey is None or i == categoryKey:
+                self._time_series_data_collection[i] = self._time_series_data_collection[i].dropna()
+        return self
