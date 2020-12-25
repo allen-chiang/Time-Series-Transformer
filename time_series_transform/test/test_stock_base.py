@@ -56,6 +56,7 @@ class Test_Stock:
         test.columns = test.columns.str.lower()
         df.columns = df.columns.str.lower()
         pd.testing.assert_frame_equal(df,test,False)
+        print(df.head())
 
 
 class Test_Portfolio:

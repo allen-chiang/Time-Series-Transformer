@@ -6,7 +6,6 @@ import collections
 from joblib import Parallel, delayed
 from collections import ChainMap
 from collections import Counter
-import binstar_client.commands.copy
 import uuid
 
 class Time_Series_Data(object):
@@ -72,19 +71,28 @@ class Time_Series_Data(object):
         return self
 
 
+    def _nan_pos(self,dataArray):
+        if isinstance(dataArray[0],(list,np.ndarray)):
+            res = []
+            for i in dataArray:
+                res.append(np.isnan(i).any())
+            return np.argwhere(res).tolist()
+        return np.argwhere(np.isnan(np.asarray(dataArray))).tolist()
+
+
     def dropna(self):
         ixList = []
         notNaList=[]
         for i in self.data:
-            tmp = np.argwhere(np.isnan(np.asarray(self.data[i]))).tolist()
+            tmp = self._nan_pos(self.data[i])
             for t in tmp:
                 ixList.extend(t)
         for i in self.labels:
-            tmp = np.argwhere(np.isnan(np.asarray(self.labels[i]))).tolist()
+            tmp =  self._nan_pos(self.labels[i])
             for t in tmp:
                 ixList.extend(t)
         if len(ixList) == 0:
-            return
+            return self
         ixList = list(set(ixList))
         for i in range(self.time_length):
             if i in ixList:

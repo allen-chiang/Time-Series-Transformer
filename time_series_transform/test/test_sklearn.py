@@ -4,10 +4,12 @@ import pytest
 import numpy as np
 import collections
 import pandas as pd
+import pandas_ta as ta
 from time_series_transform.sklearn.transformer import (
     Base_Time_Series_Transformer,
     Lag_Transformer,
-    Function_Transformer
+    Function_Transformer,
+    Stock_Technical_Indicator_Transformer
 )
 from time_series_transform.transform_core_api.time_series_transformer import *
 
@@ -162,6 +164,52 @@ def expected_func_output_collection():
             'data':[2,2,5,6],
         },
     }
+ 
+@pytest.fixture('class')
+def single_stock():
+    return {
+    'train':{
+        'Date':[1,2,3,4,5,6,7,8,9,10],
+        'Close':[1,2,3,4,5,6,7,8,9,10],
+        'High':[1,2,3,4,5,6,7,8,9,10],
+        'Volume':[1,2,3,4,5,6,7,8,9,10],
+        'Open':[1,2,3,4,5,6,7,8,9,10],
+        'Low':[1,2,3,4,5,6,7,8,9,10]
+        },
+    'test':{
+        'Date':[11,12,13],
+        'Close':[11,12,13],
+        'High':[11,12,13],
+        'Volume':[11,12,13],
+        'Open':[11,12,13],
+        'Low':[11,12,13]
+        }
+    }
+
+@pytest.fixture('class')
+def collection_stock():
+    return {
+        'train':{
+            'Date':[1,2,3,4,5,1,2,3,4,5],
+            'Close':[1,2,3,4,5,1,2,3,4,5],
+            'Open':[1,2,3,4,5,1,2,3,4,5],
+            'High':[1,2,3,4,5,1,2,3,4,5],
+            'Low':[1,2,3,4,5,1,2,3,4,5],
+            'Volume':[1,2,3,4,5,1,2,3,4,5],
+            'symbol':[1,1,1,1,1,2,2,2,2,2]
+        },
+        'test':{
+            'Date':[6,7,6,7],
+            'Close':[6,7,6,7],
+            'Open':[6,7,6,7],
+            'High':[6,7,6,7],
+            'Low':[6,7,6,7],
+            'Volume':[6,7,6,7],
+            'symbol':[1,1,2,2]
+        }
+    }
+
+
 
 class Test_sklearn_transformer:
 
@@ -386,4 +434,50 @@ class Test_sklearn_transformer:
         np.testing.assert_equal(train,expectDict['train_withTimeCategory'])
         np.testing.assert_equal(test,expectDict['test_withTimeCategory'])
 
-    
+    def test_single_stock_technical_indicator(self,single_stock):
+        strategy = ta.Strategy(
+            name = 'sma',
+            ta = [
+                {'kind':'sma','length':2}
+            ]
+        )
+        df = pd.DataFrame(single_stock['train'])
+        sit = Stock_Technical_Indicator_Transformer(strategy,'Date')
+        sit.fit(df)
+        y = sit.transform(df)
+        df.ta.strategy(strategy)
+        np.testing.assert_equal(y.reshape(-1),df['SMA_2'].values)
+        df = pd.DataFrame(single_stock['train'])
+        df = df.append(pd.DataFrame(single_stock['test']),True)
+        df2 = pd.DataFrame(single_stock['test'])
+        y = sit.transform(df2)
+        df.ta.strategy(strategy)
+        np.testing.assert_equal(y.reshape(-1),df.tail(3)['SMA_2'].values)
+
+    def test_collection_stock_technical_indicator(self,collection_stock):
+        strategy = ta.Strategy(
+            name = 'sma',
+            ta = [
+                {'kind':'sma','length':2}
+            ]
+        )
+        df = pd.DataFrame(collection_stock['train'])
+        sit = Stock_Technical_Indicator_Transformer(strategy,'Date','symbol')
+        sit.fit(df)
+        y = sit.transform(df)
+        res = []
+        for i in df.symbol.unique():
+            tmp = df[df.symbol == i]
+            tmp.ta.strategy(strategy)
+            res.extend(tmp['SMA_2'])
+        np.testing.assert_equal(y.reshape(-1),np.array(res))
+        df = pd.DataFrame(collection_stock['test'])
+        y= sit.transform(df)
+        df = pd.DataFrame(collection_stock['train'])
+        df = df.append(pd.DataFrame(collection_stock['test']),True)
+        res = []
+        for i in df.symbol.unique():
+            tmp = df[df.symbol == i]
+            tmp.ta.strategy(strategy)
+            res.extend(tmp['SMA_2'].tail(2).tolist())
+        np.testing.assert_equal(y.reshape(-1),np.array(res))
