@@ -11,6 +11,28 @@ import uuid
 class Time_Series_Data(object):
 
     def __init__(self,data=None,time_index=None):
+        """
+        __init__ Time_Series_Data initializer
+        
+        Time_Series_Data is the basic data structure used for the entire package.
+        There are three main components: time_series_IX, data, and label.
+        Three of them are based upon dictionary data structure.
+        All data should have the same length as time_series_IX.
+        
+        Parameters
+        ----------
+        data : dict of list, optional
+            the data of input values; it can have time_index. if it has time_index, the name should
+            be passed to time_index parameter, by default None
+        time_index : dict of list or string or numeric type, optional
+            if it is dict of list the time_series_IX will be initiated by the value.
+            else it will use the information and search from data parameter., by default None
+        
+        Raises
+        ------
+        ValueError
+            data type error
+        """
         data = copy.deepcopy(data)
         self._time_index = {}
         self.time_length = 0
@@ -51,6 +73,29 @@ class Time_Series_Data(object):
         return self._time_index
 
     def set_data(self,inputData,label):
+        """
+        set_data setter of data
+        
+        the alternative of setting data.
+        Before setting data, time_series_Ix should be initialized beforehand.
+        
+        Parameters
+        ----------
+        inputData : list
+            input value of data
+        label : str
+            the name of list input
+        
+        Returns
+        -------
+        self
+            it will return self
+        
+        Raises
+        ------
+        ValueError
+            different time length error
+        """
         if len(inputData) != self.time_length:
             raise ValueError('input data has different time length')
         self._data[label] = np.array(inputData)
@@ -58,12 +103,52 @@ class Time_Series_Data(object):
 
 
     def set_labels(self,inputData,label):
+        """
+        set_data setter of label
+        
+        the alternative of setting data.
+        Before setting data, time_series_Ix should be initialized beforehand.
+        
+        Parameters
+        ----------
+        inputData : list
+            input value of data
+        label : str
+            the name of list input
+        
+        Returns
+        -------
+        self
+            it will return self
+        
+        Raises
+        ------
+        ValueError
+            different time length error
+        """
         if len(inputData) != self.time_length:
             raise ValueError('input data has different time length')
         self._labels[label] = np.array(inputData)
         return self
 
     def remove(self,key,remove_type=None):
+        """
+        remove remove data or label
+
+        this function will remove the target key and values from the data structure
+
+        Parameters
+        ----------
+        key : str
+            the name of data or label
+        remove_type : ['data','label'], optional
+            passing the type of removed data will improve the performance of searching, by default None
+
+        Returns
+        -------
+        self
+            it will pass self
+        """
         if key in self.data and (remove_type is None or remove_type == 'data'):
             self._data.pop(key)
         if key in self.labels and (remove_type is None or remove_type == 'label'):
@@ -81,6 +166,18 @@ class Time_Series_Data(object):
 
 
     def dropna(self):
+        """
+        dropna drop null values
+        
+        it will drop null values for the time index.
+        For example, time_index:[1,2,3], data1:[1,2,np.nan], data2[1,2,3]
+        dropna will return time_index:[1,2], data1:[1,2], data2[1,2]
+        
+        Returns
+        -------
+        Time_Series_Data
+            it will return a new Time_Series_Data without null values
+        """
         ixList = []
         notNaList=[]
         for i in self.data:
@@ -107,6 +204,23 @@ class Time_Series_Data(object):
 
 
     def set_time_index(self,inputData,label):
+        """
+        set_time_index alternative of setting time_index
+        
+        setting time_index
+        
+        Parameters
+        ----------
+        inputData : list
+            input values
+        label : str
+            name of time_index
+        
+        Returns
+        -------
+        self
+            it will return self
+        """
         self._time_index = {}
         self._time_index[label] = np.array(inputData)
         self.time_seriesIx = label
@@ -130,6 +244,21 @@ class Time_Series_Data(object):
         return np.array(ordered_list)
 
     def sort(self,ascending=True):
+        """
+        sort sorting data by time_index
+        
+        sort data by index
+        
+        Parameters
+        ----------
+        ascending : bool, optional
+            whether to sort the time index ascending, by default True
+        
+        Returns
+        -------
+        self
+            it will return a sorted self
+        """
         sortingList = list(self.time_index.values())[0]
         for data in self.data:
             self.data[data] = self._reorder_list(sortingList,self.data[data],ascending)
@@ -166,6 +295,29 @@ class Time_Series_Data(object):
         return arrDict,outputType
 
     def transform(self,inputLabels,newName,func,*args,**kwargs):
+        """
+        transform the way of manipulating data
+        
+        this function is a wrapper of executing data manipulation
+        
+        Parameters
+        ----------
+        inputLabels : str or list of string
+            the input data pass into functions
+        newName : str
+            the new name or prefix for the output data
+            if the function has specify the output name, it will become
+            prefix
+        func : function
+            the function for data manipulation.
+            the output of function requires to be dictiony of list,
+            numpy array or pandas dataFrame.
+            The final output should also have the same length as time_index
+        
+        Returns
+        -------
+        self
+        """
         # transform
         if isinstance(inputLabels,list):
             arr,outputType = self._list_transform(inputLabels,func,*args,**kwargs)
