@@ -7,9 +7,25 @@ class TimeSeriesPlot(plot_base):
     def __init__(self, time_series_data):
         super().__init__(time_series_data)
 
-    def create_plot(self, dataCols,title = "", lineType='scatter'):
+    def create_plot(self, dataCols,title = "", lineType='scatter',**kwargs):
+        """create plot based on the given data columns
+
+        Parameters
+        ----------
+        dataCols : array
+            array of the columns
+        title : str, optional
+            title of the plot, by default ""
+        lineType : str, optional
+            type of the line in the plot, by default 'scatter'
+
+        Returns
+        -------
+        self
+            the current TimeSeriesPlot object
+        """
         for col in dataCols:
-            self.add_line(col, lineType)
+            self.add_line(col, lineType,**kwargs)
         
         if self.is_collection:
             buttonList = list()
@@ -47,7 +63,29 @@ class TimeSeriesPlot(plot_base):
 
         return self
     
-    def add_marker(self,x,y,color,legendName,showlegend=True,marker='circle'):
+    def add_marker(self,x,y,color,legendName,showlegend=True,marker='circle',**kwargs):
+        """add_marker will add the marker of the shape on the plot 
+
+        Parameters
+        ----------
+        x : array
+            array of the x coordinates
+        y : array
+            array of the y coordinates
+        color : str
+            color of the marker
+        legendName : str
+            name of the legend
+        showlegend : bool, optional
+            show the legend, by default True
+        marker : str, optional
+            shape of the marker, by default 'circle'
+
+        Returns
+        -------
+        self
+            the current TimeSeriesPlot object
+        """
         self.fig.add_trace(
             go.Scatter(
                 mode='markers',
@@ -58,18 +96,76 @@ class TimeSeriesPlot(plot_base):
                     color = color,
                     symbol=marker
                 ),
-                showlegend=showlegend
+                showlegend=showlegend,**kwargs
             )
         )
+        return self
+
+    def __call__(self, cols, title="", type="scatter"):
+        self.create_plot(cols, title=title, lineType=type)
         return self
 
     def __repr__(self):
         self.fig.show()
         return ""
+
+    def line(self, cols, title=""):
+        """create the line chart of the given columns and title
+
+        Parameters
+        ----------
+        cols : array
+            array of the columns
+        title : str, optional
+            title of the plot, by default ""
+
+        Returns
+        -------
+        self
+            the current TimeSeriesPlot object
+        """
+        self.create_plot(cols, title=title, lineType='scatter')
+        return self
     
-def create_plot(time_series_data, dataCols,title = "", type='scatter'):
+    def bar(self,cols, title=""):
+        """create the bar chart of the given columns and title
+
+        Parameters
+        ----------
+        cols : array
+            array of the columns
+        title : str, optional
+            title of the plot, by default ""
+
+        Returns
+        -------
+        self
+            the current TimeSeriesPlot object
+        """
+        self.create_plot(cols, title = title, lineType='bar')
+        return self
+    
+def create_plot(time_series_data, dataCols,title = "", type='scatter', **kwargs):
+    """create plot based on the given data columns
+
+    Parameters
+    ----------
+    time_series_data : Time_Series_Data
+        data of the plot
+    dataCols : array
+        array of the columns
+    title : str, optional
+        title of the plot, by default ""
+    lineType : str, optional
+        type of the line in the plot, by default 'scatter'
+
+    Returns
+    -------
+    TimeSeriesPlot
+        the TimeSeriesPlot object
+    """
     tsp = TimeSeriesPlot(time_series_data)
-    tsp.create_plot(dataCols,lineType= type)
+    tsp.create_plot(dataCols,lineType= type,**kwargs)
     return tsp
 
     

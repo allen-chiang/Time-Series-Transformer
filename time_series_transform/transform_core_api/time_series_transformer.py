@@ -8,7 +8,7 @@ from pyarrow import parquet as pq
 from collections import defaultdict
 from time_series_transform import io
 from time_series_transform.transform_core_api.base import (Time_Series_Data,Time_Series_Data_Collection)
-
+from time_series_transform.plot import *
 
 class Time_Series_Transformer(object):
 
@@ -21,6 +21,7 @@ class Time_Series_Transformer(object):
         self.timeSeriesCol = timeSeriesCol
         self._isCollection = [True if mainCategoryCol is not None else False][0]
         self.mainCategoryCol = mainCategoryCol
+        self.plot = TimeSeriesPlot(self.time_series_data)
 
     def _setup_time_series_data(self,data,timeSeriesCol,mainCategoryCol):
         if timeSeriesCol is None:
