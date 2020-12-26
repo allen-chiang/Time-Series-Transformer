@@ -380,6 +380,27 @@ class Time_Series_Data(object):
         
 class Time_Series_Data_Collection(object):
     def __init__(self,time_series_data,time_seriesIx,categoryIx):
+        """
+        Time_Series_Data_Collection The dictionary version of Time_Series_Data
+        
+        This class is designed to handle multiple 
+        Time_Series_Data within one same category.
+        
+        Parameters
+        ----------
+        time_series_data : dict of Time_Series_Data or Time_Series_Data
+            if this parameter is a dict of Time_Series_Data, it will directly cast into this class.
+            else, it will seperate teh Time_Series_Data according to the categoryIX column.
+        time_seriesIx : str
+            the name of time_seriesIx
+        categoryIx : str
+            the name of categoryIx
+        
+        Raises
+        ------
+        ValueError
+            invalid input data type
+        """
         time_series_data = copy.deepcopy(time_series_data)
         super().__init__()
         if isinstance(time_series_data,dict):
@@ -412,6 +433,23 @@ class Time_Series_Data_Collection(object):
         return self._time_series_data_collection
 
     def set_time_series_data_collection(self,ix,time_series_data):
+        """
+        set_time_series_data_collection alternative of setting time_series_collection data
+        
+        using this function, one can add a new key of Time_Series_Data.
+        
+        Parameters
+        ----------
+        ix : str
+            new key name
+        time_series_data : Time_Series_Data
+            data of the key
+        
+        Raises
+        ------
+        ValueError
+            invalid input data type
+        """
         if isinstance(time_series_data,Time_Series_Data):
             self._time_series_data_collection[ix] = time_series_data
         else:
@@ -419,6 +457,21 @@ class Time_Series_Data_Collection(object):
 
 
     def remove(self,key):
+        """
+        remove remove the target key of Time_Series_Data
+        
+        remove the target key of Time_Series_Data
+        
+        
+        Parameters
+        ----------
+        key : str
+            target key
+        
+        Returns
+        -------
+        self
+        """
         if key in self._time_series_data_collection:
             self._time_series_data_collection.pop(key)
         return self
@@ -445,6 +498,36 @@ class Time_Series_Data_Collection(object):
 
 
     def transform(self,inputLabels,newName,func,n_jobs =1,verbose = 0,backend='loky',*args,**kwargs):
+        """
+        transform the function of manipulating data for each keys.
+        
+        this function implments joblib parallel execution. Hence, each key of data
+        can be compute in the parallel fashion.
+        
+        Parameters
+        ----------
+        inputLabels : str or list of string
+            the input data pass into functions
+        newName : str
+            the new name or prefix for the output data
+            if the function has specify the output name, it will become
+            prefix
+        func : function
+            the function for data manipulation.
+            the output of function requires to be dictiony of list,
+            numpy array or pandas dataFrame.
+            The final output should also have the same length as time_index
+        n_jobs : int, optional
+            number of processes (joblib), by default 1
+        verbose : int, optional
+            log level (joblib), by default 0
+        backend : str, optional
+            backend type (joblib), by default 'loky'
+        
+        Returns
+        -------
+        self
+        """
         dctList= Parallel(n_jobs=n_jobs,verbose = verbose, backend=backend)(delayed(self._parallel_transform)(
             c,self._time_series_data_collection[c],inputLabels,newName,func,*args,**kwargs
             ) for c in self.time_series_data_collection)
@@ -455,6 +538,13 @@ class Time_Series_Data_Collection(object):
         return self
 
     def remove_different_time_index(self):
+        """
+        remove_different_time_index remove the time period which does not exisit in other Time_Series_Data
+        
+        Returns
+        -------
+        self
+        """
         timeix = []
         for i in self._time_series_data_collection:
             timeix.extend(self._time_series_data_collection[i][:][self._time_series_Ix])
@@ -491,6 +581,20 @@ class Time_Series_Data_Collection(object):
 
 
     def pad_time_index(self,fillMissing=np.nan):
+        """
+        pad_time_index 
+        fill certain values for each missing time_index for the Time_Series_Data
+        comparing to different keys
+        
+        Parameters
+        ----------
+        fillMissing : object, optional
+            the filling values, by default np.nan
+        
+        Returns
+        -------
+        self
+        """
         timeix = []
         for i in self._time_series_data_collection:
             timeix.extend(self._time_series_data_collection[i][:][self._time_series_Ix]) 
@@ -511,6 +615,21 @@ class Time_Series_Data_Collection(object):
         return self
 
     def sort(self,ascending=True,categoryList=None):
+        """
+        sort sort the Time_Series_Data for specific keys or all keys
+    
+        
+        Parameters
+        ----------
+        ascending : bool, optional
+            sorting for ascending order, by default True
+        categoryList : list, optional
+            list of key names. if None, it will sort all, by default None
+        
+        Returns
+        -------
+        self
+        """
         if categoryList is None:
             categoryList = list(self._time_series_data_collection.keys())
         for i in categoryList:
@@ -538,6 +657,20 @@ class Time_Series_Data_Collection(object):
         return True
         
     def dropna(self,categoryKey = None):
+        """
+        dropna drop null values by a specific key or all
+        
+        if categoryKey is None, it will drop all keys
+        
+        Parameters
+        ----------
+        categoryKey : str or numeric data, optional
+            the key of target data, by default None
+        
+        Returns
+        -------
+        self
+        """
         for i in self.time_series_data_collection:
             if categoryKey is None or i == categoryKey:
                 self._time_series_data_collection[i] = self._time_series_data_collection[i].dropna()
