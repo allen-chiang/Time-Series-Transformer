@@ -8,7 +8,6 @@ from time_series_transform.stock_transform.base import (
     Portfolio
 )
 
-from time_series_transform.stock_transform.plot import Plot
 
 
 __all__ = [
@@ -17,5 +16,4 @@ __all__ = [
     'Portfolio_Extractor',
     'Stock',
     'Portfolio',
-    'Plot'
 ]

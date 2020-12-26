@@ -189,8 +189,7 @@ class Portfolio(Time_Series_Data_Collection):
         
         Returns
         -------
-        [type]
-            [description]
+        self
         """
         dctList = Parallel(n_jobs = n_jobs,backend=backend,verbose=verbose)(delayed(self._get_techinal_indicator)(
             c, 
