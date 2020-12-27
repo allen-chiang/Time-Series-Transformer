@@ -54,8 +54,19 @@ class Test_time_series_base:
 
 
     def test_remove(self):
-        raise
-
+        data = {
+            'time':[1,2,3],
+            'data':[1,2,3],
+            'data2':[1,2,3]
+        }
+        res = {
+            'time':[1,2,3],
+            'data2':[1,2,3]            
+        }
+        tsd = Time_Series_Data(data,'time')
+        tsd = tsd.remove('data')
+        resD = Time_Series_Data(res,'time')
+        assert tsd == resD
 
     def test_time_series_base_sort(self):
         tsd = Time_Series_Data()
@@ -78,7 +89,20 @@ class Test_time_series_base:
         np.testing.assert_array_equal(tsd[:,['res_res']]['res_res'] , np.array([8,12,10]))
 
     def test_time_series_base_dropna(self):
-        raise
+        data = {
+            'time':[1,2,3],
+            'data':[1,2,np.nan],
+            'data1':[1,np.nan,3]
+            }
+        res = {
+            'time':[1],
+            'data':[1],
+            'data1':[1]
+        }
+        tsd = Time_Series_Data(data,'time')
+        tsd = tsd.dropna()
+        res = Time_Series_Data(res,'time')
+        assert tsd == res
 
 class Test_Time_Series_Collection:
 
@@ -123,4 +147,19 @@ class Test_Time_Series_Collection:
 
 
     def test_time_series_collection_dropna(self):
-        raise
+        data = {
+            'time':[1,2,3,1,2,3],
+            'data':[1,2,np.nan,1,2,3],
+            'category':[1,1,1,2,2,2]
+        }
+        res = {
+            'time':[1,2,1,2,3],
+            'data':[1,2,1,2,3],
+            'category':[1,1,2,2,2]            
+        }
+        tsd = Time_Series_Data(data,'time')
+        tsc = Time_Series_Data_Collection(tsd,'time','category')
+        tsc = tsc.dropna()
+        resd = Time_Series_Data(res,'time')
+        resc = Time_Series_Data_Collection(resd,'time','category')
+        assert tsc == resc

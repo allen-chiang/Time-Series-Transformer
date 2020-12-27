@@ -7,6 +7,19 @@ import numpy as np
 
 class io_base (object):
     def __init__(self,time_series,timeSeriesCol,mainCategoryCol):
+        """
+        io_base 
+        IO class
+        
+        Parameters
+        ----------
+        time_series : Time_Series_Data or Time_Series_Data_Collection
+            input data
+        timeSeriesCol : str or int
+            index of time period column
+        mainCategoryCol : str of int
+            index of category column
+        """
         if isinstance(time_series,(Time_Series_Data,Time_Series_Data_Collection)):
             self.time_series = copy.deepcopy(time_series)
             self.dictList = None
@@ -17,6 +30,18 @@ class io_base (object):
         self.mainCategoryCol = mainCategoryCol
 
     def to_single(self):
+        """
+        to_single transform data to Time_Series_Data
+        
+        Returns
+        -------
+        Time_Series_Data
+        
+        Raises
+        ------
+        KeyError
+            invalid data
+        """
         tsd = Time_Series_Data()
         if self.timeSeriesCol is None:
             raise KeyError("time series index is required")
@@ -28,6 +53,18 @@ class io_base (object):
         return tsd
     
     def to_collection(self):
+        """
+        to_collection transform data into Time_Series_Data_Collection
+        
+        Returns
+        -------
+        Time_Series_Data_Collection
+        
+        Raises
+        ------
+        KeyError
+            invalid input
+        """
         if self.timeSeriesCol is None:
             raise KeyError("time series index is required")
         tsd = Time_Series_Data(self.dictList,self.timeSeriesCol)
@@ -35,6 +72,29 @@ class io_base (object):
         return tsc
 
     def from_collection(self,expandCategory,expandTimeIx,preprocessType='ignore'):
+        """
+        from_collection prepare Time_Series_Data_Collection into dict of list
+        
+        Parameters
+        ----------
+        expandCategory : bool
+            whether to expand category
+        expandTime : bool
+            whether to expand time
+        preprocessType : ['ignore','pad','remove']
+            preprocess data time across categories
+        
+        Returns
+        -------
+        dict of list
+        
+        Raises
+        ------
+        ValueError
+            invalid data
+        KeyError
+            invalid key
+        """
         transCollection = copy.deepcopy(self.time_series)
         transCollection =  transCollection.sort()
         if preprocessType == 'remove':
@@ -81,6 +141,18 @@ class io_base (object):
         return res
 
     def from_single(self,expandTime):
+        """
+        from_single transform Time_Series_Data into dict of list
+        
+        Parameters
+        ----------
+        expandTime : bool
+            whether to expand Time
+        
+        Returns
+        -------
+        Time_Series_Data
+        """
         if expandTime:
             tmp = {"1":self.time_series}
             return self._expand_dict_date(tmp)['1']

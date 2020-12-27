@@ -8,6 +8,40 @@ from time_series_transform.plot import *
 
 class Stock_Transformer(Time_Series_Transformer):
     def __init__(self,time_series_data,time_seriesIx,symbolIx,High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
+        """
+        Stock_Transformer the class for Stock and Portfolio data manipulation
+        
+        This class inhereite from Time_Series_Transform.
+        it can perform different data manipulation: making lag data,
+        lead data, lag sequence data, making technical indicator through pandas-ta api, 
+        or do a customize data manipulation.
+        It also built in native plot and io functions. IO function currently
+        support pandas DataFrame, numpy ndArray, apache arrow table , apache feather,
+        and apache parquet. Besides these io, it currently support fetching data from
+        yahoo finance and investment.com data through yfinance and investpy api.
+
+        yfinance: https://github.com/ranaroussi/yfinance
+        investpy: https://github.com/alvarobartt/investpy
+        
+        Parameters
+        ----------
+        time_series_data : dict of list, Stock, or Portfolio
+            the value of data.
+        time_seriesIx : str
+            the name of time_seriesIx
+        symbolIx : str or int
+            the symbol column index of the data
+        High : str or int, optional
+            the index or name for High, by default 'High'
+        Low : str or int, optional
+            the index or name for Low, by default 'Low'
+        Close : str or int, optional
+            the index or name for Close, by default 'Close'
+        Open : str or int, optional
+            the index or name for Open, by default 'Open'
+        Volume : str or int, optional
+            the index or name for Volume, by default 'Volume'
+        """
         super().__init__(time_series_data,time_seriesIx, symbolIx)
         if not isinstance(time_series_data, (Stock,Portfolio)):
             self.time_series_data =_time_series_data_to_stock_data(self.time_series_data,self.mainCategoryCol,High,Low,Close,Open,Volume)
@@ -15,6 +49,27 @@ class Stock_Transformer(Time_Series_Transformer):
 
     @classmethod
     def from_stock_engine_period(cls,symbols,period,engine,n_threads=8,*args,**kwargs):
+        """
+        from_stock_engine_period fetching data from online
+        
+        the current engine support yfinance and investpy
+        
+        Parameters
+        ----------
+        symbols : str or list
+            ticker name
+        period : str
+            period of the data
+            for example, 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max 
+        engine : ['yahoo','investing']
+            fetching api
+        n_threads : int, optional
+            multi-thread fetching support only when symbols is a list, by default 8
+        
+        Returns
+        -------
+        Stock_Transformer
+        """
         if isinstance(symbols,list):
             se = Portfolio_Extractor(symbols,engine,*args,**kwargs)
             data = se.get_period(period,n_threads = n_threads)
@@ -25,6 +80,31 @@ class Stock_Transformer(Time_Series_Transformer):
 
     @classmethod
     def from_stock_engine_date(cls,symbols,start_date,end_date,engine,n_threads=8,*args,**kwargs):
+        """
+        from_stock_engine_date [summary]
+        
+        [extended_summary]
+        
+        Parameters
+        ----------
+        symbols : str or list
+            ticker name
+        start_date : str
+            start of the data
+            format: "%Y-%m-%d", eg "2020-02-20"
+        end_date : str
+            end of the data
+            format: "%Y-%m-%d", eg "2020-02-20"
+        engine : ['yahoo','investing']
+            fetching api
+        n_threads : int, optional
+            multi-thread fetching support only when symbols is a list, by default 8
+        
+        
+        Returns
+        -------
+        Stock_Transformer
+        """
         if isinstance(symbols,list):
             se = Portfolio_Extractor(symbols,engine,*args,**kwargs)
             data = se.get_date(start_date,end_date,n_threads = n_threads)
@@ -54,6 +134,34 @@ class Stock_Transformer(Time_Series_Transformer):
                 Close='Close',
                 Open='Open',
                 Volume='Volume'):
+        """
+        from_pandas
+        
+        from_pandas import data from pandas dataFrame
+        
+        Parameters
+        ----------
+        pandasFrame : pandas DataFrame
+            input data
+        timeSeriesCol : str or numeric
+            time series column name
+        mainCategoryCol : str or numeric
+            main category name
+        High : str or int, optional
+            the column name for High, by default 'High'
+        Low : str or int, optional
+            the column name for Low, by default 'Low'
+        Close : str or int, optional
+            the column name for Close, by default 'Close'
+        Open : str or int, optional
+            the column name for Open, by default 'Open'
+        Volume : str or int, optional
+            the column name for Volume, by default 'Volume'
+        
+        Returns
+        -------
+        Stock_Transformer
+        """
         data = io.from_pandas(pandasFrame,timeSeriesCol,mainCategoryCol)
         data = _time_series_data_to_stock_data(data,mainCategoryCol,High,Low,Close,Open,Volume)
         return cls(data,timeSeriesCol,mainCategoryCol)
@@ -69,6 +177,32 @@ class Stock_Transformer(Time_Series_Transformer):
                 Close,
                 Open,
                 Volume):
+        """
+        from_numpy from_numpy import data from numpy
+        
+        Parameters
+        ----------
+        numpyData : numpy ndArray
+            input data
+        timeSeriesCol : int
+            index of time series column
+        mainCategoryCol : int
+            index of main category column
+        High : int, optional
+            the column index for High, by default 'High'
+        Low : int, optional
+            the column index for Low, by default 'Low'
+        Close : int, optional
+            the column index for Close, by default 'Close'
+        Open : int, optional
+            the column index for Open, by default 'Open'
+        Volume : int, optional
+            the column index for Volume, by default 'Volume'
+        
+        Returns
+        -------
+        Stock_Transformer
+        """
         data = io.from_numpy(numpyData,timeSeriesCol,mainCategoryCol)
         data = _time_series_data_to_stock_data(data,mainCategoryCol,High,Low,Close,Open,Volume)
         return cls(data,timeSeriesCol,mainCategoryCol)
@@ -83,6 +217,28 @@ class Stock_Transformer(Time_Series_Transformer):
                 Close='Close',
                 Open='Open',
                 Volume='Volume'):
+        """
+        from_time_series_transformer making Stock_Transformer from Time_Series_Transformer
+        
+        Parameters
+        ----------
+        time_series_transformer : Time_Series_Transformer
+            input data
+        High : str or int, optional
+            the index or name for High, by default 'High'
+        Low : str or int, optional
+            the index or name for Low, by default 'Low'
+        Close : str or int, optional
+            the index or name for Close, by default 'Close'
+        Open : str or int, optional
+            the index or name for Open, by default 'Open'
+        Volume : str or int, optional
+            the index or name for Volume, by default 'Volume'
+        
+        Returns
+        -------
+        Stock_Transformer
+        """
         data = time_series_transformer.time_series_data
         timeCol = time_series_transformer.timeSeriesCol
         symbolIx = time_series_transformer.mainCategoryCol
@@ -101,6 +257,34 @@ class Stock_Transformer(Time_Series_Transformer):
                 Close='Close',
                 Open='Open',
                 Volume='Volume'):
+        """
+        from_feather import data from feather
+        
+        Parameters
+        ----------
+        feather_dir : str
+            directory of feather file
+        timeSeriesCol : str or numeric
+            time series column name
+        symbolIx : str or numeric
+            main category name
+        columns : str or numeric, optional
+            target columns (apache arrow implmentation), by default None
+        High : str or int, optional
+            the index or name for High, by default 'High'
+        Low : str or int, optional
+            the index or name for Low, by default 'Low'
+        Close : str or int, optional
+            the index or name for Close, by default 'Close'
+        Open : str or int, optional
+            the index or name for Open, by default 'Open'
+        Volume : str or int, optional
+            the index or name for Volume, by default 'Volume'
+        
+        Returns
+        -------
+        Stock_Transformer
+        """
         data = io.from_feather(
             feather_dir,
             timeSeriesCol,
@@ -124,6 +308,40 @@ class Stock_Transformer(Time_Series_Transformer):
                 Close='Close',
                 Open='Open',
                 Volume='Volume'):
+        """
+        from_parquet import data from parquet file
+        
+        Parameters
+        ----------
+        parquet_dir : str
+            directory of parquet file
+        timeSeriesCol : str or numeric
+            time series column name
+        symbolIx : str or numeric
+            main category name
+        columns : str or numeric, optional
+            target columns (apache arrow implmentation), by default None
+        partitioning : str, optional
+            type of partitioning, by default 'hive'
+        filters : str, optional
+            filter (apache arrow implmentation), by default None
+        filesystem : str, optional
+            filesystem (apache arrow implmentation), by default None
+        High : str or int, optional
+            the index or name for High, by default 'High'
+        Low : str or int, optional
+            the index or name for Low, by default 'Low'
+        Close : str or int, optional
+            the index or name for Close, by default 'Close'
+        Open : str or int, optional
+            the index or name for Open, by default 'Open'
+        Volume : str or int, optional
+            the index or name for Volume, by default 'Volume'
+        
+        Returns
+        -------
+        Stock_Transformer
+        """
         data = io.from_parquet(
             parquet_dir,
             timeSeriesCol,
@@ -146,11 +364,60 @@ class Stock_Transformer(Time_Series_Transformer):
                 Close='Close',
                 Open='Open',
                 Volume='Volume'):
+        """
+        from_arrow_table [summary]
+        
+        [extended_summary]
+        
+        Parameters
+        ----------
+        arrow_table : arrow table
+            input data
+        timeSeriesCol : str or numeric
+            time series column name
+        symbolIx : str or numeric
+            main category name
+        High : str or int, optional
+            the index or name for High, by default 'High'
+        Low : str or int, optional
+            the index or name for Low, by default 'Low'
+        Close : str or int, optional
+            the index or name for Close, by default 'Close'
+        Open : str or int, optional
+            the index or name for Open, by default 'Open'
+        Volume : str or int, optional
+            the index or name for Volume, by default 'Volume'
+        
+        Returns
+        -------
+        Stock_Transformer
+        """
         data = io.from_arrow_table(arrow_table,timeSeriesCol,symbolIx)
         return cls(data,timeSeriesCol,symbolIx,High,Low,Close,Open,Volume)
 
 
     def get_technial_indicator(self,strategy,n_jobs=1,verbose=10,backend='loky'):
+        """
+        get_technical_indicator making different technical indicator
+        
+        pandas-ta implmentation
+        https://github.com/twopirllc/pandas-ta
+        
+        Parameters
+        ----------
+        strategy : Strategy
+            pandas-ta strategy
+        n_jobs : int, optional
+            number of processes (joblib), by default 1
+        verbose : int, optional
+            log level (joblib), by default 0
+        backend : str, optional
+            backend type (joblib), by default 'loky'
+        
+        Returns
+        -------
+        self
+        """
         if isinstance(self.time_series_data,Portfolio):
             self.time_series_data= self.time_series_data.get_technical_indicator(
                 strategy,
