@@ -2,6 +2,10 @@ import pytest
 from time_series_transform.stock_transform.base import *
 from time_series_transform.stock_transform.stock_extractor import *
 from time_series_transform.stock_transform.util import *
+from datetime import date, timedelta
+from dateutil.relativedelta import *
+import datetime
+
 
 ###################### Data and Result ########################
 @pytest.fixture('class')
@@ -988,6 +992,35 @@ def compare_arr_result(real, expect):
     else:
         return compare_equal(np.array(real).round(4), np.array(expect).round(4))
 
+def findBusinessDay(start,end):
+    start = datetime.datetime.strptime(start, '%d/%m/%Y').date()
+    end = datetime.datetime.strptime(end, '%d/%m/%Y').date()
+    days = np.busday_count( start, end )
+    return days
+
+def periodBusinessday(period):
+    end_date = date.today()
+    if period =='max':
+        start = '1/1/1920'
+    else:
+        t_delta = {
+            'd' : 0,
+            'mo' : 0,
+            'y' : 0
+        }
+        if period == 'ytd':
+            t_delta['y'] = 1
+        else:
+            indx = -1
+            if 'mo' in period:
+                indx = -2
+
+        t_delta[period[indx:]] = int(period[:indx])
+        start_date = end_date - relativedelta(years=t_delta['y'], months=t_delta['mo'], days=t_delta['d'])
+        start = start_date.strftime('%d/%m/%Y')
+    end = end_date.strftime('%d/%m/%Y')
+    return findBusinessDay(start,end)
+
 
 ###################### Unit Test ########################
 
@@ -1027,8 +1060,14 @@ class Test_stock_extractor:
                         se = Stock_Extractor(symbol[j],source,country = country[j])
                     else:
                         se = Stock_Extractor(symbol[j],source)
-                    data = se.get_period(period[i])
-                    assert isinstance(data, Stock)
+                    
+                    if source == 'investing' and periodBusinessday(period[i]) ==0:
+                        print(period[i])
+                        with pytest.raises(ValueError):
+                            data = se.get_period(period[i])
+                    else:
+                        data = se.get_period(period[i])
+                        assert isinstance(data, Stock)
 
 class Test_portfolio_extractor:
 

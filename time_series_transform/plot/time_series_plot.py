@@ -105,9 +105,7 @@ class TimeSeriesPlot(plot_base):
         self.create_plot(cols, title=title, lineType=type)
         return self
 
-    def __repr__(self):
-        self.fig.show()
-        return ""
+
 
     def line(self, cols, title=""):
         """create the line chart of the given columns and title

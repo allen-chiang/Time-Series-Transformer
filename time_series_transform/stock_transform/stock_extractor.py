@@ -4,6 +4,7 @@ import pandas as pd
 from time_series_transform.stock_transform.base import *
 from time_series_transform.stock_transform.stock_engine._investing import investing
 from time_series_transform.stock_transform.stock_engine._yahoo_stock import yahoo_stock
+from datetime import date, timedelta
 
 class Stock_Extractor(object):
     def __init__(self,symbol,engine, *args, **kwargs):
