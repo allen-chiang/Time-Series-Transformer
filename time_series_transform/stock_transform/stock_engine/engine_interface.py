@@ -65,6 +65,27 @@ class engine_interface(metaclass = abc.ABCMeta):
         """
         return NotImplemented
 
+    @abc.abstractmethod
+    def getIntraDayData(self, start_date, end_date, interval_range):
+        """Return intra-day data within the start and end date, range cannot be 
+        larger than 60d
+
+        Parameters
+        ----------
+        start_date, end_date: str
+        range of the stock, format: "%Y-%m-%d", eg "2020-02-20"
+
+        interval_range : string 
+            interval of the data
+            Valid intervals: [1m, 2m, 5m, 15m, 30m, 60m, 90m, 1h]
+
+        Returns
+        -------
+        stock data
+            
+        """
+        return NotImplemented
+
 def valid_period_format(date_string):
     format = "%Y-%m-%d"
 

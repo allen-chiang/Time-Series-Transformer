@@ -4,13 +4,14 @@ from time_series_transform.stock_transform.base import Stock, Portfolio
 from time_series_transform.transform_core_api.time_series_transformer import Time_Series_Transformer
 from time_series_transform.transform_core_api.base import Time_Series_Data,Time_Series_Data_Collection
 from time_series_transform.stock_transform.stock_extractor import Stock_Extractor, Portfolio_Extractor
-
+from time_series_transform.plot import *
 
 class Stock_Transformer(Time_Series_Transformer):
     def __init__(self,time_series_data,time_seriesIx,symbolIx,High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
         super().__init__(time_series_data,time_seriesIx, symbolIx)
         if not isinstance(time_series_data, (Stock,Portfolio)):
             self.time_series_data =_time_series_data_to_stock_data(self.time_series_data,self.mainCategoryCol,High,Low,Close,Open,Volume)
+            self.plot = StockPlot(self.time_series_data)
 
     @classmethod
     def from_stock_engine_period(cls,symbols,period,engine,n_threads=8,*args,**kwargs):
@@ -29,7 +30,17 @@ class Stock_Transformer(Time_Series_Transformer):
             data = se.get_date(start_date,end_date,n_threads = n_threads)
             return cls(data,'Date','symbol')
         se = Stock_Extractor(symbols,engine,*args,**kwargs)
-        data = se.get_period(start_date,end_date)
+        data = se.get_date(start_date,end_date)
+        return cls(data,'Date',None)
+
+    @classmethod
+    def from_stock_engine_intraday(cls,symbols,start_date,end_date,engine, interval = '1m',n_threads=8,*args,**kwargs):
+        if isinstance(symbols,list):
+            se = Portfolio_Extractor(symbols,engine,*args,**kwargs)
+            data = se.get_intra_day(start_date,end_date, interval=interval,n_threads = n_threads)
+            return cls(data,'Date','symbol')
+        se = Stock_Extractor(symbols,engine,*args,**kwargs)
+        data = se.get_intra_day(start_date,end_date, interval=interval)
         return cls(data,'Date',None)
 
     @classmethod

@@ -80,7 +80,8 @@ class investing(engine_interface):
         }
         return data
 
-
+    def getIntraDayData(self, start_date, end_date, interval_range):
+        raise NotImplementedError("The function is not available in the investing engine, please switch to yahoo")
 
     def getAllStocks(self):
         return investpy.stocks.get_stocks()

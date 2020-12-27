@@ -60,7 +60,6 @@ class yahoo_stock(engine_interface):
         except:
             return None
 
-
     def getHistoricalByPeriod(self, period = '1mo'):
         return self.ticker.history(period)
 
@@ -68,6 +67,17 @@ class yahoo_stock(engine_interface):
         if valid_period_format(start_date) and valid_period_format(end_date):
             end_date = (datetime.strptime(end_date, '%Y-%m-%d') + timedelta(days=1)).strftime('%Y-%m-%d')
             return self.ticker.history(start = start_date, end = end_date)
+        else:
+            raise ValueError('date format must be YYYY-mm-dd')
+
+    def getIntraDayData(self,start_date,end_date, interval_range):
+        valid_range = ["1m", "2m", "5m", "15m", "30m", '60m', '90m', '1h']
+        if interval_range not in valid_range:
+            raise ValueError("Invalid interval range, valid intervals: [1m, 2m, 5m, 15m, 30m, 60m, 90m, 1h]")
+
+        if valid_period_format(start_date) and valid_period_format(end_date):
+            end_date = (datetime.strptime(end_date, '%Y-%m-%d') + timedelta(days=1)).strftime('%Y-%m-%d')
+            return self.ticker.history(start = start_date, end = end_date, interval = interval_range)
         else:
             raise ValueError('date format must be YYYY-mm-dd')
 
