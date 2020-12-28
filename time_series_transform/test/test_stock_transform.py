@@ -10,7 +10,7 @@ from time_series_transform.stock_transform.stock_transfromer import Stock_Transf
 from time_series_transform.transform_core_api.base import (Time_Series_Data,Time_Series_Data_Collection)
 from time_series_transform.transform_core_api.time_series_transformer import Time_Series_Transformer
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def dictList_stock():
     return {
         'Date': ['2020-01-01', '2020-01-02'],
@@ -22,7 +22,7 @@ def dictList_stock():
         'symbol':['AT','AT']
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def dictList_portfolio():
     return {
         'Date': ['2020-01-01', '2020-01-02','2020-01-01', '2020-01-02'],

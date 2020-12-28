@@ -4,7 +4,7 @@ from time_series_transform.stock_transform.stock_extractor import *
 from time_series_transform.stock_transform.util import *
 
 ###################### Data and Result ########################
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def extractor_sample():
     return {
         'period': ["1y", "max", "1d"],
@@ -12,14 +12,14 @@ def extractor_sample():
         'symbol': ["aapl"],
         'country': ['united states']
     }
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def extractor_intraday_sample():
     return {
         'date': [["2020-12-20", "2020-12-21"]],
         'symbol': ["aapl"]
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def extractor_intraday_expect():
     expect = {'Datetime': np.array(['2020-12-21 14:30:00', '2020-12-21 14:31:00',
        '2020-12-21 14:32:00', '2020-12-21 14:33:00',
@@ -698,7 +698,7 @@ def extractor_intraday_expect():
     return expect
 
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def extractor_yahoo_expect():
     aapl = {'Date': np.array(['2020-07-27', '2020-07-28', '2020-07-29', '2020-07-30',
        '2020-07-31', '2020-08-03', '2020-08-04', '2020-08-05',
@@ -768,7 +768,7 @@ def extractor_yahoo_expect():
             'msft':Time_Series_Data(msft,'Date')}
     return res
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def extractor_investing_expect():
     aapl = {'Date': np.array(['2020-07-27', '2020-07-28', '2020-07-29', '2020-07-30',
        '2020-07-31', '2020-08-03', '2020-08-04', '2020-08-05',
@@ -813,7 +813,7 @@ def extractor_investing_expect():
             'msft':Time_Series_Data(msft,'Date')}
     return res
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def extractor_portfolio_sample():
     return {
         'period': ["1y", "max", "1d"],
@@ -823,12 +823,12 @@ def extractor_portfolio_sample():
     }
 
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def util_scaler_sample():
     data = [[], [100], [100,20,30], list(range(30))]
     return data
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def util_stock_sample():
     data = {'Date': np.array(['2019-11-20', '2019-11-21', '2019-11-22', '2019-11-25',
         '2019-11-26', '2019-11-27', '2019-11-29', '2019-12-02',
@@ -864,7 +864,7 @@ def util_stock_sample():
     out = [[1,2,3], data]
     return out
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def util_macd_output():
     out = {True:[[],[np.array(0)],
     np.array([ 0.        , -0.7977208 , -0.57822641]),
@@ -917,7 +917,7 @@ def util_macd_output():
     return out
 
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def util_stochastic_oscillator_output():
     out = [[], {'k_val': np.array([        np.nan,         np.nan,         np.nan,         np.nan,         np.nan,
                 np.nan,         np.nan,         np.nan,         np.nan,         np.nan,
@@ -929,7 +929,7 @@ def util_stochastic_oscillator_output():
         91.29316401, 96.74055332, 96.21799638, 96.69249503, 94.14409295])}]
     return out
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def util_rsi_output():
     out = [[],np.array([np.nan]),
         np.array([       np.nan, 0.        , 0.95238095]),
@@ -938,7 +938,7 @@ def util_rsi_output():
                 100., 100., 100., 100., 100., 100., 100., 100.])]
     return out
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def util_william_r_output():
     out = [[],np.array([         np.nan,          np.nan,          np.nan,          np.nan,
                 np.nan,          np.nan,          np.nan,          np.nan,

@@ -10,14 +10,14 @@ import pyarrow as pa
 import os
 
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def dictList_single():
     return {
         'time': [1, 2],
         'data': [1, 2]
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def dictList_collection():
     return {
         'time': [1,2,1,3],
@@ -25,7 +25,7 @@ def dictList_collection():
         'category':[1,1,2,2]
     }
     
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expect_single_lag():
     return {
         'time':[1,2],
@@ -33,7 +33,7 @@ def expect_single_lag():
         'data_lag_1':[np.nan,1]
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expect_single_lead():
     return {
         'time':[1,2],
@@ -41,7 +41,7 @@ def expect_single_lead():
         'data_lead_1':[2,np.nan]
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expect_single_lag_sequence():
     return {
         'time':[1,2],
@@ -49,7 +49,7 @@ def expect_single_lag_sequence():
         'data_lag_1':[[np.nan],[1]]
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expect_single_lead_sequence():
     return {
         'time':[1,2],
@@ -57,7 +57,7 @@ def expect_single_lead_sequence():
         'data_lead_1':[[2],[np.nan]]
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expect_single_identical_sequence():
     return {
         'time':[1,2],
@@ -65,7 +65,7 @@ def expect_single_identical_sequence():
         'data_identical_2':[[1,1],[2,2]]
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expect_collection_lag():
     return {
         'time': [1,2,1,3],
@@ -74,7 +74,7 @@ def expect_collection_lag():
         'category':[1,1,2,2],
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expect_collection_lead():
     return {
         'time': [1,2,1,3],
@@ -83,7 +83,7 @@ def expect_collection_lead():
         'category':[1,1,2,2],
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expect_collection_lag_sequence():
     return {
         'time': [1,2,1,3],
@@ -92,7 +92,7 @@ def expect_collection_lag_sequence():
         'category':[1,1,2,2],
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expect_collection_lead_sequence():
     return {
         'time': [1,2,1,3],
@@ -101,7 +101,7 @@ def expect_collection_lead_sequence():
         'category':[1,1,2,2],
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expect_collection_identity_sequence():
     return {
         'time': [1,2,1,3],
@@ -110,7 +110,7 @@ def expect_collection_identity_sequence():
         'category':[1,1,2,2],
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expect_single_stack_sequence():
     return {
         'time':[1,2],
@@ -119,7 +119,7 @@ def expect_single_stack_sequence():
         'stack_data':[[[np.nan,np.nan]],[[1,1]]]
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expect_collection_stack_sequence():
     return {
         'time': [1,2,1,3],
@@ -130,7 +130,7 @@ def expect_collection_stack_sequence():
     }
 
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def single_na_test():
     return {
         'test':{
@@ -145,7 +145,7 @@ def single_na_test():
         }
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def collection_na_test():
     return {
         'test':{

@@ -13,7 +13,7 @@ from time_series_transform.sklearn.transformer import (
 )
 from time_series_transform.transform_core_api.time_series_transformer import *
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def data_input_single():
     return {
         'train':{
@@ -28,7 +28,7 @@ def data_input_single():
         }
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def data_input_collection():
     return {
         'train':{
@@ -44,7 +44,7 @@ def data_input_collection():
     }
 
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expected_lag_output_collection():
     return {
         'train_withTimeCategory':{
@@ -82,7 +82,7 @@ def expected_lag_output_collection():
     }
 
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expected_lag_output_single():
     return {
         'train_rmTime':{
@@ -105,7 +105,7 @@ def expected_lag_output_single():
         }
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expected_func_output_single():
     return {
         'train_rmTime':{
@@ -128,7 +128,7 @@ def expected_func_output_single():
         }
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expected_func_output_collection():
     return {
         'train_withTimeCategory':{
@@ -165,7 +165,7 @@ def expected_func_output_collection():
         },
     }
  
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def single_stock():
     return {
     'train':{
@@ -186,7 +186,7 @@ def single_stock():
         }
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def collection_stock():
     return {
         'train':{
