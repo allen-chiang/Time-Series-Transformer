@@ -150,6 +150,8 @@ class Stock_Transformer(Time_Series_Transformer):
             time series column name
         mainCategoryCol : str or numeric
             main category name
+        symbolName : str or numeric, option
+            ticker name only used when single stock, by default None
         High : str or int, optional
             the column name for High, by default 'High'
         Low : str or int, optional
@@ -179,7 +181,8 @@ class Stock_Transformer(Time_Series_Transformer):
                 Low,
                 Close,
                 Open,
-                Volume):
+                Volume,
+                symbolName = None):
         """
         from_numpy from_numpy import data from numpy
         
@@ -201,13 +204,15 @@ class Stock_Transformer(Time_Series_Transformer):
             the column index for Open, by default 'Open'
         Volume : int, optional
             the column index for Volume, by default 'Volume'
+        symbolName : str or numeric, option
+            ticker name only used when single stock, by default None
         
         Returns
         -------
         Stock_Transformer
         """
         data = io.from_numpy(numpyData,timeSeriesCol,mainCategoryCol)
-        data = _time_series_data_to_stock_data(data,mainCategoryCol,High,Low,Close,Open,Volume)
+        data = _time_series_data_to_stock_data(data,symbolName,High,Low,Close,Open,Volume)
         return cls(data,timeSeriesCol,mainCategoryCol)
 
 
