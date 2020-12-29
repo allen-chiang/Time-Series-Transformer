@@ -9,7 +9,7 @@ from time_series_transform.transform_core_api.util import *
 from time_series_transform.transform_core_api.base import *
 
 class Stock(Time_Series_Data):
-    def __init__(self,data,time_index,symbol='default',High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
+    def __init__(self,data,time_index,symbol=None,High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
         """
         Stock Basic data structure which inherite from Time_Series_Data.
         
