@@ -2,6 +2,7 @@ import investpy
 from datetime import date, timedelta
 from dateutil.relativedelta import *
 from time_series_transform.stock_transform.stock_engine.engine_interface import *
+import numpy as np
 
 class investing(engine_interface):
 
@@ -34,24 +35,24 @@ class investing(engine_interface):
     # interface function implementations
     def getHistoricalByPeriod(self, period):
         end_date = date.today()
-        t_delta = {
-            'd' : 0,
-            'mo' : 0,
-            'y' : 0
-        }
-        if period == 'max':
-            t_delta['y'] = 100
-        elif period == 'ytd':
-            t_delta['y'] = 1
+        if period =='max':
+            start = '1/1/1920'
         else:
-            indx = -1
-            if 'mo' in period:
-                indx = -2
+            t_delta = {
+                'd' : 0,
+                'mo' : 0,
+                'y' : 0
+            }
+            if period == 'ytd':
+                t_delta['y'] = 1
+            else:
+                indx = -1
+                if 'mo' in period:
+                    indx = -2
             
             t_delta[period[indx:]] = int(period[:indx])
-
-        start_date = end_date - relativedelta(years=t_delta['y'], months=t_delta['mo'], days=t_delta['d'])
-        start = start_date.strftime('%d/%m/%Y')
+            start_date = end_date - relativedelta(years=t_delta['y'], months=t_delta['mo'], days=t_delta['d'])
+            start = start_date.strftime('%d/%m/%Y')
         end = end_date.strftime('%d/%m/%Y')
         return self.getHistoricalData(start, end)
 
@@ -101,7 +102,10 @@ class investing(engine_interface):
 
 
     def getHistoricalData(self, start_date, end_date, as_json = False, order = 'ascending', interval = 'Daily'):
-        return investpy.stocks.get_stock_historical_data(self.symbol, self.country, start_date, end_date, as_json, order, interval)
+        if self.findBusinessDay(start_date,end_date)>0:
+            return investpy.stocks.get_stock_historical_data(self.symbol, self.country, start_date, end_date, as_json, order, interval)
+        else:
+            raise ValueError("Input date are not businessday")
 
     def getFinancialSummary(self, summary_type = 'income_statement', period = 'annual'):
         try:
@@ -115,3 +119,9 @@ class investing(engine_interface):
             return investpy.stocks.get_stock_dividends(self.symbol, self.country)
         except:
             return None
+    
+    def findBusinessDay(self,start,end):
+        start = datetime.datetime.strptime(start, '%d/%m/%Y').date()
+        end = datetime.datetime.strptime(end, '%d/%m/%Y').date()
+        days = np.busday_count( start, end )
+        return days

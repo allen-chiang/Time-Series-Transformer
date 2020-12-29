@@ -82,3 +82,7 @@ class plot_base(object):
         """
         self.fig.update_layout(**kwargs)
         return self
+
+    def __repr__(self):
+        self.fig.show()
+        return ""

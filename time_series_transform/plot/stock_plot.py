@@ -6,9 +6,11 @@ import plotly.graph_objects as go
 from time_series_transform.stock_transform.base import *
 from time_series_transform.stock_transform.util import *
 from time_series_transform.transform_core_api.util import *
+from time_series_transform.plot.base import plot_base
+from copy import copy
 
-class StockPlot(object):
-    def __init__(self, stock):
+class StockPlot(plot_base):
+    def __init__(self,stock):
         """
         Plot uses the stock data to create various plots
 
@@ -18,9 +20,8 @@ class StockPlot(object):
             stock data to create the plot
         """
         self._checkStock(stock)
-        self.stock = stock
-        self.data = stock[:]
-        self.fig = self._candleplot()
+        super().__init__(stock)
+        self._candleplot()
         self._plots = {
             'y' : ['candleplot'],
             'y2' : ['volume']
@@ -28,33 +29,55 @@ class StockPlot(object):
         self._subplots = {}
 
     def _checkStock(self, object):
-        if isinstance(object,Stock):
+        if isinstance(object,(Stock,Portfolio)):
             return
         else:
             raise ValueError('object is not stock')
 
-    def _candleplot(self):
-        df = self.data
+    def _create_candle_data(self, df, symbol):
         colors = []
         INCREASING_COLOR = '#008000'
         DECREASING_COLOR = '#FF0000'
-
         data=[dict(type='candlestick',
-                x=df['Date'],
-                open=df['Open'],
-                high=df['High'],
-                low=df['Low'],
-                close=df['Close'],
-                yaxis = 'y',
-                name = self.stock.symbol)]
+                    x=self.time_index_data,
+                    open=df['Open'],
+                    high=df['High'],
+                    low=df['Low'],
+                    close=df['Close'],
+                    yaxis = 'y',
+                    name = symbol)]
 
         colors = [DECREASING_COLOR if df['Close'][i] < df['Close'][i-1] else INCREASING_COLOR for i in range(1,len(df['Close']))]
         colors.insert(0,DECREASING_COLOR)
                 
-        data.append( dict( x=df['Date'], y=df['Volume'],                         
+        data.append( dict( x=self.time_index_data, y=df['Volume'],                         
                                 marker=dict( color=colors ),
-                                type='bar', yaxis='y2', name='Volume' ) )
-        
+                                type='bar', yaxis='y2', name=symbol+'_Volume' ) )
+        return data
+
+    def _candleplot(self):
+        if self.is_collection:
+            data = list()
+            buttonList = list()
+            visible_array = np.zeros(len(self.category)*2)
+            for indx in range(len(self.category)):
+                cat = self.category[indx]
+                stock_data = self.time_series[cat].data
+                plot_data = self._create_candle_data(stock_data, cat)
+                data.extend(plot_data)
+                va = copy(visible_array)
+                va[indx*2] = 1
+                va[indx*2+1] = 1
+                buttonList.append(dict(label = cat,
+                                        method = 'update',
+                                        args = [{'visible': va==1},
+                                                {'title': cat,
+                                                'showlegend':True}]))
+
+
+        else:
+            data = self._create_candle_data(self.data,self.time_series.symbol)
+            
         layout = {
             'plot_bgcolor' : 'rgb(250, 250, 250)',
             'xaxis' : dict( anchor = 'y2', rangeselector = dict( visible = True ) ),
@@ -66,13 +89,16 @@ class StockPlot(object):
 
         fig = dict(data = data,layout=layout)
         ret = go.Figure(fig)
-        ret.update_xaxes(
-            rangebreaks=[
-                dict(bounds=["sat", "mon"]), 
-                dict(values=["2015-12-25", "2016-01-01"])
-            ]
-        )
-        return ret
+        self.fig = ret
+        if self.is_collection:
+            self.update_layout(
+                updatemenus=[go.layout.Updatemenu(
+                            active=0,
+                            buttons=buttonList
+                            )
+                        ]
+            )
+
 
 
     def get_all_subplots(self):
@@ -232,7 +258,7 @@ class StockPlot(object):
         ValueError
             raise when it is trying to remove the default candle plot
         """
-        default_plot = [self.stock.symbol, 'volume', 'candleplot']
+        default_plot = [self.time_series.symbol, 'volume', 'candleplot']
         if legendName in default_plot:
             raise ValueError("Cannot remove default plot")
 
