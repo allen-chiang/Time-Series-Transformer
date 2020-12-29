@@ -55,7 +55,7 @@ class Test_Stock_Transform:
     def test_single_from_numpy(self,dictList_stock):
         df = pd.DataFrame(dictList_stock).values
         stockTrans = Stock_Transformer.from_numpy(df,0,None,1,2,3,4,5)
-        test = Stock_Transformer(pd.DataFrame(df),0,None,1,2,3,4,5)
+        test = Stock_Transformer(pd.DataFrame(df),0,None,None,1,2,3,4,5)
         assert stockTrans == test
 
     def test_single_make_technical_indicator(self,dictList_stock):
@@ -84,7 +84,7 @@ class Test_Stock_Transform:
     def test_collection_from_numpy(self,dictList_portfolio):
         df = pd.DataFrame(dictList_portfolio).values
         stockTrans = Stock_Transformer.from_numpy(df,0,6,1,2,3,4,5)
-        test = Stock_Transformer(pd.DataFrame(df),0,6,1,2,3,4,5)
+        test = Stock_Transformer(pd.DataFrame(df),0,6,None,1,2,3,4,5)
         assert stockTrans == test
 
     def test_collection_make_technical_indicator(self,dictList_portfolio):
