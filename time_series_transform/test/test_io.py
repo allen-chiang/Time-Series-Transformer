@@ -34,14 +34,14 @@ from time_series_transform.io.feather import (
     to_feather
     )
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def dictList_single():
     return {
         'time': [1, 2],
         'data': [1, 2]
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def dictList_collection():
     return {
         'time': [1,2,1,3],
@@ -49,14 +49,14 @@ def dictList_collection():
         'category':[1,1,2,2]
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expect_single_expandTime():
     return {
         'data_1':[1],
         'data_2':[2]
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expect_single_seperateLabel():
     return [{
         'time': [1, 2],
@@ -66,7 +66,7 @@ def expect_single_seperateLabel():
         'data_label': [1, 2]
     }]
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expect_collection_seperateLabel():
     return [{
         'time': [1,2,1,3],
@@ -78,7 +78,7 @@ def expect_collection_seperateLabel():
     }
 ]
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expect_collection_expandTime():
     return {
         'pad': {
@@ -92,7 +92,7 @@ def expect_collection_expandTime():
             'category':[1,2]            
         }
     }
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expect_collection_expandCategory():
     return {
         'pad': {
@@ -107,7 +107,7 @@ def expect_collection_expandCategory():
         }        
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expect_collection_expandFull():
     return {
         'pad': {
@@ -124,7 +124,7 @@ def expect_collection_expandFull():
         }        
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expect_collection_noExpand():
     return {
         'ignore':{
@@ -144,14 +144,14 @@ def expect_collection_noExpand():
         }        
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def seq_single():
     return {
         'time':[1,2,3],
         'data':[[1,2,3],[11,12,13],[21,22,23]]
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def seq_collection():
     return {
         'time':[1,2,1,2],
@@ -159,7 +159,7 @@ def seq_collection():
         'category':[1,1,2,2]
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def expect_seq_collection():
     return {
         'data_1_1':[[1,2]],

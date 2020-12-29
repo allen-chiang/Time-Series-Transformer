@@ -7,7 +7,7 @@ from time_series_transform.stock_transform.stock_extractor import Stock_Extracto
 from time_series_transform.plot import *
 
 class Stock_Transformer(Time_Series_Transformer):
-    def __init__(self,time_series_data,time_seriesIx,symbolIx,High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
+    def __init__(self,time_series_data,time_seriesIx,symbolIx,symbolName=None,High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
         """
         Stock_Transformer the class for Stock and Portfolio data manipulation
         
@@ -31,6 +31,8 @@ class Stock_Transformer(Time_Series_Transformer):
             the name of time_seriesIx
         symbolIx : str or int
             the symbol column index of the data
+        symbolName : str, optional
+            tiker name used only when there is single stock, by default None
         High : str or int, optional
             the index or name for High, by default 'High'
         Low : str or int, optional
@@ -44,8 +46,8 @@ class Stock_Transformer(Time_Series_Transformer):
         """
         super().__init__(time_series_data,time_seriesIx, symbolIx)
         if not isinstance(time_series_data, (Stock,Portfolio)):
-            self.time_series_data =_time_series_data_to_stock_data(self.time_series_data,self.mainCategoryCol,High,Low,Close,Open,Volume)
-            self.plot = StockPlot(self.time_series_data)
+            self.time_series_data =_time_series_data_to_stock_data(self.time_series_data,symbolName,High,Low,Close,Open,Volume)
+        self.plot = StockPlot(self.time_series_data)
 
     @classmethod
     def from_stock_engine_period(cls,symbols,period,engine,n_threads=8,*args,**kwargs):
@@ -76,7 +78,7 @@ class Stock_Transformer(Time_Series_Transformer):
             return cls(data,'Date','symbol')
         se = Stock_Extractor(symbols,engine,*args,**kwargs)
         data = se.get_period(period)
-        return cls(data,'Date',None)
+        return cls(data,'Date',None,symbols)
 
     @classmethod
     def from_stock_engine_date(cls,symbols,start_date,end_date,engine,n_threads=8,*args,**kwargs):
@@ -111,7 +113,7 @@ class Stock_Transformer(Time_Series_Transformer):
             return cls(data,'Date','symbol')
         se = Stock_Extractor(symbols,engine,*args,**kwargs)
         data = se.get_date(start_date,end_date)
-        return cls(data,'Date',None)
+        return cls(data,'Date',None,symbols)
 
     @classmethod
     def from_stock_engine_intraday(cls,symbols,start_date,end_date,engine, interval = '1m',n_threads=8,*args,**kwargs):
@@ -121,7 +123,7 @@ class Stock_Transformer(Time_Series_Transformer):
             return cls(data,'Date','symbol')
         se = Stock_Extractor(symbols,engine,*args,**kwargs)
         data = se.get_intra_day(start_date,end_date, interval=interval)
-        return cls(data,'Date',None)
+        return cls(data,'Date',None,symbols)
 
     @classmethod
     def from_pandas(
@@ -129,6 +131,7 @@ class Stock_Transformer(Time_Series_Transformer):
                 pandasFrame,
                 timeSeriesCol,
                 mainCategoryCol,
+                symbolName = None,
                 High='High',
                 Low='Low',
                 Close='Close',
@@ -147,6 +150,8 @@ class Stock_Transformer(Time_Series_Transformer):
             time series column name
         mainCategoryCol : str or numeric
             main category name
+        symbolName : str or numeric, option
+            ticker name only used when single stock, by default None
         High : str or int, optional
             the column name for High, by default 'High'
         Low : str or int, optional
@@ -164,7 +169,7 @@ class Stock_Transformer(Time_Series_Transformer):
         """
         data = io.from_pandas(pandasFrame,timeSeriesCol,mainCategoryCol)
         data = _time_series_data_to_stock_data(data,mainCategoryCol,High,Low,Close,Open,Volume)
-        return cls(data,timeSeriesCol,mainCategoryCol)
+        return cls(data,timeSeriesCol,mainCategoryCol,symbolName)
 
     @classmethod
     def from_numpy(
@@ -176,7 +181,8 @@ class Stock_Transformer(Time_Series_Transformer):
                 Low,
                 Close,
                 Open,
-                Volume):
+                Volume,
+                symbolName = None):
         """
         from_numpy from_numpy import data from numpy
         
@@ -198,20 +204,23 @@ class Stock_Transformer(Time_Series_Transformer):
             the column index for Open, by default 'Open'
         Volume : int, optional
             the column index for Volume, by default 'Volume'
+        symbolName : str or numeric, option
+            ticker name only used when single stock, by default None
         
         Returns
         -------
         Stock_Transformer
         """
         data = io.from_numpy(numpyData,timeSeriesCol,mainCategoryCol)
-        data = _time_series_data_to_stock_data(data,mainCategoryCol,High,Low,Close,Open,Volume)
-        return cls(data,timeSeriesCol,mainCategoryCol)
+        data = _time_series_data_to_stock_data(data,symbolName,High,Low,Close,Open,Volume)
+        return cls(data,timeSeriesCol,mainCategoryCol,symbolName)
 
 
     @classmethod
     def from_time_series_transformer(
                 cls,
                 time_series_transformer,
+                symbolName = None,
                 High='High',
                 Low='Low',
                 Close='Close',
@@ -224,6 +233,8 @@ class Stock_Transformer(Time_Series_Transformer):
         ----------
         time_series_transformer : Time_Series_Transformer
             input data
+        symbolName : str or numeric, option
+            ticker name only used when single stock, by default None
         High : str or int, optional
             the index or name for High, by default 'High'
         Low : str or int, optional
@@ -242,7 +253,7 @@ class Stock_Transformer(Time_Series_Transformer):
         data = time_series_transformer.time_series_data
         timeCol = time_series_transformer.timeSeriesCol
         symbolIx = time_series_transformer.mainCategoryCol
-        return cls(data,timeCol,symbolIx,High,Low,Close,Open,Volume)
+        return cls(data,timeCol,symbolIx,symbolName,High,Low,Close,Open,Volume)
         
 
     @classmethod
@@ -251,6 +262,7 @@ class Stock_Transformer(Time_Series_Transformer):
                 feather_dir,
                 timeSeriesCol,
                 symbolIx,
+                symbolName = None,
                 columns=None,
                 High='High',
                 Low='Low',
@@ -268,6 +280,8 @@ class Stock_Transformer(Time_Series_Transformer):
             time series column name
         symbolIx : str or numeric
             main category name
+        symbolName : str or numeric, option
+            ticker name only used when single stock, by default None
         columns : str or numeric, optional
             target columns (apache arrow implmentation), by default None
         High : str or int, optional
@@ -291,7 +305,7 @@ class Stock_Transformer(Time_Series_Transformer):
             symbolIx,
             columns
             )
-        return cls(data,timeSeriesCol,symbolIx,High,Low,Close,Open,Volume)
+        return cls(data,timeSeriesCol,symbolIx,symbolName,High,Low,Close,Open,Volume)
     
     @classmethod
     def from_parquet(
@@ -299,6 +313,7 @@ class Stock_Transformer(Time_Series_Transformer):
                 parquet_dir,
                 timeSeriesCol,
                 symbolIx,
+                symbolName = None,
                 columns = None,
                 partitioning='hive',
                 filters=None,
@@ -319,6 +334,8 @@ class Stock_Transformer(Time_Series_Transformer):
             time series column name
         symbolIx : str or numeric
             main category name
+        symbolName : str or numeric, option
+            ticker name only used when single stock, by default None
         columns : str or numeric, optional
             target columns (apache arrow implmentation), by default None
         partitioning : str, optional
@@ -351,7 +368,7 @@ class Stock_Transformer(Time_Series_Transformer):
             filters,
             filesystem
             )
-        return cls(data,timeSeriesCol,symbolIx,High,Low,Close,Open,Volume)
+        return cls(data,timeSeriesCol,symbolIx,symbolName,High,Low,Close,Open,Volume)
     
     @classmethod
     def from_arrow_table(
@@ -359,6 +376,7 @@ class Stock_Transformer(Time_Series_Transformer):
                 arrow_table,
                 timeSeriesCol,
                 symbolIx,
+                symbolName = None,
                 High='High',
                 Low='Low',
                 Close='Close',
@@ -377,6 +395,8 @@ class Stock_Transformer(Time_Series_Transformer):
             time series column name
         symbolIx : str or numeric
             main category name
+        symbolName : str or numeric, option
+            ticker name only used when single stock, by default None
         High : str or int, optional
             the index or name for High, by default 'High'
         Low : str or int, optional
@@ -393,7 +413,7 @@ class Stock_Transformer(Time_Series_Transformer):
         Stock_Transformer
         """
         data = io.from_arrow_table(arrow_table,timeSeriesCol,symbolIx)
-        return cls(data,timeSeriesCol,symbolIx,High,Low,Close,Open,Volume)
+        return cls(data,timeSeriesCol,symbolIx,symbolName,High,Low,Close,Open,Volume)
 
 
     def get_technial_indicator(self,strategy,n_jobs=1,verbose=10,backend='loky'):
@@ -432,11 +452,12 @@ class Stock_Transformer(Time_Series_Transformer):
         return self
 
 
-def _time_series_data_to_stock_data(time_series_data,mainCategoryCol,High,Low,Close,Open,Volume):
+def _time_series_data_to_stock_data(time_series_data,symbolName,High,Low,Close,Open,Volume):
     res = None
     if isinstance(time_series_data,Time_Series_Data):
         res = Stock.from_time_series_data(
             time_series_data= time_series_data,
+            symbol = symbolName,
             High = High,
             Low = Low,
             Close = Close,

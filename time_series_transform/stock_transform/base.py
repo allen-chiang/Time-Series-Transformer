@@ -9,7 +9,7 @@ from time_series_transform.transform_core_api.util import *
 from time_series_transform.transform_core_api.base import *
 
 class Stock(Time_Series_Data):
-    def __init__(self,data,time_index,symbol='Default',High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
+    def __init__(self,data,time_index,symbol=None,High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
         """
         Stock Basic data structure which inherite from Time_Series_Data.
         
@@ -25,6 +25,8 @@ class Stock(Time_Series_Data):
         time_index : dict of list or string or numeric type, optional
             if it is dict of list the time_series_IX will be initiated by the value.
             else it will use the information and search from data parameter., by default None
+        symbol : str, option
+            ticker name, by default None
         High : str or int, optional
             the index or name for High, by default 'High'
         Low : str or int, optional
@@ -38,11 +40,11 @@ class Stock(Time_Series_Data):
         """
         super().__init__(data,time_index)
         self.ohlcva ={
-            'high':High,
-            'close':Close,
-            'open':Open,
-            'volume':Volume,
-            'low':Low,
+            'High':High,
+            'Close':Close,
+            'Open':Open,
+            'Volume':Volume,
+            'Low':Low,
             'Date':time_index
         }
         self.symbol = symbol
@@ -77,7 +79,7 @@ class Stock(Time_Series_Data):
         return self
     
     @classmethod
-    def from_time_series_data(cls,time_series_data,High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
+    def from_time_series_data(cls,time_series_data,symbol=None,High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
         """
         from_time_series_data 
         making Stock object from Time_Series_Data class
@@ -86,6 +88,8 @@ class Stock(Time_Series_Data):
         ----------
         time_series_data : Time_Series_Data
             input Data
+        symbol : str, option
+            ticker name, by default None
         High : str or int, optional
             the index or name for High, by default 'High'
         Low : str or int, optional
@@ -111,6 +115,7 @@ class Stock(Time_Series_Data):
         return cls(
             time_series_data[:],
             time_series_data.time_seriesIx,
+            symbol = symbol,
             **ohlcva
             )
 
@@ -157,6 +162,7 @@ class Portfolio(Time_Series_Data_Collection):
         for i in self.time_series_data_collection:
             stock_collection[i] = Stock.from_time_series_data(
                 self.time_series_data_collection[i],
+                symbol= i,
                 High=self.ohlcva['High'],
                 Close=self.ohlcva['Close'],
                 Open=self.ohlcva['Open'],

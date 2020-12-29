@@ -10,7 +10,7 @@ from time_series_transform.stock_transform.stock_transfromer import Stock_Transf
 from time_series_transform.transform_core_api.base import (Time_Series_Data,Time_Series_Data_Collection)
 from time_series_transform.transform_core_api.time_series_transformer import Time_Series_Transformer
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def dictList_stock():
     return {
         'Date': ['2020-01-01', '2020-01-02'],
@@ -22,7 +22,7 @@ def dictList_stock():
         'symbol':['AT','AT']
     }
 
-@pytest.fixture('class')
+@pytest.fixture(scope = 'class')
 def dictList_portfolio():
     return {
         'Date': ['2020-01-01', '2020-01-02','2020-01-01', '2020-01-02'],
@@ -55,7 +55,7 @@ class Test_Stock_Transform:
     def test_single_from_numpy(self,dictList_stock):
         df = pd.DataFrame(dictList_stock).values
         stockTrans = Stock_Transformer.from_numpy(df,0,None,1,2,3,4,5)
-        test = Stock_Transformer(pd.DataFrame(df),0,None,1,2,3,4,5)
+        test = Stock_Transformer(pd.DataFrame(df),0,None,None,1,2,3,4,5)
         assert stockTrans == test
 
     def test_single_make_technical_indicator(self,dictList_stock):
@@ -84,7 +84,7 @@ class Test_Stock_Transform:
     def test_collection_from_numpy(self,dictList_portfolio):
         df = pd.DataFrame(dictList_portfolio).values
         stockTrans = Stock_Transformer.from_numpy(df,0,6,1,2,3,4,5)
-        test = Stock_Transformer(pd.DataFrame(df),0,6,1,2,3,4,5)
+        test = Stock_Transformer(pd.DataFrame(df),0,6,None,1,2,3,4,5)
         assert stockTrans == test
 
     def test_collection_make_technical_indicator(self,dictList_portfolio):

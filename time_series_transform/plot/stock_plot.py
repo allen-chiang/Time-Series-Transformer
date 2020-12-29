@@ -21,12 +21,14 @@ class StockPlot(plot_base):
         """
         self._checkStock(stock)
         super().__init__(stock)
+        self.ohlcva = self.time_series.ohlcva
         self._candleplot()
         self._plots = {
             'y' : ['candleplot'],
             'y2' : ['volume']
         }
         self._subplots = {}
+        
 
     def _checkStock(self, object):
         if isinstance(object,(Stock,Portfolio)):
@@ -40,19 +42,24 @@ class StockPlot(plot_base):
         DECREASING_COLOR = '#FF0000'
         data=[dict(type='candlestick',
                     x=self.time_index_data,
-                    open=df['Open'],
-                    high=df['High'],
-                    low=df['Low'],
-                    close=df['Close'],
+                    open=df[self.ohlcva['Open']],
+                    high=df[self.ohlcva['High']],
+                    low=df[self.ohlcva['Low']],
+                    close=df[self.ohlcva['Close']],
                     yaxis = 'y',
-                    name = symbol)]
+                    name = str(symbol))]
 
-        colors = [DECREASING_COLOR if df['Close'][i] < df['Close'][i-1] else INCREASING_COLOR for i in range(1,len(df['Close']))]
+        close_data = df[self.ohlcva['Close']]
+        colors = [DECREASING_COLOR if close_data[i] < close_data[i-1] else INCREASING_COLOR for i in range(1,len(close_data))]
         colors.insert(0,DECREASING_COLOR)
-                
-        data.append( dict( x=self.time_index_data, y=df['Volume'],                         
-                                marker=dict( color=colors ),
-                                type='bar', yaxis='y2', name=symbol+'_Volume' ) )
+        
+        volume_data = dict( x=self.time_index_data, y=df[self.ohlcva['Volume']],                         
+                                    marker=dict( color=colors ),
+                                    type='bar', yaxis='y2', name=None )
+        if symbol is not None:
+            volume_data['name'] = str(symbol)+'_Volume'
+        data.append(volume_data)
+
         return data
 
     def _candleplot(self):
@@ -68,10 +75,10 @@ class StockPlot(plot_base):
                 va = copy(visible_array)
                 va[indx*2] = 1
                 va[indx*2+1] = 1
-                buttonList.append(dict(label = cat,
+                buttonList.append(dict(label = str(cat),
                                         method = 'update',
                                         args = [{'visible': va==1},
-                                                {'title': cat,
+                                                {'title': str(cat),
                                                 'showlegend':True}]))
 
 
