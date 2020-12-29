@@ -7,7 +7,7 @@ from time_series_transform.stock_transform.stock_extractor import Stock_Extracto
 from time_series_transform.plot import *
 
 class Stock_Transformer(Time_Series_Transformer):
-    def __init__(self,time_series_data,time_seriesIx,symbolIx,High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
+    def __init__(self,time_series_data,time_seriesIx,symbolIx,symbolName=None,High='High',Low='Low',Close='Close',Open='Open',Volume='Volume'):
         """
         Stock_Transformer the class for Stock and Portfolio data manipulation
         
@@ -31,6 +31,8 @@ class Stock_Transformer(Time_Series_Transformer):
             the name of time_seriesIx
         symbolIx : str or int
             the symbol column index of the data
+        symbolName : str, optional
+            tiker name used only when there is single stock, by default None
         High : str or int, optional
             the index or name for High, by default 'High'
         Low : str or int, optional
@@ -44,7 +46,7 @@ class Stock_Transformer(Time_Series_Transformer):
         """
         super().__init__(time_series_data,time_seriesIx, symbolIx)
         if not isinstance(time_series_data, (Stock,Portfolio)):
-            self.time_series_data =_time_series_data_to_stock_data(self.time_series_data,self.mainCategoryCol,High,Low,Close,Open,Volume)
+            self.time_series_data =_time_series_data_to_stock_data(self.time_series_data,symbolName,High,Low,Close,Open,Volume)
             self.plot = StockPlot(self.time_series_data)
 
     @classmethod
@@ -432,11 +434,12 @@ class Stock_Transformer(Time_Series_Transformer):
         return self
 
 
-def _time_series_data_to_stock_data(time_series_data,mainCategoryCol,High,Low,Close,Open,Volume):
+def _time_series_data_to_stock_data(time_series_data,symbolName,High,Low,Close,Open,Volume):
     res = None
     if isinstance(time_series_data,Time_Series_Data):
         res = Stock.from_time_series_data(
             time_series_data= time_series_data,
+            symbol = symbolName,
             High = High,
             Low = Low,
             Close = Close,
