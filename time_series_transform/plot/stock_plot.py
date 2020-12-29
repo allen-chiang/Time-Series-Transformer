@@ -21,12 +21,14 @@ class StockPlot(plot_base):
         """
         self._checkStock(stock)
         super().__init__(stock)
+        self.ohlcva = self.time_series.ohlcva
         self._candleplot()
         self._plots = {
             'y' : ['candleplot'],
             'y2' : ['volume']
         }
         self._subplots = {}
+        
 
     def _checkStock(self, object):
         if isinstance(object,(Stock,Portfolio)):

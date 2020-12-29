@@ -7,6 +7,7 @@ class TimeSeriesPlot(plot_base):
     def __init__(self, time_series_data):
         super().__init__(time_series_data)
 
+
     def create_plot(self, dataCols,title = "", lineType='scatter',**kwargs):
         """create plot based on the given data columns
 
