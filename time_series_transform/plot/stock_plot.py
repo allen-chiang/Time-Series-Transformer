@@ -47,7 +47,7 @@ class StockPlot(plot_base):
                     low=df[self.ohlcva['Low']],
                     close=df[self.ohlcva['Close']],
                     yaxis = 'y',
-                    name = symbol)]
+                    name = str(symbol))]
 
         close_data = df[self.ohlcva['Close']]
         colors = [DECREASING_COLOR if close_data[i] < close_data[i-1] else INCREASING_COLOR for i in range(1,len(close_data))]
@@ -56,8 +56,8 @@ class StockPlot(plot_base):
         volume_data = dict( x=self.time_index_data, y=df[self.ohlcva['Volume']],                         
                                     marker=dict( color=colors ),
                                     type='bar', yaxis='y2', name=None )
-        if symbol != None:
-            volume_data['name'] = symbol+'_Volume'
+        if symbol is not None:
+            volume_data['name'] = str(symbol)+'_Volume'
         data.append(volume_data)
 
         return data
@@ -75,10 +75,10 @@ class StockPlot(plot_base):
                 va = copy(visible_array)
                 va[indx*2] = 1
                 va[indx*2+1] = 1
-                buttonList.append(dict(label = cat,
+                buttonList.append(dict(label = str(cat),
                                         method = 'update',
                                         args = [{'visible': va==1},
-                                                {'title': cat,
+                                                {'title': str(cat),
                                                 'showlegend':True}]))
 
 
