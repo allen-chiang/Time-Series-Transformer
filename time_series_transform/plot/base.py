@@ -16,12 +16,14 @@ class plot_base(object):
             self.time_series = time_series
             self.time_index_data = time_series[self.category[0]].time_index[time_series[self.category[0]].time_seriesIx]
             self.fig = go.Figure()
+            self.ohlcva = self.time_series.ohlcva
             self.is_collection = True
         elif isinstance(time_series, Time_Series_Data):
             self.time_series = time_series
             self.data = time_series[:]
             self.time_index_data = time_series.time_index[time_series.time_seriesIx]
             self.fig = go.Figure()
+            self.ohlcva = self.time_series.ohlcva
             self.is_collection = False
         else:
             raise ValueError("Input data must be Time_Series_Data")

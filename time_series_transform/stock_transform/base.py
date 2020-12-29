@@ -40,11 +40,11 @@ class Stock(Time_Series_Data):
         """
         super().__init__(data,time_index)
         self.ohlcva ={
-            'high':High,
-            'close':Close,
-            'open':Open,
-            'volume':Volume,
-            'low':Low,
+            'High':High,
+            'Close':Close,
+            'Open':Open,
+            'Volume':Volume,
+            'Low':Low,
             'Date':time_index
         }
         self.symbol = symbol

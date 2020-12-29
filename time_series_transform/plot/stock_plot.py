@@ -35,26 +35,29 @@ class StockPlot(plot_base):
             raise ValueError('object is not stock')
 
     def _create_candle_data(self, df, symbol):
-        if symbol is None:
-            symbol = "None"
         colors = []
         INCREASING_COLOR = '#008000'
         DECREASING_COLOR = '#FF0000'
         data=[dict(type='candlestick',
                     x=self.time_index_data,
-                    open=df['Open'],
-                    high=df['High'],
-                    low=df['Low'],
-                    close=df['Close'],
+                    open=df[self.ohlcva['Open']],
+                    high=df[self.ohlcva['High']],
+                    low=df[self.ohlcva['Low']],
+                    close=df[self.ohlcva['Close']],
                     yaxis = 'y',
                     name = symbol)]
 
-        colors = [DECREASING_COLOR if df['Close'][i] < df['Close'][i-1] else INCREASING_COLOR for i in range(1,len(df['Close']))]
+        close_data = df[self.ohlcva['Close']]
+        colors = [DECREASING_COLOR if close_data[i] < close_data[i-1] else INCREASING_COLOR for i in range(1,len(close_data))]
         colors.insert(0,DECREASING_COLOR)
-                
-        data.append( dict( x=self.time_index_data, y=df['Volume'],                         
-                                marker=dict( color=colors ),
-                                type='bar', yaxis='y2', name=symbol+'_Volume' ) )
+        
+        volume_data = dict( x=self.time_index_data, y=df[self.ohlcva['Volume']],                         
+                                    marker=dict( color=colors ),
+                                    type='bar', yaxis='y2', name=None )
+        if symbol != None:
+            volume_data['name'] = symbol+'_Volume'
+        data.append(volume_data)
+
         return data
 
     def _candleplot(self):
