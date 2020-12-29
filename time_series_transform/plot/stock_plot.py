@@ -35,6 +35,8 @@ class StockPlot(plot_base):
             raise ValueError('object is not stock')
 
     def _create_candle_data(self, df, symbol):
+        if symbol is None:
+            symbol = "None"
         colors = []
         INCREASING_COLOR = '#008000'
         DECREASING_COLOR = '#FF0000'

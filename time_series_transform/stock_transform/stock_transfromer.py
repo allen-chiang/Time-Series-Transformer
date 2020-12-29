@@ -131,6 +131,7 @@ class Stock_Transformer(Time_Series_Transformer):
                 pandasFrame,
                 timeSeriesCol,
                 mainCategoryCol,
+                symbolName = None,
                 High='High',
                 Low='Low',
                 Close='Close',
