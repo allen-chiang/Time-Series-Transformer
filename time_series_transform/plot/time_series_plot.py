@@ -164,7 +164,7 @@ def create_plot(time_series_data, dataCols,title = "", type='scatter', **kwargs)
         the TimeSeriesPlot object
     """
     tsp = TimeSeriesPlot(time_series_data)
-    tsp.create_plot(dataCols,lineType= type,**kwargs)
+    tsp.create_plot(dataCols,title,lineType= type,**kwargs)
     return tsp
 
     
