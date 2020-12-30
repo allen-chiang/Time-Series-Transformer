@@ -440,7 +440,7 @@ class Time_Series_Transformer(object):
         -------
         self
         """
-        if isinstance(self._isCollection):
+        if isinstance(self.time_series_data,Time_Series_Data_Collection):
             for i in self.time_series_data:
                 self.time_series_data[i].remove(colName)
                 return self

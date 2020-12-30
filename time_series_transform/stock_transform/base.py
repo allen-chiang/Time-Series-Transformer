@@ -72,6 +72,8 @@ class Stock(Time_Series_Data):
         df = pd.DataFrame(dct)
         df.ta.strategy(strategy)
         keys = list(map(lambda x: x.lower(),list(self._get_all_info().keys())))
+        for i in self.ohlcva:
+            keys.append(str.lower(i))
         for i in df.columns:
             if i in keys:
                 continue

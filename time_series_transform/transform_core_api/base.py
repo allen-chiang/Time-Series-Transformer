@@ -290,7 +290,6 @@ class Time_Series_Data(object):
                     arrDict[col] = self.labels[col]
                 else:
                     arrDict[f"{col}_{str(uuid.uuid4())}"] = self.labels[col]
-        print(f"print {arrDict}")
         arrDict = func(arrDict,*args,**kwargs)
         return arrDict,outputType
 
