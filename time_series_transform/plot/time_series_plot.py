@@ -26,7 +26,7 @@ class TimeSeriesPlot(plot_base):
             the current TimeSeriesPlot object
         """
         for col in dataCols:
-            self.add_line(col, lineType,**kwargs)
+            self.add_line(col = col, lineType = lineType,**kwargs)
         
         if self.is_collection:
             buttonList = list()
@@ -64,43 +64,6 @@ class TimeSeriesPlot(plot_base):
 
         return self
     
-    def add_marker(self,x,y,color,legendName,showlegend=True,marker='circle',**kwargs):
-        """add_marker will add the marker of the shape on the plot 
-
-        Parameters
-        ----------
-        x : array
-            array of the x coordinates
-        y : array
-            array of the y coordinates
-        color : str
-            color of the marker
-        legendName : str
-            name of the legend
-        showlegend : bool, optional
-            show the legend, by default True
-        marker : str, optional
-            shape of the marker, by default 'circle'
-
-        Returns
-        -------
-        self
-            the current TimeSeriesPlot object
-        """
-        self.fig.add_trace(
-            go.Scatter(
-                mode='markers',
-                x=x,
-                y=y,
-                name=legendName,
-                marker=dict(
-                    color = color,
-                    symbol=marker
-                ),
-                showlegend=showlegend,**kwargs
-            )
-        )
-        return self
 
     def __call__(self, cols, title="", type="scatter"):
         self.create_plot(cols, title=title, lineType=type)

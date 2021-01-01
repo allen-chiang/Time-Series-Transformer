@@ -27,7 +27,7 @@ class StockPlot(plot_base):
             'y' : ['candleplot'],
             'y2' : ['volume']
         }
-        self._subplots = {}
+        
         
 
     def _checkStock(self, object):
@@ -83,7 +83,7 @@ class StockPlot(plot_base):
 
 
         else:
-            data = self._create_candle_data(self.data,self.time_series.symbol)
+            data = self._create_candle_data(self.time_series.data,self.time_series.symbol)
             
         layout = {
             'plot_bgcolor' : 'rgb(250, 250, 250)',
@@ -106,108 +106,47 @@ class StockPlot(plot_base):
                         ]
             )
 
+# ###### macd todo#######
+    # def add_macd(self):
+    #     """
+    #     add the moving average convergence divergence plot
 
-
-    def get_all_subplots(self):
-        """
-        get_all_subplots returns a list of current subplots
-
-        Returns
-        -------
-        subplots
-            list of the current subplots
-        """
-        return list(self._subplots.keys())
-    
-    def show(self):
-        """
-        show the current plot
-        """
-        self.fig.show()
-
-    def add_line(self, colName, color, legendName, showLegend = True, subplot = 'y', data = None):
-        """
-        add_line add line to the current plot
-
-        Parameters
-        ----------
-        colName : str
-            the column name of the stock data
-        color : str
-            color of the line
-        legendName : str
-            legend name of the line
-        showLegend : bool, optional
-            show legend, by default True
-        subplot : str, optional
-            subplot label, by default 'y'
-            for example, y, y2, y3...
-        data : list, optional
-            array of the data to plot, by default None
-            either data or colName is required
-        """
-        for li in list(self._plots.values()):
-            if legendName in li:
-                raise ValueError("duplicated legendName or indicator")
-        if subplot not in list(self._plots.keys()):
-            raise ValueError("subplot does not exist")
-
-        if data is None:
-            data = self.data[colName]
+    #     Raises
+    #     ------
+    #     ValueError
+    #         raise exception when the macd is already in the plot
+    #     """
+    #     if 'macd' in list(self._subplots.keys()):
+    #         raise ValueError("macd already exists")
+    #     macd_data = macd(self.data['Close'])
+    #     macd_line_data = {'DIF':macd_data['DIF'], 'DEM':macd_data['DEM'], 'macdBase1': np.zeros(macd_data['DEM'].shape[0])}
         
-        self._plots[subplot].append(legendName)
+    #     axis_num = self._find_next_layer()
+    #     self._add_subplot_layer()
+    #     self._add_multi_trace(macd_line_data, ['#a0bbe8', '#ff6767', 'grey'], axis_num)
+    #     self.fig.add_trace(dict( x=self.data['Date'], y=macd_data['OSC'],                         
+    #                             showlegend = False,
+    #                             type='bar', yaxis=axis_num, name='osc' ))
+    #     self._plots[axis_num].append('osc')
+    #     self._subplots['macd'] = axis_num
 
-        self.fig.add_trace(
-            go.Scatter(
-                x= self.data['Date'],
-                y= data,
-                mode="lines",
-                line=go.scatter.Line(color=color),
-                showlegend= showLegend,
-                yaxis = subplot,
-                name = legendName)
-            )
+    # def add_stochastic_oscillator(self):
+    #     """
+    #     add the stochastic_oscillator plot
 
-    def add_macd(self):
-        """
-        add the moving average convergence divergence plot
-
-        Raises
-        ------
-        ValueError
-            raise exception when the macd is already in the plot
-        """
-        if 'macd' in list(self._subplots.keys()):
-            raise ValueError("macd already exists")
-        macd_data = macd(self.data['Close'])
-        macd_line_data = {'DIF':macd_data['DIF'], 'DEM':macd_data['DEM'], 'macdBase1': np.zeros(macd_data['DEM'].shape[0])}
+    #     Raises
+    #     ------
+    #     ValueError
+    #         raise exception when the macd is already in the plot
+    #     """
+    #     if 'stochastic_oscillator' in list(self._subplots.keys()):
+    #         raise ValueError("stochastic_oscillator already exists")
+    #     so_data = stochastic_oscillator(self.data['Close'])
         
-        axis_num = self._find_next_layer()
-        self._add_subplot_layer()
-        self._add_multi_trace(macd_line_data, ['#a0bbe8', '#ff6767', 'grey'], axis_num)
-        self.fig.add_trace(dict( x=self.data['Date'], y=macd_data['OSC'],                         
-                                showlegend = False,
-                                type='bar', yaxis=axis_num, name='osc' ))
-        self._plots[axis_num].append('osc')
-        self._subplots['macd'] = axis_num
-
-    def add_stochastic_oscillator(self):
-        """
-        add the stochastic_oscillator plot
-
-        Raises
-        ------
-        ValueError
-            raise exception when the macd is already in the plot
-        """
-        if 'stochastic_oscillator' in list(self._subplots.keys()):
-            raise ValueError("stochastic_oscillator already exists")
-        so_data = stochastic_oscillator(self.data['Close'])
-        
-        axis_num = self._find_next_layer()
-        self._add_subplot_layer()
-        self._add_multi_trace(so_data, ['red', 'grey'], axis_num)
-        self._subplots['stochastic_oscillator'] = axis_num
+    #     axis_num = self._find_next_layer()
+    #     self._add_subplot_layer()
+    #     self._add_multi_trace(so_data, ['red', 'grey'], axis_num)
+    #     self._subplots['stochastic_oscillator'] = axis_num
 
     def _find_next_layer(self):
         cur_max = 0
@@ -225,88 +164,7 @@ class StockPlot(plot_base):
             trace = data[i]
             if i.find('Base') >= 0 :
                 showLegend = False
-            self.add_line(colName = None, color = colors[indx], legendName = i,showLegend=showLegend, subplot= subplot, data = trace)
+            self.add_line(col = None, lineType = 'scatter', color = colors[indx], legendName = i,showlegend=showLegend, subplot= subplot, data = trace)
             indx += 1
-
-    def _add_subplot_layer(self):
-        newlayer = self._find_next_layer()
-        self._plots[newlayer] = list()
-        self._update_layout()
-        
-    
-    def _update_layout(self):
-        layoutNum = len(self._plots.keys())
-        offset = 0.05 * (layoutNum-2)  + 0.15 * (layoutNum -2) + 0.1
-
-        layout = {}
-        for num in range(1,layoutNum+1):
-            if num == 1:
-                layout['yaxis'] = dict( domain = [round(offset, 2), 0.85])
-            elif num == 2:
-                offset -= 0.1
-                layout['yaxis2'] = dict( domain = [round(offset, 2), round(offset + 0.1,2)], showticklabels = False )
-            else:
-                offset -= 0.2
-                layout['yaxis' + str(num)] = dict( domain = [round(offset, 2), round(offset + 0.15,2)])
-        
-        self.fig.update_layout(layout)
-
-    def remove_line(self, legendName):
-        """
-        remove the line by the given legendName from the plot
-
-        Parameters
-        ----------
-        legendName : str
-            legend name of the line
-
-        Raises
-        ------
-        ValueError
-            raise when it is trying to remove the default candle plot
-        """
-        default_plot = [self.time_series.symbol, 'volume', 'candleplot']
-        if legendName in default_plot:
-            raise ValueError("Cannot remove default plot")
-
-        try:
-            remove_indx = [i for i in range(len(self.fig.data)) if self.fig.data[i]['name'] == legendName][0]
-            new_data = [self.fig.data[i] for i in range(len(self.fig.data)) if i != remove_indx]
-            self.fig.data = new_data
-            layer_loc = [ix for i, ix in enumerate(self._plots) if legendName in self._plots[ix]][0]
-            if layer_loc in self._plots:
-                if len(self._plots[layer_loc]) == 0:
-                    self._remove_layer(layer_loc)
-        except:
-            print(legendName + ' not exist')
-       
-
-    def _remove_layer(self, layer_loc):
-        deleted_item = self._plots[layer_loc]
-        for i in deleted_item:
-            self.remove_line(i)
-        self._plots.pop(layer_loc)
-        self.fig.layout.pop('yaxis' + layer_loc[1:])
-        self._update_layout()
-
-    def remove_subplot(self, subplotName):
-        """
-        remove subplot from the plot
-
-        Parameters
-        ----------
-        subplotName : str
-            subplot name deleted
-
-        Raises
-        ------
-        ValueError
-            raise when the subplot does not exist
-        """
-        if subplotName not in self._subplots:
-            raise ValueError(subplotName + " does not exist")
-        layer = self._subplots[subplotName]
-        self._remove_layer(layer)
-        self._subplots.pop(subplotName)
 
 
