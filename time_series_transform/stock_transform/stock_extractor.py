@@ -265,7 +265,7 @@ class Portfolio_Extractor(object):
                 stock_data = Stock_Extractor(symbol, self.engine, *self.args, **self.kwargs)
             extract_func = getattr(stock_data,func)
             if len(time_val) >1:
-                stock_data = extract_func(time_val[0], time_val[1])
+                stock_data = extract_func(time_val[0], time_val[1],time_val[2])
             else:
                 stock_data = extract_func(time_val[0])
             
