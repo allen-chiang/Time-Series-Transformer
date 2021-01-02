@@ -839,12 +839,11 @@ def lead_sequence(arr,leadNum,windowSize,fillMissing=np.nan):
     return res
 
 def stack_sequence(arrDict, axis = -1):
-    res = None
+    res = []
     for ix, v in enumerate(arrDict):
-        if ix == 0:
-            res = arrDict[v]
-            continue
-        res = np.stack([res,arrDict[v]],axis = axis )
+        data = np.array(arrDict[v])
+        res.append(data)
+    res = np.stack(res,axis = axis )
     return res
 
 
