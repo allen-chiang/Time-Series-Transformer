@@ -758,8 +758,25 @@ class Time_Series_Transformer(object):
         return False
 
 
+    def _statement_maker(self,tsd,mainCategory):
+        dataCol = list(tsd._get_all_info().keys())
+        timeLength = tsd.time_length
+        statement = "data column\n-----------\n"
+        for i in dataCol:
+            statement += f"{i}\n"
+        statement += f"time length: {str(timeLength)}\n"
+        statement += f"category: {str(mainCategory)}\n\n"
+        return statement
+
+
     def __repr__(self):
-        return super().__repr__()
+        if isinstance(self.time_series_data,Time_Series_Data):
+            return self._statement_maker(self.time_series_data,self.mainCategoryCol)
+        statement = ""
+        for i in self.time_series_data:
+            statement+= self._statement_maker(self.time_series_data[i],i)
+        statement += f"main category column: {self.mainCategoryCol}"
+        return statement
 
 def make_sequence(arr, window,fillMissing=np.nan):
     """
