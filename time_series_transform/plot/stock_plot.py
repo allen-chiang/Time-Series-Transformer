@@ -106,48 +106,6 @@ class StockPlot(plot_base):
                         ]
             )
 
-# ###### macd todo#######
-    # def add_macd(self):
-    #     """
-    #     add the moving average convergence divergence plot
-
-    #     Raises
-    #     ------
-    #     ValueError
-    #         raise exception when the macd is already in the plot
-    #     """
-    #     if 'macd' in list(self._subplots.keys()):
-    #         raise ValueError("macd already exists")
-    #     macd_data = macd(self.data['Close'])
-    #     macd_line_data = {'DIF':macd_data['DIF'], 'DEM':macd_data['DEM'], 'macdBase1': np.zeros(macd_data['DEM'].shape[0])}
-        
-    #     axis_num = self._find_next_layer()
-    #     self._add_subplot_layer()
-    #     self._add_multi_trace(macd_line_data, ['#a0bbe8', '#ff6767', 'grey'], axis_num)
-    #     self.fig.add_trace(dict( x=self.data['Date'], y=macd_data['OSC'],                         
-    #                             showlegend = False,
-    #                             type='bar', yaxis=axis_num, name='osc' ))
-    #     self._plots[axis_num].append('osc')
-    #     self._subplots['macd'] = axis_num
-
-    # def add_stochastic_oscillator(self):
-    #     """
-    #     add the stochastic_oscillator plot
-
-    #     Raises
-    #     ------
-    #     ValueError
-    #         raise exception when the macd is already in the plot
-    #     """
-    #     if 'stochastic_oscillator' in list(self._subplots.keys()):
-    #         raise ValueError("stochastic_oscillator already exists")
-    #     so_data = stochastic_oscillator(self.data['Close'])
-        
-    #     axis_num = self._find_next_layer()
-    #     self._add_subplot_layer()
-    #     self._add_multi_trace(so_data, ['red', 'grey'], axis_num)
-    #     self._subplots['stochastic_oscillator'] = axis_num
-
     def _find_next_layer(self):
         cur_max = 0
         for k in self._plots.keys():

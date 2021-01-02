@@ -106,6 +106,8 @@ class TimeSeriesPlot(plot_base):
         """
         self.create_plot(cols, title = title, lineType='bar')
         return self
+
+
     
 def create_plot(time_series_data, dataCols,title = "", type='scatter', **kwargs):
     """create plot based on the given data columns
