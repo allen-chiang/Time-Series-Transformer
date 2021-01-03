@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 from joblib import dump, load
-
+import copy
 
 class TFRecord_Writer(object):
     def __init__(self,fileName,compression_type = 'GZIP'):
@@ -24,15 +24,20 @@ class TFRecord_Writer(object):
         valueDict = {}
         for i in data:
             if np.ndim(data[i]) > 0:
+                if not isinstance(data[i],np.ndarray):
+                    data[i] = np.array(data[i])
                 self._dtypeDict[i] = ('tensor',data[i].shape)
                 valueDict[i] = _tensor_feature(data[i])
             else:
                 if type(data[i]) is int:
                     self._dtypeDict[i] = ('int',[1])
                     valueDict[i] = _int64_feature(data[i])
-                else:
+                elif type(data[i]) is float:
                     self._dtypeDict[i] = ('float',[1])
                     valueDict[i] = _float_feature(data[i])
+                else:
+                    self._dtypeDict[i] = ('str',[1])
+                    valueDict[i] = _bytes_feature(str.encode(data[i]))                    
         return valueDict
 
     def _tfExample_factory(self,valueDict):
@@ -52,9 +57,8 @@ class TFRecord_Writer(object):
             iteratable data
         """
         with tf.io.TFRecordWriter(self.fileName,self._compression_type) as writer:
-            for X,y in data:
-                X['label'] = y
-                valueDict = self._valueDict_builder(X)
+            for X in data:
+                valueDict = self._valueDict_builder(copy.copy(X))
                 serialized_features_dataset = self._tfExample_factory(valueDict)
                 writer.write(serialized_features_dataset)
 
@@ -120,6 +124,8 @@ class TFRecord_Reader(object):
                 feature_desc[i] = tf.io.FixedLenFeature((), tf.float32)
             elif self._dtypeDict[i][0] == 'int':
                 feature_desc[i] = tf.io.FixedLenFeature((), tf.int64)
+            else:
+                feature_desc[i] = tf.io.FixedLenFeature([], tf.string)
         return feature_desc
 
     def _read_tfrecord(self,serialized_example,feature_desc,dtypeDict,tensor_opt_dtype):
