@@ -49,12 +49,12 @@ class TFRecord_Writer(object):
         """
         write_tfRecord writing tfRecord
         
-        transforming iterator object to tfRecord
+        transforming list of dict object to tfRecord
         
         Parameters
         ----------
-        data : iterable
-            iteratable data
+        data : list of dict
+            list of dict data such as [{'col':1,'col2':"123",'col3':[1,2]}]
         """
         with tf.io.TFRecordWriter(self.fileName,self._compression_type) as writer:
             for X in data:
