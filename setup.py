@@ -28,6 +28,7 @@ setup(
     packages=[
         'time_series_transform',
         'time_series_transform/transform_core_api',
+        'time_series_transform/plot',
         'time_series_transform/stock_transform',
         'time_series_transform/stock_transform/stock_engine',
         'time_series_transform/test',
