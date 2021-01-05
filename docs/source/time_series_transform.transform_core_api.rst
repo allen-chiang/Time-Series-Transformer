@@ -12,10 +12,10 @@ time\_series\_transform.transform\_core\_api.base module
    :undoc-members:
    :show-inheritance:
 
-time\_series\_transform.transform\_core\_api.tensorflow\_adopter module
------------------------------------------------------------------------
+time\_series\_transform.transform\_core\_api.tfDataset\_adopter module
+----------------------------------------------------------------------
 
-.. automodule:: time_series_transform.transform_core_api.tensorflow_adopter
+.. automodule:: time_series_transform.transform_core_api.tfDataset_adopter
    :members:
    :undoc-members:
    :show-inheritance:
@@ -35,7 +35,6 @@ time\_series\_transform.transform\_core\_api.util module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 Module contents
 ---------------

@@ -1,0 +1,790 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>time_series_transform.sklearn.transformer &mdash; Time-Series-Transform 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Time-Series-Transform
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Time Series Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id1">Time_Series_Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#stock-transformer">Stock_Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">time_series_transform API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Time-Series-Transform</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>time_series_transform.sklearn.transformer</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for time_series_transform.sklearn.transformer</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">time_series_transform.io.numpy</span> <span class="kn">import</span> <span class="p">(</span><span class="n">from_numpy</span><span class="p">,</span><span class="n">to_numpy</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">time_series_transform.io.pandas</span> <span class="kn">import</span> <span class="p">(</span><span class="n">from_pandas</span><span class="p">,</span><span class="n">to_pandas</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">time_series_transform.io.parquet</span> <span class="kn">import</span> <span class="p">(</span><span class="n">from_parquet</span><span class="p">,</span> <span class="n">to_parquet</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">time_series_transform.stock_transform.stock_transfromer</span> <span class="kn">import</span> <span class="n">Stock_Transformer</span>
+<span class="kn">from</span> <span class="nn">time_series_transform.transform_core_api.time_series_transformer</span> <span class="kn">import</span> <span class="n">Time_Series_Transformer</span>
+
+
+<div class="viewcode-block" id="Base_Time_Series_Transformer"><a class="viewcode-back" href="../../../time_series_transform.sklearn.html#time_series_transform.sklearn.transformer.Base_Time_Series_Transformer">[docs]</a><span class="k">class</span> <span class="nc">Base_Time_Series_Transformer</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">time_col</span><span class="p">,</span><span class="n">category_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">len_preprocessing</span> <span class="o">=</span> <span class="s1">&#39;ignore&#39;</span><span class="p">,</span><span class="n">remove_time</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">remove_category</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">remove_org_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">cache_data_path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        __init__ Base class for sklearn transformer implmemnting Time_Series_Transformer</span>
+<span class="sd">        </span>
+<span class="sd">        This class prepared the data into Time_Series_Transformer. It can also use parquet</span>
+<span class="sd">        to save data for future transformation. Since transforming time series data is usually</span>
+<span class="sd">        associated with past data, this class cache the past data and check whether it will be used</span>
+<span class="sd">        during transformation</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        time_col : str or int</span>
+<span class="sd">            the index of time series period column</span>
+<span class="sd">        category_col : str or int, optional</span>
+<span class="sd">            category column index, by default None</span>
+<span class="sd">        len_preprocessing : [&#39;ignore&#39;,&#39;pad&#39;,&#39;remove&#39;] , optional</span>
+<span class="sd">            data preprocessing for categories, by default &#39;ignore&#39;</span>
+<span class="sd">        remove_time : bool, optional</span>
+<span class="sd">            whether to remove time column for output, by default True</span>
+<span class="sd">        remove_category : bool, optional</span>
+<span class="sd">            whether to remove category column for output, by default True</span>
+<span class="sd">        remove_org_data : bool, optional</span>
+<span class="sd">            whether to remove orign data for output, by default True</span>
+<span class="sd">        cache_data_path : str, optional</span>
+<span class="sd">            the path to cache data, by default None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_col</span> <span class="o">=</span> <span class="n">time_col</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">category_col</span> <span class="o">=</span> <span class="n">category_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_series_cache</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">len_preprocessing</span> <span class="o">=</span> <span class="n">len_preprocessing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_time</span> <span class="o">=</span> <span class="n">remove_time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache_data_path</span> <span class="o">=</span> <span class="n">cache_data_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_org_data</span> <span class="o">=</span> <span class="n">remove_org_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_category</span> <span class="o">=</span> <span class="n">remove_category</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_series_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">category_cache</span><span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_cache_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">time_series_data</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">to_parquet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_data_path</span><span class="p">,</span><span class="n">time_series_data</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_to_time_series_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">X</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">time_series_cache</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">time_col</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">time_series_data</span> <span class="o">=</span> <span class="n">from_pandas</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">time_col</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">category_col</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">category_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">category_cache</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">category_col</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">time_series_cache</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span><span class="bp">self</span><span class="o">.</span><span class="n">time_col</span><span class="p">])</span>
+            <span class="n">time_series_data</span> <span class="o">=</span> <span class="n">from_numpy</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">time_col</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">category_col</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">category_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">category_cache</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span><span class="bp">self</span><span class="o">.</span><span class="n">category_col</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">time_series_data</span>
+
+    <span class="k">def</span> <span class="nf">_check_time_not_exist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">timeList</span><span class="p">,</span><span class="n">categoryList</span><span class="p">):</span>
+        <span class="n">checkedList</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">categoryList</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">timeList</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_series_cache</span><span class="p">:</span>
+                    <span class="n">checkedList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="k">continue</span>
+                <span class="n">checkedList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tmpDict</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">t</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">category_cache</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">time_series_cache</span><span class="p">):</span>
+                <span class="n">tmpDict</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">t</span><span class="p">,</span><span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">timeList</span><span class="p">,</span><span class="n">categoryList</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">t</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tmpDict</span><span class="p">[</span><span class="n">c</span><span class="p">]:</span>
+                    <span class="n">checkedList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="k">continue</span>
+                <span class="n">checkedList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">checkedList</span>
+
+<div class="viewcode-block" id="Base_Time_Series_Transformer.fit"><a class="viewcode-back" href="../../../time_series_transform.sklearn.html#time_series_transform.sklearn.transformer.Base_Time_Series_Transformer.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        fit train model</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : pandas DataFrame or numpy ndArray</span>
+<span class="sd">            input values</span>
+<span class="sd">        y : depreciated not used, optional</span>
+<span class="sd">            following sklearn convention (not used), by default None</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">time_series_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_time_series_data</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_data_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cache_data</span><span class="p">(</span><span class="n">time_series_data</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_series_data</span> <span class="o">=</span> <span class="n">time_series_data</span>
+        <span class="k">return</span> <span class="bp">self</span> </div>
+
+
+<div class="viewcode-block" id="Base_Time_Series_Transformer.transform"><a class="viewcode-back" href="../../../time_series_transform.sklearn.html#time_series_transform.sklearn.transformer.Base_Time_Series_Transformer.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        transform prepare the data as Time_Series_Transformer and other helper data</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : pandas DataFrame or numpy ndArray</span>
+<span class="sd">            input values</span>
+<span class="sd">        y : depreciated not used, optional</span>
+<span class="sd">            following sklearn convention (not used), by default None</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tst Time_Series_Transformer</span>
+<span class="sd">            the output Time_Series_Transformer</span>
+<span class="sd">        X_time list</span>
+<span class="sd">            time column list</span>
+<span class="sd">        X_header list</span>
+<span class="sd">            column name list</span>
+<span class="sd">        X_category list</span>
+<span class="sd">            category name list</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">X_category</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_data_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_data_path</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">to_pandas</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_series_data</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+        <span class="n">X_time</span><span class="p">,</span> <span class="n">X_category</span><span class="p">,</span> <span class="n">X_header</span><span class="p">,</span><span class="n">new_df</span><span class="p">,</span><span class="n">check_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prep_transform_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X_category</span><span class="p">)</span>   
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">new_df</span><span class="p">),</span><span class="n">ignore_index</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">tst</span> <span class="o">=</span> <span class="n">Time_Series_Transformer</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span>
+            <span class="n">df</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">time_col</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">category_col</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">category_col</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">tst</span><span class="p">,</span><span class="n">X_time</span><span class="p">,</span><span class="n">X_header</span><span class="p">,</span><span class="kc">None</span>
+        <span class="k">return</span> <span class="n">tst</span><span class="p">,</span><span class="n">X_time</span><span class="p">,</span><span class="n">X_header</span><span class="p">,</span><span class="n">X_category</span></div>
+
+    <span class="k">def</span> <span class="nf">_prep_transform_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">X_category</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="n">X_time</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">time_col</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">category_col</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">X_header</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_col</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">X_header</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_col</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">category_col</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                <span class="n">X_category</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">category_col</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">check_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_time_not_exist</span><span class="p">(</span><span class="n">X_time</span><span class="p">,</span><span class="n">X_category</span><span class="p">)</span>
+            <span class="n">new_df</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">check_list</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">X_time</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span><span class="bp">self</span><span class="o">.</span><span class="n">time_col</span><span class="p">])</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">category_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">X_category</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span><span class="bp">self</span><span class="o">.</span><span class="n">category_col</span><span class="p">])</span>
+            <span class="n">X_header</span><span class="o">=</span><span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_col</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">category_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">category_col</span><span class="p">):</span>
+                            <span class="k">continue</span>
+                    <span class="n">X_header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>   
+            <span class="n">check_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_time_not_exist</span><span class="p">(</span><span class="n">X_time</span><span class="p">,</span><span class="n">X_category</span><span class="p">)</span>
+            <span class="n">new_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">check_list</span><span class="p">,:])</span>
+        <span class="k">return</span> <span class="n">X_time</span><span class="p">,</span> <span class="n">X_category</span><span class="p">,</span> <span class="n">X_header</span><span class="p">,</span><span class="n">new_df</span><span class="p">,</span> <span class="n">check_list</span>
+
+    <span class="k">def</span> <span class="nf">_transform_output_wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">df</span><span class="p">,</span><span class="n">X_category</span><span class="p">,</span><span class="n">X_time</span><span class="p">,</span><span class="n">X_header</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        _transform_output_wrapper the helper function for transformed data output</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        df : pandas dataFrame</span>
+<span class="sd">            transformerd data</span>
+<span class="sd">        X_time list</span>
+<span class="sd">            time column list</span>
+<span class="sd">        X_header list</span>
+<span class="sd">            column name list</span>
+<span class="sd">        X_category list</span>
+<span class="sd">            category name list</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        [type]</span>
+<span class="sd">            [description]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">X_category</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">time_col</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">X_time</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tmpdf</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">tmpDict</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">ix</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X_time</span><span class="p">,</span><span class="n">X_category</span><span class="p">):</span>
+                <span class="n">tmpDict</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tmpDict</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">tmpdf</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">tmpdf</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">category_col</span><span class="p">]</span><span class="o">==</span><span class="n">i</span><span class="p">][</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">time_col</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">tmpDict</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span>
+                    <span class="k">continue</span>
+                <span class="n">tmpdf</span> <span class="o">=</span> <span class="n">tmpdf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">category_col</span><span class="p">]</span><span class="o">==</span><span class="n">i</span><span class="p">][</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">time_col</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">tmpDict</span><span class="p">[</span><span class="n">i</span><span class="p">])])</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">tmpdf</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">remove_category</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">category_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">category_col</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">remove_time</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_col</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">remove_org_data</span><span class="p">:</span>
+            <span class="n">df</span><span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">X_header</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">values</span>        
+
+<div class="viewcode-block" id="Base_Time_Series_Transformer.get_time_series_index_cache"><a class="viewcode-back" href="../../../time_series_transform.sklearn.html#time_series_transform.sklearn.transformer.Base_Time_Series_Transformer.get_time_series_index_cache">[docs]</a>    <span class="k">def</span> <span class="nf">get_time_series_index_cache</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get_time_series_index_cache the fitted time series index</span>
+<span class="sd">        help to see when is the latest timestamp of the model</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            cached time series index</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_series_cache</span></div></div>
+
+
+<div class="viewcode-block" id="Lag_Transformer"><a class="viewcode-back" href="../../../time_series_transform.sklearn.html#time_series_transform.sklearn.transformer.Lag_Transformer">[docs]</a><span class="k">class</span> <span class="nc">Lag_Transformer</span><span class="p">(</span><span class="n">Base_Time_Series_Transformer</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="n">lag_nums</span><span class="p">,</span>
+                <span class="n">time_col</span><span class="p">,</span>
+                <span class="n">category_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">remove_time</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="n">remove_category</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">remove_org_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">cache_data_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        __init__ Transform input data into series of lag data</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        lag_nums : int or list of int</span>
+<span class="sd">            lag period numbers</span>
+<span class="sd">        time_col : str or int</span>
+<span class="sd">            the index of time series period column</span>
+<span class="sd">        category_col : str or int, optional</span>
+<span class="sd">            category column index, by default None</span>
+<span class="sd">        len_preprocessing : [&#39;ignore&#39;,&#39;pad&#39;,&#39;remove&#39;] , optional</span>
+<span class="sd">            data preprocessing for categories, by default &#39;ignore&#39;</span>
+<span class="sd">        remove_time : bool, optional</span>
+<span class="sd">            whether to remove time column for output, by default True</span>
+<span class="sd">        remove_category : bool, optional</span>
+<span class="sd">            whether to remove category column for output, by default True</span>
+<span class="sd">        remove_org_data : bool, optional</span>
+<span class="sd">            whether to remove orign data for output, by default True</span>
+<span class="sd">        cache_data_path : str, optional</span>
+<span class="sd">            the path to cache data, by default None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">time_col</span><span class="p">,</span><span class="n">category_col</span><span class="p">,</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span><span class="n">remove_time</span><span class="p">,</span><span class="n">remove_category</span><span class="p">,</span><span class="n">remove_org_data</span><span class="p">,</span><span class="n">cache_data_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lag_nums</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lag_nums</span> <span class="o">=</span> <span class="p">[</span><span class="n">lag_nums</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lag_nums</span> <span class="o">=</span> <span class="n">lag_nums</span>
+
+<div class="viewcode-block" id="Lag_Transformer.fit"><a class="viewcode-back" href="../../../time_series_transform.sklearn.html#time_series_transform.sklearn.transformer.Lag_Transformer.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        fit train model</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : pandas DataFrame or numpy ndArray</span>
+<span class="sd">            input values</span>
+<span class="sd">        y : depreciated not used, optional</span>
+<span class="sd">            following sklearn convention (not used), by default None</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Lag_Transformer.transform"><a class="viewcode-back" href="../../../time_series_transform.sklearn.html#time_series_transform.sklearn.transformer.Lag_Transformer.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        transform transforming lag data</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : pandas DataFrame or numpy ndArray</span>
+<span class="sd">            input values</span>
+<span class="sd">        y : depreciated not used, optional</span>
+<span class="sd">            following sklearn convention (not used), by default None</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy ndArray</span>
+<span class="sd">            transformed data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tst</span><span class="p">,</span><span class="n">X_time</span><span class="p">,</span><span class="n">X_header</span><span class="p">,</span><span class="n">X_category</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lag_nums</span><span class="p">:</span>
+            <span class="n">tst</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">make_lag</span><span class="p">(</span><span class="n">X_header</span><span class="p">,</span><span class="n">lagNum</span><span class="o">=</span><span class="n">i</span><span class="p">,</span><span class="n">suffix</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_output_wrapper</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">X_category</span><span class="p">,</span><span class="n">X_time</span><span class="p">,</span><span class="n">X_header</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Function_Transformer"><a class="viewcode-back" href="../../../time_series_transform.sklearn.html#time_series_transform.sklearn.transformer.Function_Transformer">[docs]</a><span class="k">class</span> <span class="nc">Function_Transformer</span><span class="p">(</span><span class="n">Base_Time_Series_Transformer</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="n">func</span><span class="p">,</span>
+                <span class="n">inputLabels</span><span class="p">,</span>
+                <span class="n">time_col</span><span class="p">,</span>
+                <span class="n">category_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">remove_time</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="n">remove_category</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">remove_org_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">cache_data_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">parameterDict</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        __init__ Function Transformer provides an implmentation for custom functions</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        func : function</span>
+<span class="sd">            the data manipulation function</span>
+<span class="sd">        inputLabels : str, numeric data or list of data or numeric data</span>
+<span class="sd">            the input data columns passing to function</span>
+<span class="sd">        time_col : str or int</span>
+<span class="sd">            the index of time series period column</span>
+<span class="sd">        category_col : str or int, optional</span>
+<span class="sd">            category column index, by default None</span>
+<span class="sd">        len_preprocessing : [&#39;ignore&#39;,&#39;pad&#39;,&#39;remove&#39;] , optional</span>
+<span class="sd">            data preprocessing for categories, by default &#39;ignore&#39;</span>
+<span class="sd">        remove_time : bool, optional</span>
+<span class="sd">            whether to remove time column for output, by default True</span>
+<span class="sd">        remove_category : bool, optional</span>
+<span class="sd">            whether to remove category column for output, by default True</span>
+<span class="sd">        remove_org_data : bool, optional</span>
+<span class="sd">            whether to remove orign data for output, by default True</span>
+<span class="sd">        cache_data_path : str, optional</span>
+<span class="sd">            the path to cache data, by default None</span>
+<span class="sd">        parameterDict : dict, optional</span>
+<span class="sd">            input parameters, by default {}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">time_col</span><span class="p">,</span><span class="n">category_col</span><span class="p">,</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span><span class="n">remove_time</span><span class="p">,</span><span class="n">remove_category</span><span class="p">,</span><span class="n">remove_org_data</span><span class="p">,</span><span class="n">cache_data_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameterDict</span> <span class="o">=</span> <span class="n">parameterDict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameterDict</span><span class="p">[</span><span class="s1">&#39;func&#39;</span><span class="p">]</span><span class="o">=</span> <span class="n">func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameterDict</span><span class="p">[</span><span class="s1">&#39;inputLabels&#39;</span><span class="p">]</span><span class="o">=</span> <span class="n">inputLabels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameterDict</span><span class="p">[</span><span class="s1">&#39;newName&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;newName&#39;</span>
+        
+<div class="viewcode-block" id="Function_Transformer.fit"><a class="viewcode-back" href="../../../time_series_transform.sklearn.html#time_series_transform.sklearn.transformer.Function_Transformer.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        fit train model</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : pandas DataFrame or numpy ndArray</span>
+<span class="sd">            input values</span>
+<span class="sd">        y : depreciated not used, optional</span>
+<span class="sd">            following sklearn convention (not used), by default None</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Function_Transformer.transform"><a class="viewcode-back" href="../../../time_series_transform.sklearn.html#time_series_transform.sklearn.transformer.Function_Transformer.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        transform transforming data</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : pandas DataFrame or numpy ndArray</span>
+<span class="sd">            input values</span>
+<span class="sd">        y : depreciated not used, optional</span>
+<span class="sd">            following sklearn convention (not used), by default None</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy ndArray</span>
+<span class="sd">            transformed data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tst</span><span class="p">,</span><span class="n">X_time</span><span class="p">,</span><span class="n">X_header</span><span class="p">,</span><span class="n">X_category</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">tst</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">parameterDict</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_output_wrapper</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">X_category</span><span class="p">,</span><span class="n">X_time</span><span class="p">,</span><span class="n">X_header</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Base_Stock_Time_Series_Transform"><a class="viewcode-back" href="../../../time_series_transform.sklearn.html#time_series_transform.sklearn.transformer.Base_Stock_Time_Series_Transform">[docs]</a><span class="k">class</span> <span class="nc">Base_Stock_Time_Series_Transform</span><span class="p">(</span><span class="n">Base_Time_Series_Transformer</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="n">time_col</span><span class="p">,</span>
+                <span class="n">category_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">len_preprocessing</span> <span class="o">=</span> <span class="s1">&#39;ignore&#39;</span><span class="p">,</span>
+                <span class="n">remove_time</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">remove_category</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">remove_org_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">cache_data_path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">High</span><span class="o">=</span><span class="s1">&#39;High&#39;</span><span class="p">,</span>
+                <span class="n">Low</span><span class="o">=</span><span class="s1">&#39;Low&#39;</span><span class="p">,</span>
+                <span class="n">Close</span><span class="o">=</span><span class="s1">&#39;Close&#39;</span><span class="p">,</span>
+                <span class="n">Open</span><span class="o">=</span><span class="s1">&#39;Open&#39;</span><span class="p">,</span>
+                <span class="n">Volume</span><span class="o">=</span><span class="s1">&#39;Volume&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        __init__ The base class implmenting Stock_Transformer</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        time_col : str or int</span>
+<span class="sd">            the index of time series period column</span>
+<span class="sd">        category_col : str or int, optional</span>
+<span class="sd">            category column index, by default None</span>
+<span class="sd">        len_preprocessing : [&#39;ignore&#39;,&#39;pad&#39;,&#39;remove&#39;] , optional</span>
+<span class="sd">            data preprocessing for categories, by default &#39;ignore&#39;</span>
+<span class="sd">        remove_time : bool, optional</span>
+<span class="sd">            whether to remove time column for output, by default True</span>
+<span class="sd">        remove_category : bool, optional</span>
+<span class="sd">            whether to remove category column for output, by default True</span>
+<span class="sd">        remove_org_data : bool, optional</span>
+<span class="sd">            whether to remove orign data for output, by default True</span>
+<span class="sd">        cache_data_path : str, optional</span>
+<span class="sd">            the path to cache data, by default None</span>
+<span class="sd">        High : str or int, optional</span>
+<span class="sd">            the index or name for High, by default &#39;High&#39;</span>
+<span class="sd">        Low : str or int, optional</span>
+<span class="sd">            the index or name for Low, by default &#39;Low&#39;</span>
+<span class="sd">        Close : str or int, optional</span>
+<span class="sd">            the index or name for Close, by default &#39;Close&#39;</span>
+<span class="sd">        Open : str or int, optional</span>
+<span class="sd">            the index or name for Open, by default &#39;Open&#39;</span>
+<span class="sd">        Volume : str or int, optional</span>
+<span class="sd">            the index or name for Volume, by default &#39;Volume&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">time_col</span><span class="p">,</span><span class="n">category_col</span><span class="p">,</span><span class="n">len_preprocessing</span><span class="p">,</span><span class="n">remove_time</span><span class="p">,</span><span class="n">remove_category</span><span class="p">,</span><span class="n">remove_org_data</span><span class="p">,</span><span class="n">cache_data_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">high</span> <span class="o">=</span> <span class="n">High</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">low</span> <span class="o">=</span> <span class="n">Low</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">open</span> <span class="o">=</span> <span class="n">Open</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span> <span class="o">=</span> <span class="n">Close</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">=</span> <span class="n">Volume</span>
+
+
+<div class="viewcode-block" id="Base_Stock_Time_Series_Transform.transform"><a class="viewcode-back" href="../../../time_series_transform.sklearn.html#time_series_transform.sklearn.transformer.Base_Stock_Time_Series_Transform.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        transform prepare data as Stock_Transformer and helper data</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : pandas DataFrame or numpy ndArray</span>
+<span class="sd">            input values</span>
+<span class="sd">        y : depreciated not used, optional</span>
+<span class="sd">            following sklearn convention (not used), by default None</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tst Stock_Transformer</span>
+<span class="sd">            the output Stock_Transformer</span>
+<span class="sd">        X_time list</span>
+<span class="sd">            time column list</span>
+<span class="sd">        X_header list</span>
+<span class="sd">            column name list</span>
+<span class="sd">        X_category list</span>
+<span class="sd">            category name list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tst</span><span class="p">,</span><span class="n">X_time</span><span class="p">,</span><span class="n">X_header</span><span class="p">,</span><span class="n">X_category</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">tst</span> <span class="o">=</span> <span class="n">Stock_Transformer</span><span class="o">.</span><span class="n">from_time_series_transformer</span><span class="p">(</span>
+            <span class="n">tst</span><span class="p">,</span>
+            <span class="n">High</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="p">,</span>
+            <span class="n">Low</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="p">,</span>
+            <span class="n">Close</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">,</span>
+            <span class="n">Open</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">,</span>
+            <span class="n">Volume</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume</span>
+            <span class="p">)</span>        
+        <span class="k">return</span> <span class="n">tst</span><span class="p">,</span> <span class="n">X_time</span><span class="p">,</span><span class="n">X_header</span><span class="p">,</span><span class="n">X_category</span></div></div>
+
+
+
+<div class="viewcode-block" id="Stock_Technical_Indicator_Transformer"><a class="viewcode-back" href="../../../time_series_transform.sklearn.html#time_series_transform.sklearn.transformer.Stock_Technical_Indicator_Transformer">[docs]</a><span class="k">class</span> <span class="nc">Stock_Technical_Indicator_Transformer</span><span class="p">(</span><span class="n">Base_Stock_Time_Series_Transform</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="n">strategy</span><span class="p">,</span>
+                <span class="n">time_col</span><span class="p">,</span>
+                <span class="n">symbol_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">remove_time</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="n">remove_category</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">remove_org_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">cache_data_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">High</span><span class="o">=</span><span class="s1">&#39;High&#39;</span><span class="p">,</span>
+                <span class="n">Low</span><span class="o">=</span><span class="s1">&#39;Low&#39;</span><span class="p">,</span>
+                <span class="n">Close</span><span class="o">=</span><span class="s1">&#39;Close&#39;</span><span class="p">,</span>
+                <span class="n">Open</span><span class="o">=</span><span class="s1">&#39;Open&#39;</span><span class="p">,</span>
+                <span class="n">Volume</span><span class="o">=</span><span class="s1">&#39;Volume&#39;</span><span class="p">,</span>
+                <span class="n">n_jobs</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="n">verbose</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;loky&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        __init__ transforming data into techinical indicator through pandas-ta api</span>
+<span class="sd">        </span>
+<span class="sd">        Note: when using this transformer in pipeline, it is important to understand whether</span>
+<span class="sd">        the input data is numpy or pandas dataFrame. Open, Close, High, Low, and Volume column index</span>
+<span class="sd">        must match with input sources.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        strategy : Strategy</span>
+<span class="sd">            pandas-ta strategy</span>
+<span class="sd">        time_col : str</span>
+<span class="sd">            the name of time_col</span>
+<span class="sd">        symbolIx : str or int</span>
+<span class="sd">            the symbol column index of the data</span>
+<span class="sd">        remove_time : bool, optional</span>
+<span class="sd">            [description], by default True</span>
+<span class="sd">        remove_category : bool, optional</span>
+<span class="sd">            [description], by default True</span>
+<span class="sd">        remove_org_data : bool, optional</span>
+<span class="sd">            [description], by default True</span>
+<span class="sd">        cache_data_path : [type], optional</span>
+<span class="sd">            [description], by default None</span>
+<span class="sd">        High : str or int, optional</span>
+<span class="sd">            the index or name for High, by default &#39;High&#39;</span>
+<span class="sd">        Low : str or int, optional</span>
+<span class="sd">            the index or name for Low, by default &#39;Low&#39;</span>
+<span class="sd">        Close : str or int, optional</span>
+<span class="sd">            the index or name for Close, by default &#39;Close&#39;</span>
+<span class="sd">        Open : str or int, optional</span>
+<span class="sd">            the index or name for Open, by default &#39;Open&#39;</span>
+<span class="sd">        Volume : str or int, optional</span>
+<span class="sd">            the index or name for Volume, by default &#39;Volume&#39;</span>
+<span class="sd">        n_jobs : int, optional</span>
+<span class="sd">            number of processes (joblib), by default 1</span>
+<span class="sd">        verbose : int, optional</span>
+<span class="sd">            log level (joblib), by default 0</span>
+<span class="sd">        backend : str, optional</span>
+<span class="sd">            backend type (joblib), by default &#39;loky&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">time_col</span><span class="p">,</span><span class="n">symbol_col</span><span class="p">,</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span><span class="n">remove_time</span><span class="p">,</span><span class="n">remove_category</span><span class="p">,</span><span class="n">remove_org_data</span><span class="p">,</span><span class="n">cache_data_path</span><span class="p">,</span><span class="n">High</span><span class="p">,</span><span class="n">Low</span><span class="p">,</span><span class="n">Close</span><span class="p">,</span><span class="n">Open</span><span class="p">,</span><span class="n">Volume</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span> <span class="o">=</span> <span class="n">strategy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span> <span class="o">=</span> <span class="n">n_jobs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">backend</span>
+
+<div class="viewcode-block" id="Stock_Technical_Indicator_Transformer.fit"><a class="viewcode-back" href="../../../time_series_transform.sklearn.html#time_series_transform.sklearn.transformer.Stock_Technical_Indicator_Transformer.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        fit train model</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : pandas DataFrame or numpy ndArray</span>
+<span class="sd">            input values</span>
+<span class="sd">        y : depreciated not used, optional</span>
+<span class="sd">            following sklearn convention (not used), by default None</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Stock_Technical_Indicator_Transformer.transform"><a class="viewcode-back" href="../../../time_series_transform.sklearn.html#time_series_transform.sklearn.transformer.Stock_Technical_Indicator_Transformer.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        transform transforming data according to the strategy</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : pandas DataFrame or numpy ndArray</span>
+<span class="sd">            input values</span>
+<span class="sd">        y : depreciated not used, optional</span>
+<span class="sd">            following sklearn convention (not used), by default None</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy ndArray</span>
+<span class="sd">            transformed data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tst</span><span class="p">,</span> <span class="n">X_time</span><span class="p">,</span><span class="n">X_header</span><span class="p">,</span><span class="n">X_category</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">tst</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">get_technial_indicator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">strategy</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_output_wrapper</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">X_category</span><span class="p">,</span><span class="n">X_time</span><span class="p">,</span><span class="n">X_header</span><span class="p">)</span></div></div>
+
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Chiang.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

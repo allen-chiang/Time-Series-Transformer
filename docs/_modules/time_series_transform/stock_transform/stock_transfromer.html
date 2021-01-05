@@ -1,0 +1,684 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>time_series_transform.stock_transform.stock_transfromer &mdash; Time-Series-Transform 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Time-Series-Transform
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Time Series Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id1">Time_Series_Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#stock-transformer">Stock_Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">time_series_transform API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Time-Series-Transform</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>time_series_transform.stock_transform.stock_transfromer</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for time_series_transform.stock_transform.stock_transfromer</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">from</span> <span class="nn">time_series_transform</span> <span class="kn">import</span> <span class="n">io</span>
+<span class="kn">from</span> <span class="nn">time_series_transform.stock_transform.base</span> <span class="kn">import</span> <span class="n">Stock</span><span class="p">,</span> <span class="n">Portfolio</span>
+<span class="kn">from</span> <span class="nn">time_series_transform.transform_core_api.time_series_transformer</span> <span class="kn">import</span> <span class="n">Time_Series_Transformer</span>
+<span class="kn">from</span> <span class="nn">time_series_transform.transform_core_api.base</span> <span class="kn">import</span> <span class="n">Time_Series_Data</span><span class="p">,</span><span class="n">Time_Series_Data_Collection</span>
+<span class="kn">from</span> <span class="nn">time_series_transform.stock_transform.stock_extractor</span> <span class="kn">import</span> <span class="n">Stock_Extractor</span><span class="p">,</span> <span class="n">Portfolio_Extractor</span>
+<span class="kn">from</span> <span class="nn">time_series_transform.plot</span> <span class="kn">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="Stock_Transformer"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.Stock_Transformer">[docs]</a><span class="k">class</span> <span class="nc">Stock_Transformer</span><span class="p">(</span><span class="n">Time_Series_Transformer</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">time_series_data</span><span class="p">,</span><span class="n">time_seriesIx</span><span class="p">,</span><span class="n">symbolIx</span><span class="p">,</span><span class="n">symbolName</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">High</span><span class="o">=</span><span class="s1">&#39;High&#39;</span><span class="p">,</span><span class="n">Low</span><span class="o">=</span><span class="s1">&#39;Low&#39;</span><span class="p">,</span><span class="n">Close</span><span class="o">=</span><span class="s1">&#39;Close&#39;</span><span class="p">,</span><span class="n">Open</span><span class="o">=</span><span class="s1">&#39;Open&#39;</span><span class="p">,</span><span class="n">Volume</span><span class="o">=</span><span class="s1">&#39;Volume&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stock_Transformer the class for Stock and Portfolio data manipulation</span>
+<span class="sd">        </span>
+<span class="sd">        This class inhereite from Time_Series_Transform.</span>
+<span class="sd">        it can perform different data manipulation: making lag data,</span>
+<span class="sd">        lead data, lag sequence data, making technical indicator through pandas-ta api, </span>
+<span class="sd">        or do a customize data manipulation.</span>
+<span class="sd">        It also built in native plot and io functions. IO function currently</span>
+<span class="sd">        support pandas DataFrame, numpy ndArray, apache arrow table , apache feather,</span>
+<span class="sd">        and apache parquet. Besides these io, it currently support fetching data from</span>
+<span class="sd">        yahoo finance and investment.com data through yfinance and investpy api.</span>
+
+<span class="sd">        yfinance: https://github.com/ranaroussi/yfinance</span>
+<span class="sd">        investpy: https://github.com/alvarobartt/investpy</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        time_series_data : dict of list, Stock, or Portfolio</span>
+<span class="sd">            the value of data.</span>
+<span class="sd">        time_seriesIx : str</span>
+<span class="sd">            the name of time_seriesIx</span>
+<span class="sd">        symbolIx : str or int</span>
+<span class="sd">            the symbol column index of the data</span>
+<span class="sd">        symbolName : str, optional</span>
+<span class="sd">            tiker name used only when there is single stock, by default None</span>
+<span class="sd">        High : str or int, optional</span>
+<span class="sd">            the index or name for High, by default &#39;High&#39;</span>
+<span class="sd">        Low : str or int, optional</span>
+<span class="sd">            the index or name for Low, by default &#39;Low&#39;</span>
+<span class="sd">        Close : str or int, optional</span>
+<span class="sd">            the index or name for Close, by default &#39;Close&#39;</span>
+<span class="sd">        Open : str or int, optional</span>
+<span class="sd">            the index or name for Open, by default &#39;Open&#39;</span>
+<span class="sd">        Volume : str or int, optional</span>
+<span class="sd">            the index or name for Volume, by default &#39;Volume&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">time_series_data</span><span class="p">,</span><span class="n">time_seriesIx</span><span class="p">,</span> <span class="n">symbolIx</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time_series_data</span><span class="p">,</span> <span class="p">(</span><span class="n">Stock</span><span class="p">,</span><span class="n">Portfolio</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">time_series_data</span> <span class="o">=</span><span class="n">_time_series_data_to_stock_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_series_data</span><span class="p">,</span><span class="n">symbolName</span><span class="p">,</span><span class="n">High</span><span class="p">,</span><span class="n">Low</span><span class="p">,</span><span class="n">Close</span><span class="p">,</span><span class="n">Open</span><span class="p">,</span><span class="n">Volume</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot</span> <span class="o">=</span> <span class="n">StockPlot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_series_data</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Stock_Transformer.from_stock_engine_period"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.Stock_Transformer.from_stock_engine_period">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_stock_engine_period</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">symbols</span><span class="p">,</span><span class="n">period</span><span class="p">,</span><span class="n">engine</span><span class="p">,</span><span class="n">n_threads</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        from_stock_engine_period fetching data from online</span>
+<span class="sd">        </span>
+<span class="sd">        the current engine support yfinance and investpy</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        symbols : str or list</span>
+<span class="sd">            ticker name</span>
+<span class="sd">        period : str</span>
+<span class="sd">            period of the data</span>
+<span class="sd">            for example, 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max </span>
+<span class="sd">        engine : [&#39;yahoo&#39;,&#39;investing&#39;]</span>
+<span class="sd">            fetching api</span>
+<span class="sd">        n_threads : int, optional</span>
+<span class="sd">            multi-thread fetching support only when symbols is a list, by default 8</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Stock_Transformer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">symbols</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+            <span class="n">se</span> <span class="o">=</span> <span class="n">Portfolio_Extractor</span><span class="p">(</span><span class="n">symbols</span><span class="p">,</span><span class="n">engine</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">se</span><span class="o">.</span><span class="n">get_period</span><span class="p">(</span><span class="n">period</span><span class="p">,</span><span class="n">n_threads</span> <span class="o">=</span> <span class="n">n_threads</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="s1">&#39;symbol&#39;</span><span class="p">)</span>
+        <span class="n">se</span> <span class="o">=</span> <span class="n">Stock_Extractor</span><span class="p">(</span><span class="n">symbols</span><span class="p">,</span><span class="n">engine</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">se</span><span class="o">.</span><span class="n">get_period</span><span class="p">(</span><span class="n">period</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="n">symbols</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Stock_Transformer.from_stock_engine_date"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.Stock_Transformer.from_stock_engine_date">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_stock_engine_date</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">symbols</span><span class="p">,</span><span class="n">start_date</span><span class="p">,</span><span class="n">end_date</span><span class="p">,</span><span class="n">engine</span><span class="p">,</span><span class="n">n_threads</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        from_stock_engine_date [summary]</span>
+<span class="sd">        </span>
+<span class="sd">        [extended_summary]</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        symbols : str or list</span>
+<span class="sd">            ticker name</span>
+<span class="sd">        start_date : str</span>
+<span class="sd">            start of the data</span>
+<span class="sd">            format: &quot;%Y-%m-%d&quot;, eg &quot;2020-02-20&quot;</span>
+<span class="sd">        end_date : str</span>
+<span class="sd">            end of the data</span>
+<span class="sd">            format: &quot;%Y-%m-%d&quot;, eg &quot;2020-02-20&quot;</span>
+<span class="sd">        engine : [&#39;yahoo&#39;,&#39;investing&#39;]</span>
+<span class="sd">            fetching api</span>
+<span class="sd">        n_threads : int, optional</span>
+<span class="sd">            multi-thread fetching support only when symbols is a list, by default 8</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Stock_Transformer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">symbols</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+            <span class="n">se</span> <span class="o">=</span> <span class="n">Portfolio_Extractor</span><span class="p">(</span><span class="n">symbols</span><span class="p">,</span><span class="n">engine</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">se</span><span class="o">.</span><span class="n">get_date</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span><span class="n">end_date</span><span class="p">,</span><span class="n">n_threads</span> <span class="o">=</span> <span class="n">n_threads</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="s1">&#39;symbol&#39;</span><span class="p">)</span>
+        <span class="n">se</span> <span class="o">=</span> <span class="n">Stock_Extractor</span><span class="p">(</span><span class="n">symbols</span><span class="p">,</span><span class="n">engine</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">se</span><span class="o">.</span><span class="n">get_date</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span><span class="n">end_date</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="n">symbols</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Stock_Transformer.from_stock_engine_intraday"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.Stock_Transformer.from_stock_engine_intraday">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_stock_engine_intraday</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">symbols</span><span class="p">,</span><span class="n">start_date</span><span class="p">,</span><span class="n">end_date</span><span class="p">,</span><span class="n">engine</span><span class="o">=</span><span class="s1">&#39;yahoo&#39;</span><span class="p">,</span> <span class="n">interval</span> <span class="o">=</span> <span class="s1">&#39;1m&#39;</span><span class="p">,</span><span class="n">n_threads</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">symbols</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+            <span class="n">se</span> <span class="o">=</span> <span class="n">Portfolio_Extractor</span><span class="p">(</span><span class="n">symbols</span><span class="p">,</span><span class="n">engine</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">se</span><span class="o">.</span><span class="n">get_intra_day</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span><span class="n">end_date</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="n">interval</span><span class="p">,</span><span class="n">n_threads</span> <span class="o">=</span> <span class="n">n_threads</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="s1">&#39;Datetime&#39;</span><span class="p">,</span><span class="s1">&#39;symbol&#39;</span><span class="p">)</span>
+        <span class="n">se</span> <span class="o">=</span> <span class="n">Stock_Extractor</span><span class="p">(</span><span class="n">symbols</span><span class="p">,</span><span class="n">engine</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">se</span><span class="o">.</span><span class="n">get_intra_day</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span><span class="n">end_date</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="n">interval</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="s1">&#39;Datetime&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="n">symbols</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Stock_Transformer.from_pandas"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.Stock_Transformer.from_pandas">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_pandas</span><span class="p">(</span>
+                <span class="bp">cls</span><span class="p">,</span> 
+                <span class="n">pandasFrame</span><span class="p">,</span>
+                <span class="n">timeSeriesCol</span><span class="p">,</span>
+                <span class="n">mainCategoryCol</span><span class="p">,</span>
+                <span class="n">symbolName</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">High</span><span class="o">=</span><span class="s1">&#39;High&#39;</span><span class="p">,</span>
+                <span class="n">Low</span><span class="o">=</span><span class="s1">&#39;Low&#39;</span><span class="p">,</span>
+                <span class="n">Close</span><span class="o">=</span><span class="s1">&#39;Close&#39;</span><span class="p">,</span>
+                <span class="n">Open</span><span class="o">=</span><span class="s1">&#39;Open&#39;</span><span class="p">,</span>
+                <span class="n">Volume</span><span class="o">=</span><span class="s1">&#39;Volume&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        from_pandas</span>
+<span class="sd">        </span>
+<span class="sd">        from_pandas import data from pandas dataFrame</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pandasFrame : pandas DataFrame</span>
+<span class="sd">            input data</span>
+<span class="sd">        timeSeriesCol : str or numeric</span>
+<span class="sd">            time series column name</span>
+<span class="sd">        mainCategoryCol : str or numeric</span>
+<span class="sd">            main category name</span>
+<span class="sd">        symbolName : str or numeric, option</span>
+<span class="sd">            ticker name only used when single stock, by default None</span>
+<span class="sd">        High : str or int, optional</span>
+<span class="sd">            the column name for High, by default &#39;High&#39;</span>
+<span class="sd">        Low : str or int, optional</span>
+<span class="sd">            the column name for Low, by default &#39;Low&#39;</span>
+<span class="sd">        Close : str or int, optional</span>
+<span class="sd">            the column name for Close, by default &#39;Close&#39;</span>
+<span class="sd">        Open : str or int, optional</span>
+<span class="sd">            the column name for Open, by default &#39;Open&#39;</span>
+<span class="sd">        Volume : str or int, optional</span>
+<span class="sd">            the column name for Volume, by default &#39;Volume&#39;</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Stock_Transformer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">pandasFrame</span><span class="p">,</span><span class="n">timeSeriesCol</span><span class="p">,</span><span class="n">mainCategoryCol</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">_time_series_data_to_stock_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">mainCategoryCol</span><span class="p">,</span><span class="n">High</span><span class="p">,</span><span class="n">Low</span><span class="p">,</span><span class="n">Close</span><span class="p">,</span><span class="n">Open</span><span class="p">,</span><span class="n">Volume</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">timeSeriesCol</span><span class="p">,</span><span class="n">mainCategoryCol</span><span class="p">,</span><span class="n">symbolName</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Stock_Transformer.from_numpy"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.Stock_Transformer.from_numpy">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_numpy</span><span class="p">(</span>
+                <span class="bp">cls</span><span class="p">,</span>
+                <span class="n">numpyData</span><span class="p">,</span>
+                <span class="n">timeSeriesCol</span><span class="p">,</span>
+                <span class="n">mainCategoryCol</span><span class="p">,</span>
+                <span class="n">High</span><span class="p">,</span>
+                <span class="n">Low</span><span class="p">,</span>
+                <span class="n">Close</span><span class="p">,</span>
+                <span class="n">Open</span><span class="p">,</span>
+                <span class="n">Volume</span><span class="p">,</span>
+                <span class="n">symbolName</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        from_numpy from_numpy import data from numpy</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        numpyData : numpy ndArray</span>
+<span class="sd">            input data</span>
+<span class="sd">        timeSeriesCol : int</span>
+<span class="sd">            index of time series column</span>
+<span class="sd">        mainCategoryCol : int</span>
+<span class="sd">            index of main category column</span>
+<span class="sd">        High : int, optional</span>
+<span class="sd">            the column index for High, by default &#39;High&#39;</span>
+<span class="sd">        Low : int, optional</span>
+<span class="sd">            the column index for Low, by default &#39;Low&#39;</span>
+<span class="sd">        Close : int, optional</span>
+<span class="sd">            the column index for Close, by default &#39;Close&#39;</span>
+<span class="sd">        Open : int, optional</span>
+<span class="sd">            the column index for Open, by default &#39;Open&#39;</span>
+<span class="sd">        Volume : int, optional</span>
+<span class="sd">            the column index for Volume, by default &#39;Volume&#39;</span>
+<span class="sd">        symbolName : str or numeric, option</span>
+<span class="sd">            ticker name only used when single stock, by default None</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Stock_Transformer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">numpyData</span><span class="p">,</span><span class="n">timeSeriesCol</span><span class="p">,</span><span class="n">mainCategoryCol</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">_time_series_data_to_stock_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">symbolName</span><span class="p">,</span><span class="n">High</span><span class="p">,</span><span class="n">Low</span><span class="p">,</span><span class="n">Close</span><span class="p">,</span><span class="n">Open</span><span class="p">,</span><span class="n">Volume</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">timeSeriesCol</span><span class="p">,</span><span class="n">mainCategoryCol</span><span class="p">,</span><span class="n">symbolName</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Stock_Transformer.from_time_series_transformer"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.Stock_Transformer.from_time_series_transformer">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_time_series_transformer</span><span class="p">(</span>
+                <span class="bp">cls</span><span class="p">,</span>
+                <span class="n">time_series_transformer</span><span class="p">,</span>
+                <span class="n">symbolName</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">High</span><span class="o">=</span><span class="s1">&#39;High&#39;</span><span class="p">,</span>
+                <span class="n">Low</span><span class="o">=</span><span class="s1">&#39;Low&#39;</span><span class="p">,</span>
+                <span class="n">Close</span><span class="o">=</span><span class="s1">&#39;Close&#39;</span><span class="p">,</span>
+                <span class="n">Open</span><span class="o">=</span><span class="s1">&#39;Open&#39;</span><span class="p">,</span>
+                <span class="n">Volume</span><span class="o">=</span><span class="s1">&#39;Volume&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        from_time_series_transformer making Stock_Transformer from Time_Series_Transformer</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        time_series_transformer : Time_Series_Transformer</span>
+<span class="sd">            input data</span>
+<span class="sd">        symbolName : str or numeric, option</span>
+<span class="sd">            ticker name only used when single stock, by default None</span>
+<span class="sd">        High : str or int, optional</span>
+<span class="sd">            the index or name for High, by default &#39;High&#39;</span>
+<span class="sd">        Low : str or int, optional</span>
+<span class="sd">            the index or name for Low, by default &#39;Low&#39;</span>
+<span class="sd">        Close : str or int, optional</span>
+<span class="sd">            the index or name for Close, by default &#39;Close&#39;</span>
+<span class="sd">        Open : str or int, optional</span>
+<span class="sd">            the index or name for Open, by default &#39;Open&#39;</span>
+<span class="sd">        Volume : str or int, optional</span>
+<span class="sd">            the index or name for Volume, by default &#39;Volume&#39;</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Stock_Transformer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">time_series_transformer</span><span class="o">.</span><span class="n">time_series_data</span>
+        <span class="n">timeCol</span> <span class="o">=</span> <span class="n">time_series_transformer</span><span class="o">.</span><span class="n">timeSeriesCol</span>
+        <span class="n">symbolIx</span> <span class="o">=</span> <span class="n">time_series_transformer</span><span class="o">.</span><span class="n">mainCategoryCol</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">timeCol</span><span class="p">,</span><span class="n">symbolIx</span><span class="p">,</span><span class="n">symbolName</span><span class="p">,</span><span class="n">High</span><span class="p">,</span><span class="n">Low</span><span class="p">,</span><span class="n">Close</span><span class="p">,</span><span class="n">Open</span><span class="p">,</span><span class="n">Volume</span><span class="p">)</span></div>
+        
+
+<div class="viewcode-block" id="Stock_Transformer.from_feather"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.Stock_Transformer.from_feather">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_feather</span><span class="p">(</span>
+                <span class="bp">cls</span><span class="p">,</span>
+                <span class="n">feather_dir</span><span class="p">,</span>
+                <span class="n">timeSeriesCol</span><span class="p">,</span>
+                <span class="n">symbolIx</span><span class="p">,</span>
+                <span class="n">symbolName</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">High</span><span class="o">=</span><span class="s1">&#39;High&#39;</span><span class="p">,</span>
+                <span class="n">Low</span><span class="o">=</span><span class="s1">&#39;Low&#39;</span><span class="p">,</span>
+                <span class="n">Close</span><span class="o">=</span><span class="s1">&#39;Close&#39;</span><span class="p">,</span>
+                <span class="n">Open</span><span class="o">=</span><span class="s1">&#39;Open&#39;</span><span class="p">,</span>
+                <span class="n">Volume</span><span class="o">=</span><span class="s1">&#39;Volume&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        from_feather import data from feather</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        feather_dir : str</span>
+<span class="sd">            directory of feather file</span>
+<span class="sd">        timeSeriesCol : str or numeric</span>
+<span class="sd">            time series column name</span>
+<span class="sd">        symbolIx : str or numeric</span>
+<span class="sd">            main category name</span>
+<span class="sd">        symbolName : str or numeric, option</span>
+<span class="sd">            ticker name only used when single stock, by default None</span>
+<span class="sd">        columns : str or numeric, optional</span>
+<span class="sd">            target columns (apache arrow implmentation), by default None</span>
+<span class="sd">        High : str or int, optional</span>
+<span class="sd">            the index or name for High, by default &#39;High&#39;</span>
+<span class="sd">        Low : str or int, optional</span>
+<span class="sd">            the index or name for Low, by default &#39;Low&#39;</span>
+<span class="sd">        Close : str or int, optional</span>
+<span class="sd">            the index or name for Close, by default &#39;Close&#39;</span>
+<span class="sd">        Open : str or int, optional</span>
+<span class="sd">            the index or name for Open, by default &#39;Open&#39;</span>
+<span class="sd">        Volume : str or int, optional</span>
+<span class="sd">            the index or name for Volume, by default &#39;Volume&#39;</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Stock_Transformer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">from_feather</span><span class="p">(</span>
+            <span class="n">feather_dir</span><span class="p">,</span>
+            <span class="n">timeSeriesCol</span><span class="p">,</span>
+            <span class="n">symbolIx</span><span class="p">,</span>
+            <span class="n">columns</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">timeSeriesCol</span><span class="p">,</span><span class="n">symbolIx</span><span class="p">,</span><span class="n">symbolName</span><span class="p">,</span><span class="n">High</span><span class="p">,</span><span class="n">Low</span><span class="p">,</span><span class="n">Close</span><span class="p">,</span><span class="n">Open</span><span class="p">,</span><span class="n">Volume</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="Stock_Transformer.from_parquet"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.Stock_Transformer.from_parquet">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_parquet</span><span class="p">(</span>
+                <span class="bp">cls</span><span class="p">,</span>
+                <span class="n">parquet_dir</span><span class="p">,</span>
+                <span class="n">timeSeriesCol</span><span class="p">,</span>
+                <span class="n">symbolIx</span><span class="p">,</span>
+                <span class="n">symbolName</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">columns</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">partitioning</span><span class="o">=</span><span class="s1">&#39;hive&#39;</span><span class="p">,</span>
+                <span class="n">filters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">filesystem</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">High</span><span class="o">=</span><span class="s1">&#39;High&#39;</span><span class="p">,</span>
+                <span class="n">Low</span><span class="o">=</span><span class="s1">&#39;Low&#39;</span><span class="p">,</span>
+                <span class="n">Close</span><span class="o">=</span><span class="s1">&#39;Close&#39;</span><span class="p">,</span>
+                <span class="n">Open</span><span class="o">=</span><span class="s1">&#39;Open&#39;</span><span class="p">,</span>
+                <span class="n">Volume</span><span class="o">=</span><span class="s1">&#39;Volume&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        from_parquet import data from parquet file</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parquet_dir : str</span>
+<span class="sd">            directory of parquet file</span>
+<span class="sd">        timeSeriesCol : str or numeric</span>
+<span class="sd">            time series column name</span>
+<span class="sd">        symbolIx : str or numeric</span>
+<span class="sd">            main category name</span>
+<span class="sd">        symbolName : str or numeric, option</span>
+<span class="sd">            ticker name only used when single stock, by default None</span>
+<span class="sd">        columns : str or numeric, optional</span>
+<span class="sd">            target columns (apache arrow implmentation), by default None</span>
+<span class="sd">        partitioning : str, optional</span>
+<span class="sd">            type of partitioning, by default &#39;hive&#39;</span>
+<span class="sd">        filters : str, optional</span>
+<span class="sd">            filter (apache arrow implmentation), by default None</span>
+<span class="sd">        filesystem : str, optional</span>
+<span class="sd">            filesystem (apache arrow implmentation), by default None</span>
+<span class="sd">        High : str or int, optional</span>
+<span class="sd">            the index or name for High, by default &#39;High&#39;</span>
+<span class="sd">        Low : str or int, optional</span>
+<span class="sd">            the index or name for Low, by default &#39;Low&#39;</span>
+<span class="sd">        Close : str or int, optional</span>
+<span class="sd">            the index or name for Close, by default &#39;Close&#39;</span>
+<span class="sd">        Open : str or int, optional</span>
+<span class="sd">            the index or name for Open, by default &#39;Open&#39;</span>
+<span class="sd">        Volume : str or int, optional</span>
+<span class="sd">            the index or name for Volume, by default &#39;Volume&#39;</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Stock_Transformer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">from_parquet</span><span class="p">(</span>
+            <span class="n">parquet_dir</span><span class="p">,</span>
+            <span class="n">timeSeriesCol</span><span class="p">,</span>
+            <span class="n">symbolIx</span><span class="p">,</span>
+            <span class="n">columns</span><span class="p">,</span>
+            <span class="n">partitioning</span><span class="p">,</span>
+            <span class="n">filters</span><span class="p">,</span>
+            <span class="n">filesystem</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">timeSeriesCol</span><span class="p">,</span><span class="n">symbolIx</span><span class="p">,</span><span class="n">symbolName</span><span class="p">,</span><span class="n">High</span><span class="p">,</span><span class="n">Low</span><span class="p">,</span><span class="n">Close</span><span class="p">,</span><span class="n">Open</span><span class="p">,</span><span class="n">Volume</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="Stock_Transformer.from_arrow_table"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.Stock_Transformer.from_arrow_table">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_arrow_table</span><span class="p">(</span>
+                <span class="bp">cls</span><span class="p">,</span>
+                <span class="n">arrow_table</span><span class="p">,</span>
+                <span class="n">timeSeriesCol</span><span class="p">,</span>
+                <span class="n">symbolIx</span><span class="p">,</span>
+                <span class="n">symbolName</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">High</span><span class="o">=</span><span class="s1">&#39;High&#39;</span><span class="p">,</span>
+                <span class="n">Low</span><span class="o">=</span><span class="s1">&#39;Low&#39;</span><span class="p">,</span>
+                <span class="n">Close</span><span class="o">=</span><span class="s1">&#39;Close&#39;</span><span class="p">,</span>
+                <span class="n">Open</span><span class="o">=</span><span class="s1">&#39;Open&#39;</span><span class="p">,</span>
+                <span class="n">Volume</span><span class="o">=</span><span class="s1">&#39;Volume&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        from_arrow_table [summary]</span>
+<span class="sd">        </span>
+<span class="sd">        [extended_summary]</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        arrow_table : arrow table</span>
+<span class="sd">            input data</span>
+<span class="sd">        timeSeriesCol : str or numeric</span>
+<span class="sd">            time series column name</span>
+<span class="sd">        symbolIx : str or numeric</span>
+<span class="sd">            main category name</span>
+<span class="sd">        symbolName : str or numeric, option</span>
+<span class="sd">            ticker name only used when single stock, by default None</span>
+<span class="sd">        High : str or int, optional</span>
+<span class="sd">            the index or name for High, by default &#39;High&#39;</span>
+<span class="sd">        Low : str or int, optional</span>
+<span class="sd">            the index or name for Low, by default &#39;Low&#39;</span>
+<span class="sd">        Close : str or int, optional</span>
+<span class="sd">            the index or name for Close, by default &#39;Close&#39;</span>
+<span class="sd">        Open : str or int, optional</span>
+<span class="sd">            the index or name for Open, by default &#39;Open&#39;</span>
+<span class="sd">        Volume : str or int, optional</span>
+<span class="sd">            the index or name for Volume, by default &#39;Volume&#39;</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Stock_Transformer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">from_arrow_table</span><span class="p">(</span><span class="n">arrow_table</span><span class="p">,</span><span class="n">timeSeriesCol</span><span class="p">,</span><span class="n">symbolIx</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">timeSeriesCol</span><span class="p">,</span><span class="n">symbolIx</span><span class="p">,</span><span class="n">symbolName</span><span class="p">,</span><span class="n">High</span><span class="p">,</span><span class="n">Low</span><span class="p">,</span><span class="n">Close</span><span class="p">,</span><span class="n">Open</span><span class="p">,</span><span class="n">Volume</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Stock_Transformer.get_technial_indicator"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.Stock_Transformer.get_technial_indicator">[docs]</a>    <span class="k">def</span> <span class="nf">get_technial_indicator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">strategy</span><span class="p">,</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">backend</span><span class="o">=</span><span class="s1">&#39;loky&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get_technical_indicator making different technical indicator</span>
+<span class="sd">        </span>
+<span class="sd">        pandas-ta implmentation</span>
+<span class="sd">        https://github.com/twopirllc/pandas-ta</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        strategy : Strategy</span>
+<span class="sd">            pandas-ta strategy</span>
+<span class="sd">        n_jobs : int, optional</span>
+<span class="sd">            number of processes (joblib), by default 1</span>
+<span class="sd">        verbose : int, optional</span>
+<span class="sd">            log level (joblib), by default 0</span>
+<span class="sd">        backend : str, optional</span>
+<span class="sd">            backend type (joblib), by default &#39;loky&#39;</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_series_data</span><span class="p">,</span><span class="n">Portfolio</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">time_series_data</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_series_data</span><span class="o">.</span><span class="n">get_technical_indicator</span><span class="p">(</span>
+                <span class="n">strategy</span><span class="p">,</span>
+                <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span>
+                <span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span><span class="p">,</span>
+                <span class="n">backend</span> <span class="o">=</span> <span class="n">backend</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_series_data</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_series_data</span><span class="o">.</span><span class="n">get_technical_indicator</span><span class="p">(</span>
+            <span class="n">strategy</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div></div>
+
+
+<span class="k">def</span> <span class="nf">_time_series_data_to_stock_data</span><span class="p">(</span><span class="n">time_series_data</span><span class="p">,</span><span class="n">symbolName</span><span class="p">,</span><span class="n">High</span><span class="p">,</span><span class="n">Low</span><span class="p">,</span><span class="n">Close</span><span class="p">,</span><span class="n">Open</span><span class="p">,</span><span class="n">Volume</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time_series_data</span><span class="p">,</span><span class="n">Time_Series_Data</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">Stock</span><span class="o">.</span><span class="n">from_time_series_data</span><span class="p">(</span>
+            <span class="n">time_series_data</span><span class="o">=</span> <span class="n">time_series_data</span><span class="p">,</span>
+            <span class="n">symbol</span> <span class="o">=</span> <span class="n">symbolName</span><span class="p">,</span>
+            <span class="n">High</span> <span class="o">=</span> <span class="n">High</span><span class="p">,</span>
+            <span class="n">Low</span> <span class="o">=</span> <span class="n">Low</span><span class="p">,</span>
+            <span class="n">Close</span> <span class="o">=</span> <span class="n">Close</span><span class="p">,</span>
+            <span class="n">Open</span> <span class="o">=</span> <span class="n">Open</span><span class="p">,</span>
+            <span class="n">Volume</span> <span class="o">=</span> <span class="n">Volume</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">Portfolio</span><span class="o">.</span><span class="n">from_time_series_collection</span><span class="p">(</span>
+            <span class="n">time_series_data_collection</span><span class="o">=</span> <span class="n">time_series_data</span><span class="p">,</span>
+            <span class="n">High</span> <span class="o">=</span> <span class="n">High</span><span class="p">,</span>
+            <span class="n">Low</span> <span class="o">=</span> <span class="n">Low</span><span class="p">,</span>
+            <span class="n">Close</span> <span class="o">=</span> <span class="n">Close</span><span class="p">,</span>
+            <span class="n">Open</span> <span class="o">=</span> <span class="n">Open</span><span class="p">,</span>
+            <span class="n">Volume</span> <span class="o">=</span> <span class="n">Volume</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Chiang.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>time_series_transform.stock_transform.util &mdash; Time-Series-Transform 0.0.6 documentation</title>
+  <title>time_series_transform.stock_transform.util &mdash; Time-Series-Transform 1.0.0 documentation</title>
   
 
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -29,7 +32,6 @@
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
@@ -50,7 +52,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Time-Series-Transform
+            <a href="../../../index.html" class="icon icon-home"> Time-Series-Transform
           
 
           
@@ -60,7 +62,7 @@
             
             
               <div class="version">
-                0.0.6
+                1.0.0
               </div>
             
           
@@ -86,8 +88,11 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Time Series Transformer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api_documentation.html">Api Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Time Series Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id1">Time_Series_Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#stock-transformer">Stock_Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">time_series_transform API documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
 </ul>
 
@@ -129,6 +134,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -154,6 +161,9 @@
             
   <h1>Source code for time_series_transform.stock_transform.util</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">time_series_transform.transform_core_api.util</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">time_series_transform.transform_core_api.base</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">time_series_transform.io</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="k">def</span> <span class="nf">_arr_check</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -190,31 +200,37 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
-<div class="viewcode-block" id="stochastic_oscillator"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.util.stochastic_oscillator">[docs]</a><span class="k">def</span> <span class="nf">stochastic_oscillator</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+<div class="viewcode-block" id="stochastic_oscillator"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.util.stochastic_oscillator">[docs]</a><span class="k">def</span> <span class="nf">stochastic_oscillator</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">window</span> <span class="o">=</span> <span class="mi">14</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the stochastic oscillator </span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    arr : array </span>
+<span class="sd">    arr : pandas or Time_Series_Data </span>
 <span class="sd">        data used to calculate the stochastic oscillator</span>
 
+<span class="sd">    window : int</span>
+<span class="sd">        window of the stochastic oscillator</span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    ret : dict</span>
 <span class="sd">        stochastic oscillator of the given data, including k and d values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_arr_check</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
-    <span class="n">rsv_day</span> <span class="o">=</span> <span class="mi">9</span>
-    <span class="n">ret</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">Time_Series_Data</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input must be either Time_Series_Data or Pandas&quot;</span><span class="p">)</span>
 
-    <span class="n">rsv_rolling</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">rsv_day</span><span class="p">)</span>
-    <span class="n">rsv_val</span> <span class="o">=</span> <span class="mi">100</span><span class="o">*</span><span class="p">(</span><span class="n">df</span> <span class="o">-</span> <span class="n">rsv_rolling</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="o">/</span><span class="p">(</span><span class="n">rsv_rolling</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">rsv_rolling</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
-    <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;k_val&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rsv_val</span>
-    <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;d_val&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="s1">&#39;k_val&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;k_val&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rsv_val</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">Time_Series_Data</span><span class="p">):</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">to_pandas</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">arr</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Low_window&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Low&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span> <span class="o">=</span> <span class="n">window</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;High_window&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;High&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span> <span class="o">=</span> <span class="n">window</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+    <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;k_val&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span><span class="o">*</span><span class="p">((</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Low_window&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;High_window&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Low_window&#39;</span><span class="p">]))</span>
+    <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;d_val&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="s1">&#39;k_val&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;k_val&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="s1">&#39;k_val&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="n">ret</span></div>
 
 <div class="viewcode-block" id="rsi"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.util.rsi">[docs]</a><span class="k">def</span> <span class="nf">rsi</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">n_day</span> <span class="o">=</span> <span class="mi">14</span><span class="p">):</span>
@@ -232,22 +248,21 @@
 <span class="sd">        Relative Strength Index of the given array</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_arr_check</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
-    <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
-    <span class="n">orgLen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
-    <span class="n">arr</span> <span class="o">=</span> <span class="n">arr</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">arr</span><span class="p">)]</span>
+    <span class="n">close</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">close</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> 
+    <span class="n">up</span><span class="p">,</span> <span class="n">down</span> <span class="o">=</span> <span class="n">delta</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">delta</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-    <span class="n">dif</span> <span class="o">=</span> <span class="p">[</span><span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
-    <span class="n">u_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">val</span> <span class="k">if</span> <span class="n">val</span><span class="o">&gt;</span><span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">dif</span><span class="p">])</span>
-    <span class="n">d_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="n">val</span> <span class="k">if</span> <span class="n">val</span><span class="o">&lt;</span><span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">dif</span><span class="p">])</span>
+    <span class="n">up</span><span class="p">[</span><span class="n">up</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">down</span><span class="p">[</span><span class="n">down</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="n">roll_up</span> <span class="o">=</span> <span class="n">up</span><span class="o">.</span><span class="n">ewm</span><span class="p">(</span><span class="n">com</span><span class="o">=</span><span class="n">n_day</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">adjust</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">roll_down</span> <span class="o">=</span> <span class="n">down</span><span class="o">.</span><span class="n">ewm</span><span class="p">(</span><span class="n">com</span><span class="o">=</span><span class="n">n_day</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">adjust</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
+    
+    <span class="n">rs</span> <span class="o">=</span> <span class="n">roll_up</span> <span class="o">/</span> <span class="n">roll_down</span>
 
-    <span class="n">u_ema</span> <span class="o">=</span> <span class="n">ema</span><span class="p">(</span><span class="n">u_val</span><span class="p">,</span> <span class="n">span</span> <span class="o">=</span> <span class="n">n_day</span><span class="p">)</span>
-    <span class="n">d_ema</span> <span class="o">=</span> <span class="n">ema</span><span class="p">(</span><span class="n">d_val</span><span class="p">,</span><span class="n">span</span> <span class="o">=</span> <span class="n">n_day</span><span class="p">)</span>
-    <span class="n">rs</span> <span class="o">=</span> <span class="n">u_ema</span><span class="o">/</span><span class="n">d_ema</span>
-    <span class="n">rsi</span> <span class="o">=</span> <span class="mi">100</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">rs</span><span class="p">))</span>
-    <span class="n">rsi</span> <span class="o">=</span> <span class="n">rsi</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">orgLen</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">rsi</span><span class="p">))))</span>
-    <span class="n">res</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="n">rsi</span><span class="p">)</span> </div>
+    <span class="n">rsi</span> <span class="o">=</span> <span class="mi">100</span><span class="o">-</span><span class="p">(</span><span class="mi">100</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">rs</span><span class="p">))</span>
+    <span class="n">rsi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rsi</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rsi</span></div>
 
 <div class="viewcode-block" id="williams_r"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.util.williams_r">[docs]</a><span class="k">def</span> <span class="nf">williams_r</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">n_day</span><span class="o">=</span><span class="mi">14</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -266,44 +281,46 @@
 <span class="sd">        Relative Strength Index of the given array</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="n">_arr_check</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
-    <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
-    <span class="n">orgLen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
-    <span class="n">arr</span> <span class="o">=</span> <span class="n">arr</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">arr</span><span class="p">)]</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">Time_Series_Data</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input must be either Time_Series_Data or Pandas&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">Time_Series_Data</span><span class="p">):</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">to_pandas</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">arr</span>
+
     <span class="n">r_rolling</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">n_day</span><span class="p">)</span>
-    <span class="n">r_val</span> <span class="o">=</span> <span class="mi">100</span><span class="o">*</span><span class="p">(</span><span class="n">r_rolling</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">-</span><span class="n">df</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">r_rolling</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">r_rolling</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">orgLen</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">r_val</span><span class="p">))))</span>
-    <span class="n">res</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="n">r_val</span><span class="p">)</span> </div>
+    <span class="n">highest</span> <span class="o">=</span> <span class="n">r_rolling</span><span class="o">.</span><span class="n">max</span><span class="p">()[</span><span class="s1">&#39;High&#39;</span><span class="p">]</span>
+    <span class="n">lowest</span> <span class="o">=</span> <span class="n">r_rolling</span><span class="o">.</span><span class="n">min</span><span class="p">()[</span><span class="s1">&#39;Low&#39;</span><span class="p">]</span>
+    <span class="n">r_val</span> <span class="o">=</span> <span class="o">-</span><span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">highest</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Close&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">highest</span> <span class="o">-</span> <span class="n">lowest</span><span class="p">)</span>
+    <span class="n">r_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r_val</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">r_val</span></div>
 </pre></div>
 
            </div>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Chiang
+        &#169; Copyright 2020, Chiang.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

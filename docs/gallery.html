@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Gallery &mdash; Time-Series-Transform 0.0.6 documentation</title>
+  <title>Gallery &mdash; Time-Series-Transform 1.0.0 documentation</title>
   
 
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -29,7 +32,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
@@ -37,7 +39,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Pandas Transformer" href="Pandas_Transformer_Example.html" />
+    <link rel="next" title="Time Series Data Plot" href="Plot_Gallery.html" />
     <link rel="prev" title="time_series_transform.transform_core_api package" href="time_series_transform.transform_core_api.html" /> 
 </head>
 
@@ -52,7 +54,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Time-Series-Transform
+            <a href="index.html" class="icon icon-home"> Time-Series-Transform
           
 
           
@@ -62,7 +64,7 @@
             
             
               <div class="version">
-                0.0.6
+                1.0.0
               </div>
             
           
@@ -88,19 +90,24 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Time Series Transformer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api_documentation.html">Api Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Time Series Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#id1">Time_Series_Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#stock-transformer">Stock_Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">time_series_transform API documentation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Gallery</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#basic-useage">Basic Useage</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="Pandas_Transformer_Example.html">Pandas Transformer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Pandas_Transformer_Example.html#tensorflow-adopter">Tensorflow Adopter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html">Time Series Transformer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#introduction">Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#id1">Time_Series_Transformer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#stock-transformer">Stock_Transformer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Plot_Gallery.html">Time Series Data Plot</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#stock-analysis">Stock Analysis</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="Stock_Example.html">Stock and Portfolio Example</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Stock_advanced_example.html">Stock Data Advanced Example</a></li>
-<li class="toctree-l3"><a class="reference internal" href="stock_prediction_with_sklearn.html">Stock Forecast Using Single Denoised Data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="stock_prediction_with_sklearn.html#stock-forecast-using-multiple-stock-features">Stock Forecast Using Multiple Stock Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stock_transform.html">Machine Learning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stock_transform.html#deep-learning">Deep Learning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Stock_Extraction_API_example.html">Stock Extraction</a></li>
 </ul>
 </li>
 </ul>
@@ -145,6 +152,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -156,7 +165,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/gallery.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -201,15 +210,24 @@
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Pandas_Transformer_Example.html">Pandas Transformer</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Pandas_Transformer_Example.html#making-lags-and-lead-features-for-machine-learning">Making Lags and Lead Features for Machine Learning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Pandas_Transformer_Example.html#making-tensor-data-for-deep-learning">Making Tensor Data for Deep Learning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Pandas_Transformer_Example.html#same-data">Same Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Time Series Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#id1">Time_Series_Transformer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#pre-made-functions">Pre-made functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#custom-functions">Custom Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#data-with-category">Data with Category</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#pandas">pandas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#numpy">numpy</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Pandas_Transformer_Example.html#tensorflow-adopter">Tensorflow Adopter</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Pandas_Transformer_Example.html#tfreford-writer">TFReford Writer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Pandas_Transformer_Example.html#tfrecord-reader">TFRecord Reader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#stock-transformer">Stock_Transformer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#create-technical-indicator">create technical indicator</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Plot_Gallery.html">Time Series Data Plot</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Plot_Gallery.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Plot_Gallery.html#time-series-plot">Time_Series_Plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Plot_Gallery.html#stock-plot">Stock Plot</a></li>
 </ul>
 </li>
 </ul>
@@ -220,26 +238,13 @@
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Stock_Example.html">Stock and Portfolio Example</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Stock_Example.html#data-extraction">Data Extraction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stock_Example.html#plot">Plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stock_transform.html">Machine Learning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="stock_transform.html#data-prep">Data Prep</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Stock_advanced_example.html">Stock Data Advanced Example</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Stock_advanced_example.html#introduction">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stock_advanced_example.html#data-preprocessing">Data Preprocessing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stock_advanced_example.html#stock-data-and-plot">Stock Data and Plot</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="stock_prediction_with_sklearn.html">Stock Forecast Using Single Denoised Data</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="stock_prediction_with_sklearn.html#prepare-raw-data">Prepare raw data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stock_prediction_with_sklearn.html#make-lag-lead-features">Make lag/lead features</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stock_prediction_with_sklearn.html#machine-learning-model-visualize-test-results">Machine learning model &amp; visualize test results</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="stock_prediction_with_sklearn.html#stock-forecast-using-multiple-stock-features">Stock Forecast Using Multiple Stock Features</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="stock_prediction_with_sklearn.html#prepare-stocks-data-and-transformation">Prepare stocks data and transformation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stock_prediction_with_sklearn.html#lag-lead-data-and-other-feature-engineering">Lag/lead data and other feature engineering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stock_transform.html#deep-learning">Deep Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Stock_Extraction_API_example.html">Stock Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Stock_Extraction_API_example.html#stock-transformer">Stock Transformer</a></li>
 </ul>
 </li>
 </ul>
@@ -252,37 +257,29 @@
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="Pandas_Transformer_Example.html" class="btn btn-neutral float-right" title="Pandas Transformer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="time_series_transform.transform_core_api.html" class="btn btn-neutral float-left" title="time_series_transform.transform_core_api package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="Plot_Gallery.html" class="btn btn-neutral float-right" title="Time Series Data Plot" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="time_series_transform.transform_core_api.html" class="btn btn-neutral float-left" title="time_series_transform.transform_core_api package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Chiang
+        &#169; Copyright 2020, Chiang.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

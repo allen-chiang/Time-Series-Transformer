@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>time_series_transform.stock_transform.stock_extractor &mdash; Time-Series-Transform 0.0.6 documentation</title>
+  <title>time_series_transform.stock_transform.stock_extractor &mdash; Time-Series-Transform 1.0.0 documentation</title>
   
 
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -29,7 +32,6 @@
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
@@ -50,7 +52,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Time-Series-Transform
+            <a href="../../../index.html" class="icon icon-home"> Time-Series-Transform
           
 
           
@@ -60,7 +62,7 @@
             
             
               <div class="version">
-                0.0.6
+                1.0.0
               </div>
             
           
@@ -86,8 +88,11 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Time Series Transformer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api_documentation.html">Api Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Time Series Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#id1">Time_Series_Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html#stock-transformer">Stock_Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">time_series_transform API documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
 </ul>
 
@@ -129,6 +134,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -153,16 +160,22 @@
            <div itemprop="articleBody">
             
   <h1>Source code for time_series_transform.stock_transform.stock_extractor</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">yfinance</span> <span class="k">as</span> <span class="nn">yf</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span></span><span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">time_series_transform.stock_transform.base</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">time_series_transform.stock_transform.stock_engine._investing</span> <span class="kn">import</span> <span class="n">investing</span>
+<span class="kn">from</span> <span class="nn">time_series_transform.stock_transform.stock_engine._yahoo_stock</span> <span class="kn">import</span> <span class="n">yahoo_stock</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span><span class="p">,</span> <span class="n">timedelta</span>
 
 <div class="viewcode-block" id="Stock_Extractor"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.stock_extractor.Stock_Extractor">[docs]</a><span class="k">class</span> <span class="nc">Stock_Extractor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">symbol</span><span class="p">,</span><span class="n">engine</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">symbol</span><span class="p">,</span><span class="n">engine</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Stock_Extractor extracts data of the given symbol </span>
 <span class="sd">        using the selected engine   </span>
+
+<span class="sd">        For investing engine: country is required.</span>
+<span class="sd">        for example, Stock_Extractor(&#39;aapl&#39;,&#39;investing&#39;, country = &#39;united states&#39;)</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -171,19 +184,20 @@
 <span class="sd">        engine : str</span>
 <span class="sd">            engine used for data extraction</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_extractor</span><span class="p">(</span><span class="n">engine</span><span class="p">)(</span><span class="n">symbol</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_extractor</span><span class="p">(</span><span class="n">engine</span><span class="p">)(</span><span class="n">symbol</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span> <span class="o">=</span> <span class="n">symbol</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stock</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">_get_extractor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">engine</span><span class="p">):</span>
         <span class="n">engineDict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;yahoo&#39;</span><span class="p">:</span><span class="n">_yahoo_stock</span>
+            <span class="s1">&#39;yahoo&#39;</span><span class="p">:</span> <span class="n">yahoo_stock</span><span class="p">,</span>
+            <span class="s1">&#39;investing&#39;</span><span class="p">:</span> <span class="n">investing</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="n">engineDict</span><span class="p">[</span><span class="n">engine</span><span class="p">]</span>
 
-<div class="viewcode-block" id="Stock_Extractor.get_stock_period"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.stock_extractor.Stock_Extractor.get_stock_period">[docs]</a>    <span class="k">def</span> <span class="nf">get_stock_period</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">period</span><span class="p">):</span>
+<div class="viewcode-block" id="Stock_Extractor.get_period"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.stock_extractor.Stock_Extractor.get_period">[docs]</a>    <span class="k">def</span> <span class="nf">get_period</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">period</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        get_stock_period extracts the stock data of the selected</span>
+<span class="sd">        get_period extracts the stock data of the selected</span>
 <span class="sd">        period</span>
 
 <span class="sd">        Parameters</span>
@@ -201,12 +215,16 @@
         <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">to_records</span><span class="p">())</span>
         <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">Date</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
         <span class="n">additionalInfo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">getAdditionalInfo</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stock</span> <span class="o">=</span> <span class="n">Stock</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">additionalInfo</span><span class="p">,</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stock</span> <span class="o">=</span> <span class="n">Stock</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">,</span>
+            <span class="n">time_index</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span>
+            <span class="n">symbol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol</span>
+            <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stock</span></div>
 
-<div class="viewcode-block" id="Stock_Extractor.get_stock_date"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.stock_extractor.Stock_Extractor.get_stock_date">[docs]</a>    <span class="k">def</span> <span class="nf">get_stock_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">start_date</span><span class="p">,</span><span class="n">end_date</span><span class="p">):</span>
+<div class="viewcode-block" id="Stock_Extractor.get_date"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.stock_extractor.Stock_Extractor.get_date">[docs]</a>    <span class="k">def</span> <span class="nf">get_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">start_date</span><span class="p">,</span><span class="n">end_date</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        get_stock_period extracts the stock data of the selected</span>
+<span class="sd">        get_period extracts the stock data of the selected</span>
 <span class="sd">        period</span>
 
 <span class="sd">        Parameters</span>
@@ -227,55 +245,48 @@
         <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">to_records</span><span class="p">())</span>
         <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">Date</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
         <span class="n">additionalInfo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">getAdditionalInfo</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stock</span> <span class="o">=</span> <span class="n">Stock</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">additionalInfo</span><span class="p">,</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stock</span> <span class="o">=</span> <span class="n">Stock</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">,</span>
+            <span class="n">time_index</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span>
+            <span class="n">symbol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span>
+            <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stock</span></div>
 
-    <span class="c1"># I/O</span>
-<div class="viewcode-block" id="Stock_Extractor.get_stock_from_csv"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.stock_extractor.Stock_Extractor.get_stock_from_csv">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_stock_from_csv</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Stock_Extractor.get_intra_day"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.stock_extractor.Stock_Extractor.get_intra_day">[docs]</a>    <span class="k">def</span> <span class="nf">get_intra_day</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">start_date</span><span class="p">,</span><span class="n">end_date</span><span class="p">,</span><span class="n">interval</span> <span class="o">=</span> <span class="s1">&#39;1m&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        get_stock_from_csv extracts data from a local csv file</span>
+<span class="sd">        get_intra_day extracts the intraday stock data of the selected</span>
+<span class="sd">        period</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        symbol : str</span>
-<span class="sd">            symbol of the given stock data</span>
-<span class="sd">        path : str</span>
-<span class="sd">            path of the csv file</span>
+<span class="sd">        start_date : str</span>
+<span class="sd">            start of the data</span>
+<span class="sd">            format: &quot;%Y-%m-%d&quot;, eg &quot;2020-02-20&quot;</span>
 
+<span class="sd">        end_date : str</span>
+<span class="sd">            end of the data</span>
+<span class="sd">        </span>
+<span class="sd">        interval : str</span>
+<span class="sd">            interval of the data</span>
+<span class="sd">            Valid intervals: [1m, 2m, 5m, 15m, 30m, 60m, 90m, 1h]</span>
+<span class="sd">         </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        Stock</span>
-<span class="sd">            The stock data extracted from the csv file</span>
+<span class="sd">        stock data</span>
+<span class="sd">            The stock data of selected period</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-        <span class="n">stock_data</span> <span class="o">=</span> <span class="n">Stock</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">stock_data</span></div>
-
-
-<div class="viewcode-block" id="Stock_Extractor.get_stock_from_parquet"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.stock_extractor.Stock_Extractor.get_stock_from_parquet">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_stock_from_parquet</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        get_stock_from_parquet extracts data from a local parquet file</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        symbol : str</span>
-<span class="sd">            symbol of the given stock data</span>
-<span class="sd">        path : str</span>
-<span class="sd">            path of the parquet file</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        Stock</span>
-<span class="sd">            The stock data extracted from the parquet file</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">engin</span> <span class="o">=</span> <span class="s1">&#39;pyarrow&#39;</span><span class="p">)</span>
-        <span class="n">stock_data</span> <span class="o">=</span> <span class="n">Stock</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">stock_data</span></div></div>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">getIntraDayData</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span><span class="n">end_date</span><span class="p">,</span><span class="n">interval</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">to_records</span><span class="p">())</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Datetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">Datetime</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stock</span><span class="o">=</span> <span class="n">Stock</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">,</span>
+            <span class="n">time_index</span> <span class="o">=</span> <span class="s1">&#39;Datetime&#39;</span><span class="p">,</span>
+            <span class="n">symbol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stock</span></div></div>
 
 <div class="viewcode-block" id="Portfolio_Extractor"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.stock_extractor.Portfolio_Extractor">[docs]</a><span class="k">class</span> <span class="nc">Portfolio_Extractor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">symbolList</span><span class="p">,</span><span class="n">engine</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">symbolList</span><span class="p">,</span><span class="n">engine</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Portfolio_Extractor extracts data of the given symbolList</span>
 <span class="sd">        using the selected engine   </span>
@@ -290,10 +301,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">engine</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">symbolList</span> <span class="o">=</span> <span class="n">symbolList</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">portfolio</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
 
-<div class="viewcode-block" id="Portfolio_Extractor.get_portfolio_period"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.stock_extractor.Portfolio_Extractor.get_portfolio_period">[docs]</a>    <span class="k">def</span> <span class="nf">get_portfolio_period</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">period</span><span class="p">):</span>
+<div class="viewcode-block" id="Portfolio_Extractor.get_period"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.stock_extractor.Portfolio_Extractor.get_period">[docs]</a>    <span class="k">def</span> <span class="nf">get_period</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">period</span><span class="p">,</span> <span class="n">n_threads</span><span class="o">=</span> <span class="mi">8</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        get_portfolio_period extracts the list of stock</span>
+<span class="sd">        get_period extracts the list of stock</span>
 <span class="sd">        by the given period</span>
 
 <span class="sd">        Parameters</span>
@@ -301,21 +314,24 @@
 <span class="sd">        period : str</span>
 <span class="sd">            period of the data</span>
 <span class="sd">            for example, 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max </span>
+<span class="sd">        </span>
+<span class="sd">        n_threads : int</span>
+<span class="sd">            number of thread of multi-thread processing</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        portfolio</span>
 <span class="sd">            portfolio data of the given stock list </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">stockList</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">symbol</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbolList</span><span class="p">:</span>
-            <span class="n">stock_data</span> <span class="o">=</span> <span class="n">Stock_Extractor</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span><span class="o">.</span><span class="n">get_stock_period</span><span class="p">(</span><span class="n">period</span><span class="p">)</span>
-            <span class="n">stockList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stock_data</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">portfolio</span> <span class="o">=</span> <span class="n">Portfolio</span><span class="p">(</span><span class="n">stockList</span><span class="p">)</span>
+        <span class="n">stockList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_stock_list_multi</span><span class="p">(</span><span class="n">n_threads</span><span class="p">,</span><span class="s1">&#39;get_period&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">period</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">portfolio</span> <span class="o">=</span> <span class="n">Portfolio</span><span class="p">(</span>
+            <span class="n">stockList</span><span class="p">,</span>
+            <span class="n">time_index</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span>
+            <span class="n">symbolIx</span><span class="o">=</span><span class="s1">&#39;symbol&#39;</span>
+            <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">portfolio</span></div>
 
-<div class="viewcode-block" id="Portfolio_Extractor.get_portfolio_date"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.stock_extractor.Portfolio_Extractor.get_portfolio_date">[docs]</a>    <span class="k">def</span> <span class="nf">get_portfolio_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">):</span>
+<div class="viewcode-block" id="Portfolio_Extractor.get_date"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.stock_extractor.Portfolio_Extractor.get_date">[docs]</a>    <span class="k">def</span> <span class="nf">get_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">n_threads</span> <span class="o">=</span> <span class="mi">8</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        get_portfolio_date extracts the list of stock</span>
 <span class="sd">        by the date period</span>
@@ -328,168 +344,118 @@
 
 <span class="sd">        end_date : str</span>
 <span class="sd">            end of the data</span>
+<span class="sd">        </span>
+<span class="sd">        n_threads : int</span>
+<span class="sd">            number of thread of multi-thread processing</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        portfolio</span>
 <span class="sd">            portfolio data of the given stock list </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">stockList</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">symbol</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbolList</span><span class="p">:</span>
-            <span class="n">stock_data</span> <span class="o">=</span> <span class="n">Stock_Extractor</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
-            <span class="n">stock_data</span> <span class="o">=</span> <span class="n">stock_data</span><span class="o">.</span><span class="n">get_stock_date</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">)</span>
-            <span class="n">stockList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stock_data</span><span class="p">)</span>
+        <span class="n">stockList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_stock_list_multi</span><span class="p">(</span><span class="n">n_threads</span><span class="p">,</span><span class="s1">&#39;get_date&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">portfolio</span> <span class="o">=</span> <span class="n">Portfolio</span><span class="p">(</span>
+            <span class="n">stockList</span><span class="p">,</span>
+            <span class="n">time_index</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span>
+            <span class="n">symbolIx</span><span class="o">=</span><span class="s1">&#39;symbol&#39;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">portfolio</span></div>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">portfolio</span> <span class="o">=</span> <span class="n">Portfolio</span><span class="p">(</span><span class="n">stockList</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">portfolio</span></div></div>
-
-
-
-
-<span class="k">class</span> <span class="nc">_yahoo_stock</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Fetching stock data from yahoo finance</span>
-<span class="sd">    </span>
-<span class="sd">    API Document: </span>
-<span class="sd">    - https://github.com/ranaroussi/yfinance</span>
-<span class="sd">    - https://pypi.org/project/fix-yahoo-finance/0.1.0/</span>
-<span class="sd">    ---</span>
-<span class="sd">    Require:</span>
-<span class="sd">    - yfinance</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">symbol</span><span class="p">):</span>
+<div class="viewcode-block" id="Portfolio_Extractor.get_intra_day"><a class="viewcode-back" href="../../../time_series_transform.stock_transform.html#time_series_transform.stock_transform.stock_extractor.Portfolio_Extractor.get_intra_day">[docs]</a>    <span class="k">def</span> <span class="nf">get_intra_day</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">interval</span> <span class="o">=</span> <span class="s1">&#39;1m&#39;</span><span class="p">,</span> <span class="n">n_threads</span> <span class="o">=</span> <span class="mi">8</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Historical Data</span>
-<span class="sd">        ---</span>
-<span class="sd">        Input:</span>
-<span class="sd">        symbol: string</span>
-<span class="sd">        period: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max</span>
-<span class="sd">        (default is &#39;1mo&#39;)</span>
-<span class="sd">        start_date, end_date: String, &quot;%Y-%m-%d&quot;, eg &quot;2020-02-20&quot;</span>
-<span class="sd">        ---</span>
-<span class="sd">        Return:</span>
-<span class="sd">        date, open, high, low, close, volume, dividends, stock splits</span>
+<span class="sd">        get_intra_day extracts the intraday data of the list of stock data</span>
+<span class="sd">        by the date period</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        start_date : str</span>
+<span class="sd">            start of the data</span>
+<span class="sd">            format: &quot;%Y-%m-%d&quot;, eg &quot;2020-02-20&quot;</span>
+
+<span class="sd">        end_date : str</span>
+<span class="sd">            end of the data</span>
+<span class="sd">        </span>
+<span class="sd">        interval : str</span>
+<span class="sd">            interval of the data</span>
+<span class="sd">            Valid intervals: [1m, 2m, 5m, 15m, 30m, 60m, 90m, 1h]</span>
+<span class="sd">        </span>
+<span class="sd">        n_threads : int</span>
+<span class="sd">            number of thread of multi-thread processing</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        portfolio</span>
+<span class="sd">            portfolio data of the given stock list </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_symbol</span> <span class="o">=</span> <span class="n">symbol</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ticker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getStock</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
-    
+        <span class="n">stockList</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_stock_list_multi</span><span class="p">(</span><span class="n">n_threads</span><span class="p">,</span><span class="s1">&#39;get_intra_day&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">interval</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">portfolio</span> <span class="o">=</span> <span class="n">Portfolio</span><span class="p">(</span>
+            <span class="n">stockList</span><span class="p">,</span>
+            <span class="n">time_index</span><span class="o">=</span><span class="s1">&#39;Datetime&#39;</span><span class="p">,</span>
+            <span class="n">symbolIx</span><span class="o">=</span><span class="s1">&#39;symbol&#39;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">portfolio</span></div>
 
-    <span class="c1"># getter and setter</span>
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">ticker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ticker</span>
+    <span class="k">def</span> <span class="nf">_get_stock_list_multi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_threads</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">time_val</span><span class="p">):</span>
+        <span class="n">stockList</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symbolList</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n_threads</span><span class="p">:</span>
+            <span class="n">n_threads</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symbolList</span><span class="p">)</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_symbol</span>
+        <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symbolList</span><span class="p">,</span> <span class="n">n_threads</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">bn</span> <span class="ow">in</span> <span class="n">bins</span><span class="p">:</span>
+            <span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_stock_data</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span> <span class="p">[</span><span class="n">stockList</span><span class="p">,</span> <span class="n">bn</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">time_val</span><span class="p">])</span>
+            <span class="n">tasks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thread</span><span class="p">)</span>
+            <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
-    <span class="nd">@symbol</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">symbol</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_symbol</span> <span class="o">=</span> <span class="n">symbol</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ticker</span> <span class="o">=</span> <span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
-    
-    <span class="k">def</span> <span class="nf">_getStock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">symbol</span><span class="p">):</span>
-        <span class="n">ticker</span> <span class="o">=</span> <span class="n">yf</span><span class="o">.</span><span class="n">Ticker</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">ticker</span>
+        <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">:</span>
+            <span class="n">task</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+        
+        <span class="n">stockDict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">stockList</span><span class="p">:</span>
+            <span class="n">stockDict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">stockDict</span>
 
-    <span class="k">def</span> <span class="nf">getCompanyInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">info</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">def</span> <span class="nf">_get_stock_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stockList</span><span class="p">,</span> <span class="n">symbolList</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">time_val</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">symbolList</span><span class="p">)):</span>
+            <span class="n">symbol</span> <span class="o">=</span> <span class="n">symbolList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;investing&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;country&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Country must be included while using the investing engine&quot;</span><span class="p">)</span>
+                <span class="n">country</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;country&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">stock_data</span> <span class="o">=</span> <span class="n">Stock_Extractor</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="n">country</span> <span class="o">=</span> <span class="n">country</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">stock_data</span> <span class="o">=</span> <span class="n">Stock_Extractor</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">extract_func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">stock_data</span><span class="p">,</span><span class="n">func</span><span class="p">)</span>
+            <span class="n">stock_data</span> <span class="o">=</span> <span class="n">extract_func</span><span class="p">(</span><span class="o">*</span><span class="n">time_val</span><span class="p">)</span>
+            <span class="n">stockList</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="n">symbol</span><span class="p">:</span><span class="n">stock_data</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">stockList</span></div>
 
 
-    <span class="k">def</span> <span class="nf">getHistoricalByPeriod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">period</span> <span class="o">=</span> <span class="s1">&#39;1mo&#39;</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">period</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">getHistoricalByRange</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">):</span>
-        <span class="n">end_date</span> <span class="o">=</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">end_date</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">history</span><span class="p">(</span><span class="n">start</span> <span class="o">=</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">end_date</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">getActions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">actions</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="nf">getDividends</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">dividends</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="nf">getSplits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">splits</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="nf">getSustainability</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">sustainability</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="nf">getRecommendations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">recommendations</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="nf">getNextEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ticker</span><span class="o">.</span><span class="n">calendar</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="nf">getAdditionalInfo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">info_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;company_info&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">getCompanyInfo</span><span class="p">(),</span>
-            <span class="s1">&#39;sustainability&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">getSustainability</span><span class="p">()</span>
-        <span class="p">}</span>
-
-        <span class="n">schedule_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;actions&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">getActions</span><span class="p">(),</span>
-            <span class="s1">&#39;recommendations&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">getRecommendations</span><span class="p">(),</span>
-            <span class="s1">&#39;next_event&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">getNextEvent</span><span class="p">()</span>
-        <span class="p">}</span>
-       
-        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;info&#39;</span><span class="p">:</span> <span class="n">info_dict</span><span class="p">,</span>
-            <span class="s1">&#39;schedule&#39;</span><span class="p">:</span> <span class="n">schedule_dict</span>
-            
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="n">data</span>
 </pre></div>
 
            </div>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Chiang
+        &#169; Copyright 2020, Chiang.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

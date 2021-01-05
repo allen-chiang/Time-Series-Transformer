@@ -9,7 +9,8 @@ Basic Useage
    :maxdepth: 2
    :caption: Contents:
    
-   Pandas_Transformer_Example
+   introduction
+   Plot_Gallery
 
 
 Stock Analysis
@@ -19,6 +20,5 @@ Stock Analysis
    :maxdepth: 2
    :caption: Contents:
 
-   Stock_Example
-   Stock_advanced_example
-   stock_prediction_with_sklearn
+   stock_transform
+   Stock_Extraction_API_example
