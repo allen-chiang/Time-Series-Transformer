@@ -5,13 +5,12 @@ Subpackages
 -----------
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 5
 
    time_series_transform.io
    time_series_transform.plot
    time_series_transform.sklearn
    time_series_transform.stock_transform
-   time_series_transform.test
    time_series_transform.transform_core_api
 
 Module contents

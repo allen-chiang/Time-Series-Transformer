@@ -1,0 +1,1322 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>time_series_transform.transform_core_api package &mdash; Time-Series-Transform 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Gallery" href="gallery.html" />
+    <link rel="prev" title="time_series_transform.stock_transform package" href="time_series_transform.stock_transform.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Time-Series-Transform
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Time Series Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#id1">Time_Series_Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#stock-transformer">Stock_Transformer</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">time_series_transform API documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="time_series_transform.html">time_series_transform package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="time_series_transform.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="time_series_transform.io.html">time_series_transform.io package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="time_series_transform.plot.html">time_series_transform.plot package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="time_series_transform.sklearn.html">time_series_transform.sklearn package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="time_series_transform.stock_transform.html">time_series_transform.stock_transform package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">time_series_transform.transform_core_api package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="time_series_transform.html#module-time_series_transform">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gallery.html">Gallery</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Time-Series-Transform</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">time_series_transform API documentation</a> &raquo;</li>
+        
+          <li><a href="time_series_transform.html">time_series_transform package</a> &raquo;</li>
+        
+      <li>time_series_transform.transform_core_api package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/time_series_transform.transform_core_api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="time-series-transform-transform-core-api-package">
+<h1>time_series_transform.transform_core_api package<a class="headerlink" href="#time-series-transform-transform-core-api-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-time_series_transform.transform_core_api.base">
+<span id="time-series-transform-transform-core-api-base-module"></span><h2>time_series_transform.transform_core_api.base module<a class="headerlink" href="#module-time_series_transform.transform_core_api.base" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="time_series_transform.transform_core_api.base.Time_Series_Data">
+<em class="property">class </em><code class="sig-prename descclassname">time_series_transform.transform_core_api.base.</code><code class="sig-name descname">Time_Series_Data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">time_index</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/base.html#Time_Series_Data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.base.Time_Series_Data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.base.Time_Series_Data.data">
+<em class="property">property </em><code class="sig-name descname">data</code><a class="headerlink" href="#time_series_transform.transform_core_api.base.Time_Series_Data.data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.base.Time_Series_Data.dropna">
+<code class="sig-name descname">dropna</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/base.html#Time_Series_Data.dropna"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.base.Time_Series_Data.dropna" title="Permalink to this definition">¶</a></dt>
+<dd><p>dropna drop null values</p>
+<p>it will drop null values for the time index.
+For example, time_index:[1,2,3], data1:[1,2,np.nan], data2[1,2,3]
+dropna will return time_index:[1,2], data1:[1,2], data2[1,2]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>it will return a new Time_Series_Data without null values</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#time_series_transform.transform_core_api.base.Time_Series_Data" title="time_series_transform.transform_core_api.base.Time_Series_Data">Time_Series_Data</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.base.Time_Series_Data.labels">
+<em class="property">property </em><code class="sig-name descname">labels</code><a class="headerlink" href="#time_series_transform.transform_core_api.base.Time_Series_Data.labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.base.Time_Series_Data.remove">
+<code class="sig-name descname">remove</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">remove_type</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/base.html#Time_Series_Data.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.base.Time_Series_Data.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove remove data or label</p>
+<p>this function will remove the target key and values from the data structure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the name of data or label</p></li>
+<li><p><strong>remove_type</strong> (<em>[</em><em>'data'</em><em>,</em><em>'label'</em><em>]</em><em>, </em><em>optional</em>) – passing the type of removed data will improve the performance of searching, by default None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>it will pass self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.base.Time_Series_Data.set_data">
+<code class="sig-name descname">set_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inputData</span></em>, <em class="sig-param"><span class="n">label</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/base.html#Time_Series_Data.set_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.base.Time_Series_Data.set_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>set_data setter of data</p>
+<p>the alternative of setting data.
+Before setting data, time_series_Ix should be initialized beforehand.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputData</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – input value of data</p></li>
+<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the name of list input</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>it will return self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – different time length error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.base.Time_Series_Data.set_labels">
+<code class="sig-name descname">set_labels</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inputData</span></em>, <em class="sig-param"><span class="n">label</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/base.html#Time_Series_Data.set_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.base.Time_Series_Data.set_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>set_data setter of label</p>
+<p>the alternative of setting data.
+Before setting data, time_series_Ix should be initialized beforehand.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputData</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – input value of data</p></li>
+<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the name of list input</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>it will return self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – different time length error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.base.Time_Series_Data.set_time_index">
+<code class="sig-name descname">set_time_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inputData</span></em>, <em class="sig-param"><span class="n">label</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/base.html#Time_Series_Data.set_time_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.base.Time_Series_Data.set_time_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>set_time_index alternative of setting time_index</p>
+<p>setting time_index</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputData</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – input values</p></li>
+<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – name of time_index</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>it will return self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.base.Time_Series_Data.sort">
+<code class="sig-name descname">sort</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ascending</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/base.html#Time_Series_Data.sort"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.base.Time_Series_Data.sort" title="Permalink to this definition">¶</a></dt>
+<dd><p>sort sorting data by time_index</p>
+<p>sort data by index</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ascending</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to sort the time index ascending, by default True</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>it will return a sorted self</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.base.Time_Series_Data.time_index">
+<em class="property">property </em><code class="sig-name descname">time_index</code><a class="headerlink" href="#time_series_transform.transform_core_api.base.Time_Series_Data.time_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.base.Time_Series_Data.transform">
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inputLabels</span></em>, <em class="sig-param"><span class="n">newName</span></em>, <em class="sig-param"><span class="n">func</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/base.html#Time_Series_Data.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.base.Time_Series_Data.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>transform the way of manipulating data</p>
+<p>this function is a wrapper of executing data manipulation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputLabels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of string</em>) – the input data pass into functions</p></li>
+<li><p><strong>newName</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the new name or prefix for the output data
+if the function has specify the output name, it will become
+prefix</p></li>
+<li><p><strong>func</strong> (<em>function</em>) – the function for data manipulation.
+the output of function requires to be dictiony of list,
+numpy array or pandas dataFrame.
+The final output should also have the same length as time_index</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="time_series_transform.transform_core_api.base.Time_Series_Data_Collection">
+<em class="property">class </em><code class="sig-prename descclassname">time_series_transform.transform_core_api.base.</code><code class="sig-name descname">Time_Series_Data_Collection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">time_series_data</span></em>, <em class="sig-param"><span class="n">time_seriesIx</span></em>, <em class="sig-param"><span class="n">categoryIx</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/base.html#Time_Series_Data_Collection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.base.Time_Series_Data_Collection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.base.Time_Series_Data_Collection.dropna">
+<code class="sig-name descname">dropna</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">categoryKey</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/base.html#Time_Series_Data_Collection.dropna"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.base.Time_Series_Data_Collection.dropna" title="Permalink to this definition">¶</a></dt>
+<dd><p>dropna drop null values by a specific key or all</p>
+<p>if categoryKey is None, it will drop all keys</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>categoryKey</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>numeric data</em><em>, </em><em>optional</em>) – the key of target data, by default None</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.base.Time_Series_Data_Collection.pad_time_index">
+<code class="sig-name descname">pad_time_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fillMissing</span><span class="o">=</span><span class="default_value">nan</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/base.html#Time_Series_Data_Collection.pad_time_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.base.Time_Series_Data_Collection.pad_time_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>fill certain values for each missing time_index for the Time_Series_Data
+comparing to different keys</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fillMissing</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><em>object</em></a><em>, </em><em>optional</em>) – the filling values, by default np.nan</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.base.Time_Series_Data_Collection.remove">
+<code class="sig-name descname">remove</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/base.html#Time_Series_Data_Collection.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.base.Time_Series_Data_Collection.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove remove the target key of Time_Series_Data</p>
+<p>remove the target key of Time_Series_Data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – target key</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.base.Time_Series_Data_Collection.remove_different_time_index">
+<code class="sig-name descname">remove_different_time_index</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/base.html#Time_Series_Data_Collection.remove_different_time_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.base.Time_Series_Data_Collection.remove_different_time_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove_different_time_index remove the time period which does not exisit in other Time_Series_Data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.base.Time_Series_Data_Collection.set_time_series_data_collection">
+<code class="sig-name descname">set_time_series_data_collection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ix</span></em>, <em class="sig-param"><span class="n">time_series_data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/base.html#Time_Series_Data_Collection.set_time_series_data_collection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.base.Time_Series_Data_Collection.set_time_series_data_collection" title="Permalink to this definition">¶</a></dt>
+<dd><p>set_time_series_data_collection alternative of setting time_series_collection data</p>
+<p>using this function, one can add a new key of Time_Series_Data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – new key name</p></li>
+<li><p><strong>time_series_data</strong> (<a class="reference internal" href="#time_series_transform.transform_core_api.base.Time_Series_Data" title="time_series_transform.transform_core_api.base.Time_Series_Data"><em>Time_Series_Data</em></a>) – data of the key</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – invalid input data type</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.base.Time_Series_Data_Collection.sort">
+<code class="sig-name descname">sort</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ascending</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">categoryList</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/base.html#Time_Series_Data_Collection.sort"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.base.Time_Series_Data_Collection.sort" title="Permalink to this definition">¶</a></dt>
+<dd><p>sort sort the Time_Series_Data for specific keys or all keys</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ascending</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – sorting for ascending order, by default True</p></li>
+<li><p><strong>categoryList</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em>, </em><em>optional</em>) – list of key names. if None, it will sort all, by default None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.base.Time_Series_Data_Collection.time_series_data_collection">
+<em class="property">property </em><code class="sig-name descname">time_series_data_collection</code><a class="headerlink" href="#time_series_transform.transform_core_api.base.Time_Series_Data_Collection.time_series_data_collection" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.base.Time_Series_Data_Collection.transform">
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inputLabels</span></em>, <em class="sig-param"><span class="n">newName</span></em>, <em class="sig-param"><span class="n">func</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">backend</span><span class="o">=</span><span class="default_value">'loky'</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/base.html#Time_Series_Data_Collection.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.base.Time_Series_Data_Collection.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>transform the function of manipulating data for each keys.</p>
+<p>this function implments joblib parallel execution. Hence, each key of data
+can be compute in the parallel fashion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputLabels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>list of string</em>) – the input data pass into functions</p></li>
+<li><p><strong>newName</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the new name or prefix for the output data
+if the function has specify the output name, it will become
+prefix</p></li>
+<li><p><strong>func</strong> (<em>function</em>) – the function for data manipulation.
+the output of function requires to be dictiony of list,
+numpy array or pandas dataFrame.
+The final output should also have the same length as time_index</p></li>
+<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – number of processes (joblib), by default 1</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – log level (joblib), by default 0</p></li>
+<li><p><strong>backend</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – backend type (joblib), by default ‘loky’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-time_series_transform.transform_core_api.tfDataset_adopter">
+<span id="time-series-transform-transform-core-api-tfdataset-adopter-module"></span><h2>time_series_transform.transform_core_api.tfDataset_adopter module<a class="headerlink" href="#module-time_series_transform.transform_core_api.tfDataset_adopter" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="time_series_transform.transform_core_api.tfDataset_adopter.TFRecord_Reader">
+<em class="property">class </em><code class="sig-prename descclassname">time_series_transform.transform_core_api.tfDataset_adopter.</code><code class="sig-name descname">TFRecord_Reader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fileName</span></em>, <em class="sig-param"><span class="n">dtypeDict</span></em>, <em class="sig-param"><span class="n">compression_type</span><span class="o">=</span><span class="default_value">'GZIP'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/tfDataset_adopter.html#TFRecord_Reader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.tfDataset_adopter.TFRecord_Reader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.tfDataset_adopter.TFRecord_Reader.feature_des_builder">
+<code class="sig-name descname">feature_des_builder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/tfDataset_adopter.html#TFRecord_Reader.feature_des_builder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.tfDataset_adopter.TFRecord_Reader.feature_des_builder" title="Permalink to this definition">¶</a></dt>
+<dd><p>feature_des_builder create feature description ojbect for tensorflow dataset</p>
+<p>using dtypeDict to build the feature description object
+notice: currently this builder only creates FixedLenFeature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>feature description object</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.tfDataset_adopter.TFRecord_Reader.make_tfDataset">
+<code class="sig-name descname">make_tfDataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensor_opt_dtype</span><span class="o">=</span><span class="default_value">tf.float32</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/tfDataset_adopter.html#TFRecord_Reader.make_tfDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.tfDataset_adopter.TFRecord_Reader.make_tfDataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>make_tfDataset making tensorflow dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tensor_opt_dtype</strong> (<em>tf dtypes</em><em>, </em><em>optional</em>) – the tensorflow data type used for casting dataset features, by default tf.float32</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tensorflow dataset prepared for model training/testing</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tensorflow dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="time_series_transform.transform_core_api.tfDataset_adopter.TFRecord_Writer">
+<em class="property">class </em><code class="sig-prename descclassname">time_series_transform.transform_core_api.tfDataset_adopter.</code><code class="sig-name descname">TFRecord_Writer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fileName</span></em>, <em class="sig-param"><span class="n">compression_type</span><span class="o">=</span><span class="default_value">'GZIP'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/tfDataset_adopter.html#TFRecord_Writer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.tfDataset_adopter.TFRecord_Writer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.tfDataset_adopter.TFRecord_Writer.get_tfRecord_dtype">
+<code class="sig-name descname">get_tfRecord_dtype</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pickleDir</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/tfDataset_adopter.html#TFRecord_Writer.get_tfRecord_dtype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.tfDataset_adopter.TFRecord_Writer.get_tfRecord_dtype" title="Permalink to this definition">¶</a></dt>
+<dd><p>get_tfRecord_dtype geting dtype dictionary for reading tfRecord</p>
+<p>this method returns or pickle the dictionary of tfRecord feature datatype</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pickleDir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – the directory of pickling dataType dictionary if not None, by default None</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dictionary for making TFRecord_Reader</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.tfDataset_adopter.TFRecord_Writer.write_tfRecord">
+<code class="sig-name descname">write_tfRecord</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/tfDataset_adopter.html#TFRecord_Writer.write_tfRecord"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.tfDataset_adopter.TFRecord_Writer.write_tfRecord" title="Permalink to this definition">¶</a></dt>
+<dd><p>write_tfRecord writing tfRecord</p>
+<p>transforming list of dict object to tfRecord</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>list of dict</em>) – list of dict data such as [{‘col’:1,’col2’:”123”,’col3’:[1,2]}]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-time_series_transform.transform_core_api.time_series_transformer">
+<span id="time-series-transform-transform-core-api-time-series-transformer-module"></span><h2>time_series_transform.transform_core_api.time_series_transformer module<a class="headerlink" href="#module-time_series_transform.transform_core_api.time_series_transformer" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer">
+<em class="property">class </em><code class="sig-prename descclassname">time_series_transform.transform_core_api.time_series_transformer.</code><code class="sig-name descname">Time_Series_Transformer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">timeSeriesCol</span></em>, <em class="sig-param"><span class="n">mainCategoryCol</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.dropna">
+<code class="sig-name descname">dropna</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">categoryKey</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.dropna"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.dropna" title="Permalink to this definition">¶</a></dt>
+<dd><p>dropna drop null values</p>
+<p>remove null values for all or a specific category</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>categoryKey</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>numeric</em><em>, </em><em>optional</em>) – if None all category will be chosen, by default None</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.from_arrow_table">
+<em class="property">classmethod </em><code class="sig-name descname">from_arrow_table</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arrow_table</span></em>, <em class="sig-param"><span class="n">timeSeriesCol</span></em>, <em class="sig-param"><span class="n">mainCategoryCol</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.from_arrow_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.from_arrow_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>from_arrow_table import data from apache arrow table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arrow_table</strong> (<em>arrow table</em>) – input data</p></li>
+<li><p><strong>timeSeriesCol</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>numeric</em>) – time series column name</p></li>
+<li><p><strong>mainCategoryCol</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>numeric</em>) – main category name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer" title="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer">Time_Series_Transformer</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.from_feather">
+<em class="property">classmethod </em><code class="sig-name descname">from_feather</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">feather_dir</span></em>, <em class="sig-param"><span class="n">timeSeriesCol</span></em>, <em class="sig-param"><span class="n">mainCategoryCol</span></em>, <em class="sig-param"><span class="n">columns</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.from_feather"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.from_feather" title="Permalink to this definition">¶</a></dt>
+<dd><p>from_feather import data from feather</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>feather_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – directory of feather file</p></li>
+<li><p><strong>timeSeriesCol</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>numeric</em>) – time series column name</p></li>
+<li><p><strong>mainCategoryCol</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>numeric</em>) – main category name</p></li>
+<li><p><strong>columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>numeric</em><em>, </em><em>optional</em>) – target columns (apache arrow implmentation), by default None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer" title="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer">Time_Series_Transformer</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.from_numpy">
+<em class="property">classmethod </em><code class="sig-name descname">from_numpy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">numpyData</span></em>, <em class="sig-param"><span class="n">timeSeriesCol</span></em>, <em class="sig-param"><span class="n">mainCategoryCol</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.from_numpy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.from_numpy" title="Permalink to this definition">¶</a></dt>
+<dd><p>from_numpy import data from numpy</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>numpyData</strong> (<em>numpy ndArray</em>) – input data</p></li>
+<li><p><strong>timeSeriesCol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – index of time series column</p></li>
+<li><p><strong>mainCategoryCol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – index of main category column</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer" title="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer">Time_Series_Transformer</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.from_pandas">
+<em class="property">classmethod </em><code class="sig-name descname">from_pandas</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pandasFrame</span></em>, <em class="sig-param"><span class="n">timeSeriesCol</span></em>, <em class="sig-param"><span class="n">mainCategoryCol</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.from_pandas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.from_pandas" title="Permalink to this definition">¶</a></dt>
+<dd><p>from_pandas import data from pandas dataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pandasFrame</strong> (<em>pandas DataFrame</em>) – input data</p></li>
+<li><p><strong>timeSeriesCol</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>numeric</em>) – time series column name</p></li>
+<li><p><strong>mainCategoryCol</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>numeric</em>) – main category name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer" title="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer">Time_Series_Transformer</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.from_parquet">
+<em class="property">classmethod </em><code class="sig-name descname">from_parquet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parquet_dir</span></em>, <em class="sig-param"><span class="n">timeSeriesCol</span></em>, <em class="sig-param"><span class="n">mainCategoryCol</span></em>, <em class="sig-param"><span class="n">columns</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">partitioning</span><span class="o">=</span><span class="default_value">'hive'</span></em>, <em class="sig-param"><span class="n">filters</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">filesystem</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.from_parquet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.from_parquet" title="Permalink to this definition">¶</a></dt>
+<dd><p>from_parquet import data from parquet file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parquet_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – directory of parquet file</p></li>
+<li><p><strong>timeSeriesCol</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>numeric</em>) – time series column name</p></li>
+<li><p><strong>mainCategoryCol</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>numeric</em>) – main category name</p></li>
+<li><p><strong>columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>numeric</em><em>, </em><em>optional</em>) – target columns (apache arrow implmentation), by default None</p></li>
+<li><p><strong>partitioning</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – type of partitioning, by default ‘hive’</p></li>
+<li><p><strong>filters</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – filter (apache arrow implmentation), by default None</p></li>
+<li><p><strong>filesystem</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – filesystem (apache arrow implmentation), by default None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer" title="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer">Time_Series_Transformer</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.make_identical_sequence">
+<code class="sig-name descname">make_identical_sequence</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inputLabels</span></em>, <em class="sig-param"><span class="n">windowSize</span></em>, <em class="sig-param"><span class="n">suffix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.make_identical_sequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.make_identical_sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>make_identical_sequence making sequences having same data</p>
+<p>this function will make same data for a givne sequence.
+it could be useful for category data in deep learning.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputLabels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>numeric</em><em> or </em><em>list of str</em><em>, or </em><em>numeric</em>) – the name of input data</p></li>
+<li><p><strong>windowSize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the length of sequence</p></li>
+<li><p><strong>suffix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – the suffix of new data, by default None</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – joblib implmentation only used when mainCategoryCol is given, by default 0</p></li>
+<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – joblib implmentation only used when mainCategoryCol is given, by default 1</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.make_label">
+<code class="sig-name descname">make_label</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">collectionKey</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.make_label"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.make_label" title="Permalink to this definition">¶</a></dt>
+<dd><p>make_label make label data</p>
+<p>it will turn the data into label.
+when using io functions, specifing sepLabel parameter can seperate label and data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>numeric data</em>) – the target data name</p></li>
+<li><p><strong>collectionKey</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>numeric data</em><em>, </em><em>optional</em>) – the target collection, if None, all collection is selected, by default None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.make_lag">
+<code class="sig-name descname">make_lag</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inputLabels</span></em>, <em class="sig-param"><span class="n">lagNum</span></em>, <em class="sig-param"><span class="n">suffix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fillMissing</span><span class="o">=</span><span class="default_value">nan</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.make_lag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.make_lag" title="Permalink to this definition">¶</a></dt>
+<dd><p>make_lag making lag data for a given list of data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputLabels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>numeric</em><em> or </em><em>list of str</em><em>, or </em><em>numeric</em>) – the name of input data</p></li>
+<li><p><strong>lagNum</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the target lag period to make</p></li>
+<li><p><strong>suffix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – the suffix of new data, by default None</p></li>
+<li><p><strong>fillMissing</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><em>object</em></a><em>, </em><em>optional</em>) – the data for filling missing data, by default np.nan</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – joblib implmentation only used when mainCategoryCol is given, by default 0</p></li>
+<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – joblib implmentation only used when mainCategoryCol is given, by default 1</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.make_lag_sequence">
+<code class="sig-name descname">make_lag_sequence</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inputLabels</span></em>, <em class="sig-param"><span class="n">windowSize</span></em>, <em class="sig-param"><span class="n">lagNum</span></em>, <em class="sig-param"><span class="n">suffix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fillMissing</span><span class="o">=</span><span class="default_value">nan</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.make_lag_sequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.make_lag_sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>make_lag_sequence making lag sequence data</p>
+<p>this function could be useful for deep learning.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputLabels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>numeric</em><em> or </em><em>list of str</em><em>, or </em><em>numeric</em>) – the name of input data</p></li>
+<li><p><strong>windowSize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the length of sequence</p></li>
+<li><p><strong>lagNum</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the lag period of sequence</p></li>
+<li><p><strong>suffix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – the suffix of new data, by default None</p></li>
+<li><p><strong>fillMissing</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><em>object</em></a><em>, </em><em>optional</em>) – the data for filling missing data, by default np.nan</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – joblib implmentation only used when mainCategoryCol is given, by default 0</p></li>
+<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – joblib implmentation only used when mainCategoryCol is given, by default 1</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.make_lead">
+<code class="sig-name descname">make_lead</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inputLabels</span></em>, <em class="sig-param"><span class="n">leadNum</span></em>, <em class="sig-param"><span class="n">suffix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fillMissing</span><span class="o">=</span><span class="default_value">nan</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.make_lead"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.make_lead" title="Permalink to this definition">¶</a></dt>
+<dd><p>make_lead make_lead making lead data for a given list of data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputLabels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>numeric</em><em> or </em><em>list of str</em><em>, or </em><em>numeric</em>) – the name of input data</p></li>
+<li><p><strong>leadNum</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the target lead period to make</p></li>
+<li><p><strong>suffix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – the suffix of new data, by default None</p></li>
+<li><p><strong>fillMissing</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><em>object</em></a><em>, </em><em>optional</em>) – the data for filling missing data, by default np.nan</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – joblib implmentation only used when mainCategoryCol is given, by default 0</p></li>
+<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – joblib implmentation only used when mainCategoryCol is given, by default 1</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.make_lead_sequence">
+<code class="sig-name descname">make_lead_sequence</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inputLabels</span></em>, <em class="sig-param"><span class="n">windowSize</span></em>, <em class="sig-param"><span class="n">leadNum</span></em>, <em class="sig-param"><span class="n">suffix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fillMissing</span><span class="o">=</span><span class="default_value">nan</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.make_lead_sequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.make_lead_sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>make_lead_sequence making lead sequence data</p>
+<p>this function could be useful for deep learning.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputLabels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>numeric</em><em> or </em><em>list of str</em><em>, or </em><em>numeric</em>) – the name of input data</p></li>
+<li><p><strong>windowSize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the length of sequence</p></li>
+<li><p><strong>leadNum</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the lead period of sequence</p></li>
+<li><p><strong>suffix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – the suffix of new data, by default None</p></li>
+<li><p><strong>fillMissing</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><em>object</em></a><em>, </em><em>optional</em>) – the data for filling missing data, by default np.nan</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – joblib implmentation only used when mainCategoryCol is given, by default 0</p></li>
+<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – joblib implmentation only used when mainCategoryCol is given, by default 1</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.make_stack_sequence">
+<code class="sig-name descname">make_stack_sequence</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inputLabels</span></em>, <em class="sig-param"><span class="n">newName</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.make_stack_sequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.make_stack_sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>make_stack_sequence stacking sequences data</p>
+<p>making multiple seqeunce data into one on the given axis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputLabels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>numeric</em><em> or </em><em>list of str</em><em>, or </em><em>numeric</em>) – the name of input data</p></li>
+<li><p><strong>newName</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – new name for the stacking data</p></li>
+<li><p><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – the axis for stacking (numpy stack implmentation), by default -1</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – joblib implmentation only used when mainCategoryCol is given, by default 0</p></li>
+<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – joblib implmentation only used when mainCategoryCol is given, by default 1</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>[description]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.9)">type</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.pad_different_category_time">
+<code class="sig-name descname">pad_different_category_time</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fillMissing</span><span class="o">=</span><span class="default_value">nan</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.pad_different_category_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.pad_different_category_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>pad time length
+if mainCategoryCol is not specified, this function has no function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fillMissing</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><em>object</em></a><em>, </em><em>optional</em>) – data for filling paded data, by default np.nan</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.remove_category">
+<code class="sig-name descname">remove_category</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">categoryName</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.remove_category"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.remove_category" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove_category remove a specific category data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>categoryName</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>numeric data</em>) – the target category to be removed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.remove_different_category_time">
+<code class="sig-name descname">remove_different_category_time</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.remove_different_category_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.remove_different_category_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove different time index for category
+if mainCategoryCol is not specified, this function has no function.
+:returns:
+:rtype: self</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.remove_feature">
+<code class="sig-name descname">remove_feature</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">colName</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.remove_feature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.remove_feature" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove_feature remove certain data or labels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>colName</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em> or </em><em>numeric</em>) – target column or data to be removed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.to_arrow_table">
+<code class="sig-name descname">to_arrow_table</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">expandCategory</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">expandTime</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">preprocessType</span><span class="o">=</span><span class="default_value">'ignore'</span></em>, <em class="sig-param"><span class="n">sepLabel</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.to_arrow_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.to_arrow_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>to_arrow_table output data as apache arrow table format</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expandCategory</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to expand category, by default False</p></li>
+<li><p><strong>expandTime</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to expand time index column, by default False</p></li>
+<li><p><strong>preprocessType</strong> (<em>{'ignore'</em><em>,</em><em>'pad'</em><em>,</em><em>'remove'}</em><em>, </em><em>optional</em>) – the preprocessing type before out data, by default ‘ignore’</p></li>
+<li><p><strong>sepLabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to seperate label data, by default False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>arrow table</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>to_dict output data as dictionary list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict of list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.to_feather">
+<code class="sig-name descname">to_feather</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dirPaths</span></em>, <em class="sig-param"><span class="n">expandCategory</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">expandTime</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">preprocessType</span><span class="o">=</span><span class="default_value">'ignore'</span></em>, <em class="sig-param"><span class="n">sepLabel</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">version</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">chunksize</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.to_feather"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.to_feather" title="Permalink to this definition">¶</a></dt>
+<dd><p>to_feather output data into feather format</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dirPaths</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – directory of output data</p></li>
+<li><p><strong>expandCategory</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to expand category, by default False</p></li>
+<li><p><strong>expandTime</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to expand time index column, by default False</p></li>
+<li><p><strong>preprocessType</strong> (<em>{'ignore'</em><em>,</em><em>'pad'</em><em>,</em><em>'remove'}</em><em>, </em><em>optional</em>) – the preprocessing type before out data, by default ‘ignore’</p></li>
+<li><p><strong>sepLabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to seperate label data, by default False</p></li>
+<li><p><strong>version</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – fether version (apache arrow implmentation), by default 1</p></li>
+<li><p><strong>chunksize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – chunksize for output (apache arrow implmentation), by default None</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.to_numpy">
+<code class="sig-name descname">to_numpy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">expandCategory</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">expandTime</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">preprocessType</span><span class="o">=</span><span class="default_value">'ignore'</span></em>, <em class="sig-param"><span class="n">sepLabel</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.to_numpy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.to_numpy" title="Permalink to this definition">¶</a></dt>
+<dd><p>to_numpy output data into numpy format</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expandCategory</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to expand category, by default False</p></li>
+<li><p><strong>expandTime</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to expand time index column, by default False</p></li>
+<li><p><strong>preprocessType</strong> (<em>{'ignore'</em><em>,</em><em>'pad'</em><em>,</em><em>'remove'}</em><em>, </em><em>optional</em>) – the preprocessing type before out data, by default ‘ignore’</p></li>
+<li><p><strong>sepLabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to seperate label data, by default False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy ndArray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.to_pandas">
+<code class="sig-name descname">to_pandas</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">expandCategory</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">expandTime</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">preprocessType</span><span class="o">=</span><span class="default_value">'ignore'</span></em>, <em class="sig-param"><span class="n">sepLabel</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.to_pandas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.to_pandas" title="Permalink to this definition">¶</a></dt>
+<dd><p>to_pandas output data into pandas dataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expandCategory</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to expand category, by default False</p></li>
+<li><p><strong>expandTime</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to expand time index column, by default False</p></li>
+<li><p><strong>preprocessType</strong> (<em>{'ignore'</em><em>,</em><em>'pad'</em><em>,</em><em>'remove'}</em><em>, </em><em>optional</em>) – the preprocessing type before out data, by default ‘ignore’</p></li>
+<li><p><strong>sepLabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to seperate label data, by default False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas dataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.to_parquet">
+<code class="sig-name descname">to_parquet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dirPaths</span></em>, <em class="sig-param"><span class="n">expandCategory</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">expandTime</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">preprocessType</span><span class="o">=</span><span class="default_value">'ignore'</span></em>, <em class="sig-param"><span class="n">sepLabel</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">version</span><span class="o">=</span><span class="default_value">'1.0'</span></em>, <em class="sig-param"><span class="n">isDataset</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">partition_cols</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.to_parquet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.to_parquet" title="Permalink to this definition">¶</a></dt>
+<dd><p>to_parquet output data into parquet format</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dirPaths</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – directory of output data</p></li>
+<li><p><strong>expandCategory</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to expand category, by default False</p></li>
+<li><p><strong>expandTime</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to expand time index column, by default False</p></li>
+<li><p><strong>preprocessType</strong> (<em>{'ignore'</em><em>,</em><em>'pad'</em><em>,</em><em>'remove'}</em><em>, </em><em>optional</em>) – the preprocessing type before out data, by default ‘ignore’</p></li>
+<li><p><strong>sepLabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to seperate label data, by default False</p></li>
+<li><p><strong>version</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – parquet version (apache arrow implmentation), by default ‘1.0’</p></li>
+<li><p><strong>isDataset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to output data as dataset format (apache arrow implmentation), by default False</p></li>
+<li><p><strong>partition_cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – whether to partition data (apache arrow implmentation), by default None</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.transform">
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inputLabels</span></em>, <em class="sig-param"><span class="n">newName</span></em>, <em class="sig-param"><span class="n">func</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">backend</span><span class="o">=</span><span class="default_value">'loky'</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/time_series_transformer.html#Time_Series_Transformer.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.time_series_transformer.Time_Series_Transformer.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>transform the wrapper of functions performing data manipulation</p>
+<p>This function provides a way to do different data manipulation.
+The output data should be either pandas dataFrame, numpy ndArray, or list of dict.
+Also, the data should have the same time length as the original data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputLabels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>numeric data</em><em> or </em><em>list of data</em><em> or </em><em>numeric data</em>) – the input data columns passing to function</p></li>
+<li><p><strong>newName</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the output data name or prefix
+if the out function provides the new name, it will automatically become prefix</p></li>
+<li><p><strong>func</strong> (<em>function</em>) – the data manipulation function</p></li>
+<li><p><strong>n_jobs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – joblib implemention, only used when mainCategoryCol is given, by default 1</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – joblib implmentation only used when mainCategoryCol is given, by default 0</p></li>
+<li><p><strong>backend</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – joblib implmentation only used when mainCategoryCol is given, by default ‘loky’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>self</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-time_series_transform.transform_core_api.util">
+<span id="time-series-transform-transform-core-api-util-module"></span><h2>time_series_transform.transform_core_api.util module<a class="headerlink" href="#module-time_series_transform.transform_core_api.util" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="time_series_transform.transform_core_api.util.differencing">
+<code class="sig-prename descclassname">time_series_transform.transform_core_api.util.</code><code class="sig-name descname">differencing</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arr</span></em>, <em class="sig-param"><span class="n">order</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/util.html#differencing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.util.differencing" title="Permalink to this definition">¶</a></dt>
+<dd><p>differencing time series differencing</p>
+<p>it simply perform series differencing
+For example:
+order 1</p>
+<blockquote>
+<div><p>Xt, Xt+1 –&gt; Xt+1 - Xt</p>
+</div></blockquote>
+<dl class="simple">
+<dt>order 2</dt><dd><p>Xt, Xt+1, Xt+2 –&gt; Xt+1 - Xt, Xt+2-Xt+1 = a,b –&gt; b - a</p>
+</dd>
+</dl>
+<p>and so on</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong> (<em>numpy array</em>) – input array</p></li>
+<li><p><strong>order</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – number of differencing, by default 1</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>differenced array</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="time_series_transform.transform_core_api.util.ema">
+<code class="sig-prename descclassname">time_series_transform.transform_core_api.util.</code><code class="sig-name descname">ema</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arr</span></em>, <em class="sig-param"><span class="n">com</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">span</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">halflife</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">adjust</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">min_periods</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">ignore_na</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/util.html#ema"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.util.ema" title="Permalink to this definition">¶</a></dt>
+<dd><p>this is the panads ema implmentation</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="time_series_transform.transform_core_api.util.geometric_ma">
+<code class="sig-prename descclassname">time_series_transform.transform_core_api.util.</code><code class="sig-name descname">geometric_ma</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arr</span></em>, <em class="sig-param"><span class="n">windowSize</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/util.html#geometric_ma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.util.geometric_ma" title="Permalink to this definition">¶</a></dt>
+<dd><p>geometric_ma geometric moving average</p>
+<p>it use pandas rolling window with sicpy gmean function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong> (<em>numpy array</em>) – input arrray</p></li>
+<li><p><strong>windowSize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – grouping size</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>geometric moving average array</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="time_series_transform.transform_core_api.util.madev">
+<code class="sig-prename descclassname">time_series_transform.transform_core_api.util.</code><code class="sig-name descname">madev</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/util.html#madev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.util.madev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mean absolute deviation</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="time_series_transform.transform_core_api.util.moving_average">
+<code class="sig-prename descclassname">time_series_transform.transform_core_api.util.</code><code class="sig-name descname">moving_average</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arr</span></em>, <em class="sig-param"><span class="n">windowSize</span><span class="o">=</span><span class="default_value">3</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/util.html#moving_average"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.util.moving_average" title="Permalink to this definition">¶</a></dt>
+<dd><p>moving_average the arithimetic moving average</p>
+<p>Given the window size, this function will perform simple moving average</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong> (<em>numpy array</em>) – the input array</p></li>
+<li><p><strong>windowSize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – the grouping size, by default 3</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the moving average array</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="time_series_transform.transform_core_api.util.rfft_transform">
+<code class="sig-prename descclassname">time_series_transform.transform_core_api.util.</code><code class="sig-name descname">rfft_transform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arr</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">1000.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/util.html#rfft_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.util.rfft_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>rfft_transform real fast fourier transformation</p>
+<p>Fast fourier trnasformation and ignoring the imagine number
+note: numpy implmentation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong> (<em>numpy array</em>) – input array</p></li>
+<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a><em>, </em><em>optional</em>) – the threshold used for filter frequency, by default 1e3</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>rfft array</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="time_series_transform.transform_core_api.util.wavelet_denoising">
+<code class="sig-prename descclassname">time_series_transform.transform_core_api.util.</code><code class="sig-name descname">wavelet_denoising</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arr</span></em>, <em class="sig-param"><span class="n">wavelet</span><span class="o">=</span><span class="default_value">'db4'</span></em>, <em class="sig-param"><span class="n">coeff_mode</span><span class="o">=</span><span class="default_value">'per'</span></em>, <em class="sig-param"><span class="n">threshold_mode</span><span class="o">=</span><span class="default_value">'hard'</span></em>, <em class="sig-param"><span class="n">rec_mode</span><span class="o">=</span><span class="default_value">'per'</span></em>, <em class="sig-param"><span class="n">level</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">matchOriginLenth</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/transform_core_api/util.html#wavelet_denoising"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.transform_core_api.util.wavelet_denoising" title="Permalink to this definition">¶</a></dt>
+<dd><p>wavelet_denoising wavelet transformation</p>
+<p>wavelet transformation, with pywt implmentation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong> (<em>numpy array</em>) – input array</p></li>
+<li><p><strong>wavelet</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – wavelet transform family, by default ‘db4’</p></li>
+<li><p><strong>coeff_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – the coefficient mode, by default “per”</p></li>
+<li><p><strong>threshold_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – the threshold tye, by default ‘hard’</p></li>
+<li><p><strong>rec_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>optional</em>) – recover mode, by default ‘per’</p></li>
+<li><p><strong>level</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>, </em><em>optional</em>) – sigma level for theshold, by default 1</p></li>
+<li><p><strong>matchOriginLenth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to match the input array length, by default True</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>wevelet transformed array</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-time_series_transform.transform_core_api">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-time_series_transform.transform_core_api" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="gallery.html" class="btn btn-neutral float-right" title="Gallery" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="time_series_transform.stock_transform.html" class="btn btn-neutral float-left" title="time_series_transform.stock_transform package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Chiang.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

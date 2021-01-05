@@ -1,5 +1,5 @@
-time_series_transform
-=====================
+time_series_transform API documentation
+=======================================
 
 .. toctree::
    :maxdepth: 4

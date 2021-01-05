@@ -1,3 +1,20 @@
+Time Series Transformer
+=======================
+
+Documentation
+https://allen-chiang.github.io/Time-Series-Transformer/
+
+|made-with-python| |Build| |Build Status| |Board Status|
+
+.. |made-with-python| image:: https://img.shields.io/badge/Made%20with-Python-1f425f.svg
+   :target: https://www.python.org/
+.. |Build| image:: https://github.com/allen-chiang/Time-Series-Transformer/workflows/Build/badge.svg
+.. |Build Status| image:: https://dev.azure.com/kuanlunchiang/Time%20Series%20Transformer/_apis/build/status/allen-chiang.Time-Series-Transformer?branchName=master
+   :target: https://dev.azure.com/kuanlunchiang/Time%20Series%20Transformer/_build/latest?definitionId=3&branchName=master
+.. |Board Status| image:: https://dev.azure.com/kuanlunchiang/4514fff7-ad24-4603-9373-c28efeaada71/b19741c8-3782-44ee-8a92-2805fbeb49f9/_apis/work/boardbadge/e0f238c1-381a-4686-a599-43174bf8237f
+   :target: https://dev.azure.com/kuanlunchiang/4514fff7-ad24-4603-9373-c28efeaada71/_boards/board/t/b19741c8-3782-44ee-8a92-2805fbeb49f9/Microsoft.RequirementCategory
+
+
 .. code:: ipython3
 
     import pandas as pd
