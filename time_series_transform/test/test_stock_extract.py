@@ -1041,12 +1041,12 @@ class Test_stock_extractor:
         data = se.get_date(date[0],date[1])
         assert data == extractor_investing_expect[symbol]
     
-    def test_yahoo_extractor_intraday_data(self,extractor_intraday_sample, extractor_intraday_expect):
-        date = extractor_intraday_sample['date'][0]
-        symbol = extractor_intraday_sample['symbol'][0]
-        se = Stock_Extractor(symbol, 'yahoo')
-        data = se.get_intra_day(date[0],date[1], '1m')
-        assert compare_arr_result(data, extractor_intraday_expect)
+    # def test_yahoo_extractor_intraday_data(self,extractor_intraday_sample, extractor_intraday_expect):
+    #     date = extractor_intraday_sample['date'][0]
+    #     symbol = extractor_intraday_sample['symbol'][0]
+    #     se = Stock_Extractor(symbol, 'yahoo')
+    #     data = se.get_intra_day(date[0],date[1], '1m')
+    #     assert compare_arr_result(data, extractor_intraday_expect)
 
     def test_stock_extractor_period(self,extractor_sample):
         period = extractor_sample['period']
