@@ -29,7 +29,9 @@ setup(
         'time_series_transform',
         'time_series_transform/transform_core_api',
         'time_series_transform/stock_transform',
+        'time_series_transform/stock_transform/stock_engine',
         'time_series_transform/test',
+        'time_series_transform/io'
         ],
     license='MIT',
     author_email = 'kuanlun.chiang@outlook.com',

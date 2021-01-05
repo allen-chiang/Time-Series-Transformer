@@ -1,13 +1,19 @@
+import threading
+import numpy as np
 import pandas as pd
-import yfinance as yf
-from datetime import datetime, timedelta
 from time_series_transform.stock_transform.base import *
+from time_series_transform.stock_transform.stock_engine._investing import investing
+from time_series_transform.stock_transform.stock_engine._yahoo_stock import yahoo_stock
+from datetime import date, timedelta
 
 class Stock_Extractor(object):
-    def __init__(self,symbol,engine):
+    def __init__(self,symbol,engine, *args, **kwargs):
         """
         Stock_Extractor extracts data of the given symbol 
         using the selected engine   
+
+        For investing engine: country is required.
+        for example, Stock_Extractor('aapl','investing', country = 'united states')
 
         Parameters
         ----------
@@ -16,19 +22,20 @@ class Stock_Extractor(object):
         engine : str
             engine used for data extraction
         """
-        self.client = self._get_extractor(engine)(symbol)
+        self.client = self._get_extractor(engine)(symbol, *args, **kwargs)
         self.symbol = symbol
         self.stock = None
 
     def _get_extractor(self,engine):
         engineDict = {
-            'yahoo':_yahoo_stock
+            'yahoo': yahoo_stock,
+            'investing': investing
         }
         return engineDict[engine]
 
-    def get_stock_period(self,period):
+    def get_period(self,period):
         """
-        get_stock_period extracts the stock data of the selected
+        get_period extracts the stock data of the selected
         period
 
         Parameters
@@ -46,12 +53,16 @@ class Stock_Extractor(object):
         data = pd.DataFrame(data.to_records())
         data['Date'] = data.Date.astype(str)
         additionalInfo = self.client.getAdditionalInfo()
-        self.stock = Stock(self.symbol,data,additionalInfo,'Date')
+        self.stock = Stock(
+            data,
+            time_index='Date',
+            symbol=self.symbol
+            )
         return self.stock
 
-    def get_stock_date(self,start_date,end_date):
+    def get_date(self,start_date,end_date):
         """
-        get_stock_period extracts the stock data of the selected
+        get_period extracts the stock data of the selected
         period
 
         Parameters
@@ -72,55 +83,48 @@ class Stock_Extractor(object):
         data = pd.DataFrame(data.to_records())
         data['Date'] = data.Date.astype(str)
         additionalInfo = self.client.getAdditionalInfo()
-        self.stock = Stock(self.symbol,data,additionalInfo,'Date')
+        self.stock = Stock(
+            data,
+            time_index='Date',
+            symbol = self.symbol
+            )
         return self.stock
 
-    # I/O
-    @classmethod
-    def get_stock_from_csv(cls, symbol, path, *args, **kwargs):
+    def get_intra_day(self,start_date,end_date,interval = '1m'):
         """
-        get_stock_from_csv extracts data from a local csv file
+        get_intra_day extracts the intraday stock data of the selected
+        period
 
         Parameters
         ----------
-        symbol : str
-            symbol of the given stock data
-        path : str
-            path of the csv file
+        start_date : str
+            start of the data
+            format: "%Y-%m-%d", eg "2020-02-20"
 
+        end_date : str
+            end of the data
+        
+        interval : str
+            interval of the data
+            Valid intervals: [1m, 2m, 5m, 15m, 30m, 60m, 90m, 1h]
+         
         Returns
         -------
-        Stock
-            The stock data extracted from the csv file
+        stock data
+            The stock data of selected period
         """
-        data = pd.read_csv(path)
-        stock_data = Stock(symbol, data, *args, **kwargs)
-        return stock_data
-
-
-    @classmethod
-    def get_stock_from_parquet(cls, symbol, path, *args, **kwargs):
-        """
-        get_stock_from_parquet extracts data from a local parquet file
-
-        Parameters
-        ----------
-        symbol : str
-            symbol of the given stock data
-        path : str
-            path of the parquet file
-
-        Returns
-        -------
-        Stock
-            The stock data extracted from the parquet file
-        """
-        data = pd.read_parquet(path, engin = 'pyarrow')
-        stock_data = Stock(symbol, data, *args, **kwargs)
-        return stock_data
+        data = self.client.getIntraDayData(start_date,end_date,interval)
+        data = pd.DataFrame(data.to_records())
+        data['Datetime'] = data.Datetime.astype(str)
+        self.stock= Stock(
+            data,
+            time_index = 'Datetime',
+            symbol = self.symbol
+        )
+        return self.stock
 
 class Portfolio_Extractor(object):
-    def __init__(self,symbolList,engine):
+    def __init__(self,symbolList,engine, *args, **kwargs):
         """
         Portfolio_Extractor extracts data of the given symbolList
         using the selected engine   
@@ -135,10 +139,12 @@ class Portfolio_Extractor(object):
         self.engine = engine
         self.symbolList = symbolList
         self.portfolio = None
+        self.args = args
+        self.kwargs = kwargs
 
-    def get_portfolio_period(self,period):
+    def get_period(self,period, n_threads= 8):
         """
-        get_portfolio_period extracts the list of stock
+        get_period extracts the list of stock
         by the given period
 
         Parameters
@@ -146,21 +152,24 @@ class Portfolio_Extractor(object):
         period : str
             period of the data
             for example, 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max 
+        
+        n_threads : int
+            number of thread of multi-thread processing
 
         Returns
         -------
         portfolio
             portfolio data of the given stock list 
         """
-        stockList = []
-        for symbol in self.symbolList:
-            stock_data = Stock_Extractor(symbol, self.engine).get_stock_period(period)
-            stockList.append(stock_data)
-
-        self.portfolio = Portfolio(stockList)
+        stockList = self._get_stock_list_multi(n_threads,'get_period', [period])
+        self.portfolio = Portfolio(
+            stockList,
+            time_index='Date',
+            symbolIx='symbol'
+            )
         return self.portfolio
 
-    def get_portfolio_date(self,start_date, end_date):
+    def get_date(self,start_date, end_date, n_threads = 8):
         """
         get_portfolio_date extracts the list of stock
         by the date period
@@ -173,137 +182,90 @@ class Portfolio_Extractor(object):
 
         end_date : str
             end of the data
+        
+        n_threads : int
+            number of thread of multi-thread processing
 
         Returns
         -------
         portfolio
             portfolio data of the given stock list 
         """
-        stockList = []
-        for symbol in self.symbolList:
-            stock_data = Stock_Extractor(symbol, self.engine)
-            stock_data = stock_data.get_stock_date(start_date, end_date)
-            stockList.append(stock_data)
-
-        self.portfolio = Portfolio(stockList)
+        stockList = self._get_stock_list_multi(n_threads,'get_date', [start_date, end_date])
+        self.portfolio = Portfolio(
+            stockList,
+            time_index='Date',
+            symbolIx='symbol'
+            )
         return self.portfolio
 
-
-
-
-class _yahoo_stock(object):
-
-    """
-    Fetching stock data from yahoo finance
-    
-    API Document: 
-    - https://github.com/ranaroussi/yfinance
-    - https://pypi.org/project/fix-yahoo-finance/0.1.0/
-    ---
-    Require:
-    - yfinance
-
-    """
-    def __init__(self,symbol):
+    def get_intra_day(self,start_date, end_date, interval = '1m', n_threads = 8):
         """
-        Historical Data
-        ---
-        Input:
-        symbol: string
-        period: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max
-        (default is '1mo')
-        start_date, end_date: String, "%Y-%m-%d", eg "2020-02-20"
-        ---
-        Return:
-        date, open, high, low, close, volume, dividends, stock splits
+        get_intra_day extracts the intraday data of the list of stock data
+        by the date period
+
+        Parameters
+        ----------
+        start_date : str
+            start of the data
+            format: "%Y-%m-%d", eg "2020-02-20"
+
+        end_date : str
+            end of the data
+        
+        interval : str
+            interval of the data
+            Valid intervals: [1m, 2m, 5m, 15m, 30m, 60m, 90m, 1h]
+        
+        n_threads : int
+            number of thread of multi-thread processing
+
+        Returns
+        -------
+        portfolio
+            portfolio data of the given stock list 
         """
-        self._symbol = symbol
-        self._ticker = self._getStock(symbol)
-    
+        stockList = self._get_stock_list_multi(n_threads,'get_intra_day', [start_date, end_date, interval])
+        self.portfolio = Portfolio(
+            stockList,
+            time_index='Datetime',
+            symbolIx='symbol'
+            )
+        return self.portfolio
 
-    # getter and setter
-    @property
-    def ticker(self):
-        return self._ticker
+    def _get_stock_list_multi(self, n_threads, func, time_val):
+        stockList = []
+        tasks = []
+        if len(self.symbolList) < n_threads:
+            n_threads = len(self.symbolList)
 
-    @property
-    def symbol(self):
-        return self._symbol
+        bins = np.array_split(self.symbolList, n_threads)
+        for bn in bins:
+            thread = threading.Thread(target=self._get_stock_data, args= [stockList, bn, func, time_val])
+            tasks.append(thread)
+            thread.start()
 
-    @symbol.setter
-    def symbol(self, symbol):
-        self._symbol = symbol
-        self._ticker = yf.Ticker(symbol)
-    
-    def _getStock(self, symbol):
-        ticker = yf.Ticker(symbol)
-        return ticker
+        for task in tasks:
+            task.join()
+        
+        stockDict = {}
+        for i in stockList:
+            stockDict.update(i)
+        return stockDict
 
-    def getCompanyInfo(self):
-        try:
-            return self.ticker.info
-        except:
-            return None
+    def _get_stock_data(self, stockList, symbolList, func, time_val, *args, **kwargs):
+        for i in range(len(symbolList)):
+            symbol = symbolList[i]
+            if self.engine == "investing":
+                if 'country' not in self.kwargs:
+                    raise ValueError("Country must be included while using the investing engine")
+                country = self.kwargs['country'][i]
+                stock_data = Stock_Extractor(symbol, self.engine, *self.args, country = country)
+            else:
+                stock_data = Stock_Extractor(symbol, self.engine, *self.args, **self.kwargs)
+            extract_func = getattr(stock_data,func)
+            stock_data = extract_func(*time_val)
+            stockList.append({symbol:stock_data})
+        return stockList
 
 
-    def getHistoricalByPeriod(self, period = '1mo'):
-        return self.ticker.history(period)
-
-    def getHistoricalByRange(self, start_date, end_date):
-        end_date = (datetime.strptime(end_date, '%Y-%m-%d') + timedelta(days=1)).strftime('%Y-%m-%d')
-        return self.ticker.history(start = start_date, end = end_date)
-
-    def getActions(self):
-        try:
-            return self.ticker.actions
-        except:
-            return None
-
-    def getDividends(self):
-        try:
-            return self.ticker.dividends
-        except:
-            return None
-
-    def getSplits(self):
-        try:
-            return self.ticker.splits
-        except:
-            return None
-
-    def getSustainability(self):
-        try:
-            return self.ticker.sustainability
-        except:
-            return None
-
-    def getRecommendations(self):
-        try:
-            return self.ticker.recommendations
-        except:
-            return None
-
-    def getNextEvent(self):
-        try:
-            return self.ticker.calendar
-        except:
-            return None
-
-    def getAdditionalInfo(self):
-        info_dict = {
-            'company_info':self.getCompanyInfo(),
-            'sustainability': self.getSustainability()
-        }
-
-        schedule_dict = {
-            'actions': self.getActions(),
-            'recommendations': self.getRecommendations(),
-            'next_event': self.getNextEvent()
-        }
-       
-        data = {
-            'info': info_dict,
-            'schedule': schedule_dict
-            
-        }
-        return data
