@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Index &mdash; Time-Series-Transform 1.0.0 documentation</title>
+  <title>Index &mdash; Time-Series-Transform 1.1.1 documentation</title>
   
 
   
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                1.0.0
+                1.1.1
               </div>
             
           
@@ -178,6 +178,7 @@
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
  | <a href="#W"><strong>W</strong></a>
  
 </div>
@@ -251,6 +252,10 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="time_series_transform.transform_core_api.html#time_series_transform.transform_core_api.util.ema">ema() (in module time_series_transform.transform_core_api.util)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="time_series_transform.stock_transform.stock_engine.html#time_series_transform.stock_transform.stock_engine.engine_interface.engine_interface">engine_interface (class in time_series_transform.stock_transform.stock_engine.engine_interface)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -410,14 +415,14 @@
         <li><a href="time_series_transform.stock_transform.html#time_series_transform.stock_transform.stock_extractor.Stock_Extractor.get_period">(time_series_transform.stock_transform.stock_extractor.Stock_Extractor method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="time_series_transform.stock_transform.html#time_series_transform.stock_transform.stock_transfromer.Stock_Transformer.get_technial_indicator">get_technial_indicator() (time_series_transform.stock_transform.stock_transfromer.Stock_Transformer method)</a>
 
       <ul>
         <li><a href="time_series_transform.html#time_series_transform.Stock_Transformer.get_technial_indicator">(time_series_transform.Stock_Transformer method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="time_series_transform.stock_transform.html#time_series_transform.stock_transform.base.Portfolio.get_technical_indicator">get_technical_indicator() (time_series_transform.stock_transform.base.Portfolio method)</a>
 
       <ul>
@@ -427,6 +432,14 @@
       <li><a href="time_series_transform.transform_core_api.html#time_series_transform.transform_core_api.tfDataset_adopter.TFRecord_Writer.get_tfRecord_dtype">get_tfRecord_dtype() (time_series_transform.transform_core_api.tfDataset_adopter.TFRecord_Writer method)</a>
 </li>
       <li><a href="time_series_transform.sklearn.html#time_series_transform.sklearn.transformer.Base_Time_Series_Transformer.get_time_series_index_cache">get_time_series_index_cache() (time_series_transform.sklearn.transformer.Base_Time_Series_Transformer method)</a>
+</li>
+      <li><a href="time_series_transform.stock_transform.stock_engine.html#time_series_transform.stock_transform.stock_engine.engine_interface.engine_interface.getAdditionalInfo">getAdditionalInfo() (time_series_transform.stock_transform.stock_engine.engine_interface.engine_interface method)</a>
+</li>
+      <li><a href="time_series_transform.stock_transform.stock_engine.html#time_series_transform.stock_transform.stock_engine.engine_interface.engine_interface.getHistoricalByPeriod">getHistoricalByPeriod() (time_series_transform.stock_transform.stock_engine.engine_interface.engine_interface method)</a>
+</li>
+      <li><a href="time_series_transform.stock_transform.stock_engine.html#time_series_transform.stock_transform.stock_engine.engine_interface.engine_interface.getHistoricalByRange">getHistoricalByRange() (time_series_transform.stock_transform.stock_engine.engine_interface.engine_interface method)</a>
+</li>
+      <li><a href="time_series_transform.stock_transform.stock_engine.html#time_series_transform.stock_transform.stock_engine.engine_interface.engine_interface.getIntraDayData">getIntraDayData() (time_series_transform.stock_transform.stock_engine.engine_interface.engine_interface method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -551,6 +564,10 @@
         <li><a href="time_series_transform.stock_transform.html#module-time_series_transform.stock_transform">time_series_transform.stock_transform</a>
 </li>
         <li><a href="time_series_transform.stock_transform.html#module-time_series_transform.stock_transform.base">time_series_transform.stock_transform.base</a>
+</li>
+        <li><a href="time_series_transform.stock_transform.stock_engine.html#module-time_series_transform.stock_transform.stock_engine">time_series_transform.stock_transform.stock_engine</a>
+</li>
+        <li><a href="time_series_transform.stock_transform.stock_engine.html#module-time_series_transform.stock_transform.stock_engine.engine_interface">time_series_transform.stock_transform.stock_engine.engine_interface</a>
 </li>
         <li><a href="time_series_transform.stock_transform.html#module-time_series_transform.stock_transform.stock_extractor">time_series_transform.stock_transform.stock_extractor</a>
 </li>
@@ -830,6 +847,20 @@
 </li>
       </ul></li>
       <li>
+    time_series_transform.stock_transform.stock_engine
+
+      <ul>
+        <li><a href="time_series_transform.stock_transform.stock_engine.html#module-time_series_transform.stock_transform.stock_engine">module</a>
+</li>
+      </ul></li>
+      <li>
+    time_series_transform.stock_transform.stock_engine.engine_interface
+
+      <ul>
+        <li><a href="time_series_transform.stock_transform.stock_engine.html#module-time_series_transform.stock_transform.stock_engine.engine_interface">module</a>
+</li>
+      </ul></li>
+      <li>
     time_series_transform.stock_transform.stock_extractor
 
       <ul>
@@ -850,6 +881,8 @@
         <li><a href="time_series_transform.stock_transform.html#module-time_series_transform.stock_transform.util">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     time_series_transform.transform_core_api
 
@@ -857,8 +890,6 @@
         <li><a href="time_series_transform.transform_core_api.html#module-time_series_transform.transform_core_api">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     time_series_transform.transform_core_api.base
 
@@ -992,6 +1023,14 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="time_series_transform.plot.html#time_series_transform.plot.base.plot_base.update_layout">update_layout() (time_series_transform.plot.base.plot_base method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="time_series_transform.stock_transform.stock_engine.html#time_series_transform.stock_transform.stock_engine.engine_interface.valid_period_format">valid_period_format() (in module time_series_transform.stock_transform.stock_engine.engine_interface)</a>
 </li>
   </ul></td>
 </tr></table>
