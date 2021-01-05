@@ -977,7 +977,7 @@ def compare_arr_result(real, expect):
         for _ in real:
             for key in real[indx]:
                 if real[indx][key] != expect[indx][key]:
-                    if real[indx][key].round(4) != expect[indx][key].round(4):
+                    if real[indx][key].round(2) != expect[indx][key].round(2):
                         return False
             indx += 1
         return True
