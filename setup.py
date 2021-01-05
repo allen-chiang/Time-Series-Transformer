@@ -41,7 +41,7 @@ setup(
         'Source Code' : 'https://github.com/allen-chiang/Time-Series-Transformer',
         'Documentation' : "https://allen-chiang.github.io/Time-Series-Transformer/"
     },
-    download_url ='https://github.com/allen-chiang/Time-Series-Transformer/archive/1.0.1.tar.gz',
+    download_url ='https://github.com/allen-chiang/Time-Series-Transformer/archive/1.1.1.tar.gz',
     keywords = ['time series','stock', 'machine learning', 'deep learning'],
     install_requires = required,
     author = 'Kuan-Lun Chiang; Kuan-Yu Chiang',
