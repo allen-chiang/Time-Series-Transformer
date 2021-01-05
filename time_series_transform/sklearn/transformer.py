@@ -37,11 +37,11 @@ class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
         cache_data_path : str, optional
             the path to cache data, by default None
         """
-        self._time_col = time_col 
-        self._category_col = category_col
-        self._time_series_cache = None
-        self._len_preprocessing = len_preprocessing
-        self._remove_time = remove_time
+        self.time_col = time_col 
+        self.category_col = category_col
+        self.time_series_cache = None
+        self.len_preprocessing = len_preprocessing
+        self.remove_time = remove_time
         self.cache_data_path = cache_data_path
         self.remove_org_data = remove_org_data
         self.remove_category = remove_category
@@ -53,28 +53,28 @@ class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
 
     def _to_time_series_data(self,X):
         if isinstance(X, pd.DataFrame):
-            self._time_series_cache = X[self._time_col].tolist()
-            time_series_data = from_pandas(X,self._time_col,self._category_col)
-            if self._category_col is not None:
-                self.category_cache = X[self._category_col].tolist()
+            self.time_series_cache = X[self.time_col].tolist()
+            time_series_data = from_pandas(X,self.time_col,self.category_col)
+            if self.category_col is not None:
+                self.category_cache = X[self.category_col].tolist()
         else:
-            self._time_series_cache = list(X[:,self._time_col])
-            time_series_data = from_numpy(X,self._time_col,self._category_col)
-            if self._category_col is not None:
-                self.category_cache = list(X[:,self._category_col])
+            self.time_series_cache = list(X[:,self.time_col])
+            time_series_data = from_numpy(X,self.time_col,self.category_col)
+            if self.category_col is not None:
+                self.category_cache = list(X[:,self.category_col])
         return time_series_data
 
     def _check_time_not_exist(self,timeList,categoryList):
         checkedList = []
         if categoryList is None:
             for i in timeList:
-                if i not in self._time_series_cache:
+                if i not in self.time_series_cache:
                     checkedList.append(True)
                     continue
                 checkedList.append(False)
         else:
             tmpDict = collections.defaultdict(list)
-            for c,t in zip(self.category_cache,self._time_series_cache):
+            for c,t in zip(self.category_cache,self.time_series_cache):
                 tmpDict[c].append(t)
             for t,c in zip(timeList,categoryList):
                 if t not in tmpDict[c]:
@@ -138,32 +138,32 @@ class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
         df = df.append(pd.DataFrame(new_df),ignore_index = True)
         tst = Time_Series_Transformer.from_pandas(
             df,
-            self._time_col,
-            self._category_col
+            self.time_col,
+            self.category_col
             )
-        if self._category_col is None:
+        if self.category_col is None:
             return tst,X_time,X_header,None
         return tst,X_time,X_header,X_category
 
     def _prep_transform_data(self, X, X_category):
         if isinstance(X,pd.DataFrame):
-            X_time = X[self._time_col].tolist()
-            if self._category_col is None:
-                X_header = X.drop(self._time_col,axis =1).columns.tolist()
+            X_time = X[self.time_col].tolist()
+            if self.category_col is None:
+                X_header = X.drop(self.time_col,axis =1).columns.tolist()
             else:
-                X_header = X.drop(self._time_col,axis =1).drop(self._category_col,axis =1).columns.tolist()
-                X_category = X[self._category_col].tolist()
+                X_header = X.drop(self.time_col,axis =1).drop(self.category_col,axis =1).columns.tolist()
+                X_category = X[self.category_col].tolist()
             check_list = self._check_time_not_exist(X_time,X_category)
             new_df = X[check_list]
         else:
-            X_time = list(X[:,self._time_col])
-            if self._category_col is not None:
-                X_category = list(X[:,self._category_col])
+            X_time = list(X[:,self.time_col])
+            if self.category_col is not None:
+                X_category = list(X[:,self.category_col])
             X_header=[]
             for i in range(X.shape[1]):
-                if i != int(self._time_col):
-                    if self._category_col is not None:
-                        if i == int(self._category_col):
+                if i != int(self.time_col):
+                    if self.category_col is not None:
+                        if i == int(self.category_col):
                             continue
                     X_header.append(i)   
             check_list = self._check_time_not_exist(X_time,X_category)
@@ -191,7 +191,7 @@ class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
             [description]
         """
         if X_category is None:
-            df = df[df[self._time_col].isin(X_time)]
+            df = df[df[self.time_col].isin(X_time)]
         else:
             tmpdf = None
             tmpDict = collections.defaultdict(list)
@@ -199,14 +199,14 @@ class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
                 tmpDict[v].append(ix)
             for i in tmpDict:
                 if tmpdf is None:
-                    tmpdf = df[df[self._category_col]==i][df[self._time_col].isin(tmpDict[i])]
+                    tmpdf = df[df[self.category_col]==i][df[self.time_col].isin(tmpDict[i])]
                     continue
-                tmpdf = tmpdf.append(df[df[self._category_col]==i][df[self._time_col].isin(tmpDict[i])])
+                tmpdf = tmpdf.append(df[df[self.category_col]==i][df[self.time_col].isin(tmpDict[i])])
             df = tmpdf
-        if self.remove_category and self._category_col is not None:
-            df = df.drop(self._category_col,axis =1)
-        if self._remove_time:
-            df = df.drop(self._time_col,axis =1)
+        if self.remove_category and self.category_col is not None:
+            df = df.drop(self.category_col,axis =1)
+        if self.remove_time:
+            df = df.drop(self.time_col,axis =1)
         if self.remove_org_data:
             df= df.drop(X_header,axis =1)
         return df.values        
@@ -221,7 +221,7 @@ class Base_Time_Series_Transformer(BaseEstimator, TransformerMixin):
         list
             cached time series index
         """
-        return self._time_series_cache
+        return self.time_series_cache
 
 
 class Lag_Transformer(Base_Time_Series_Transformer):
