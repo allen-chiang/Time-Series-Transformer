@@ -265,7 +265,6 @@ class Portfolio_Extractor(object):
                 stock_data = Stock_Extractor(symbol, self.engine, *self.args, **self.kwargs)
             extract_func = getattr(stock_data,func)
             stock_data = extract_func(*time_val)
-            
             stockList.append({symbol:stock_data})
         return stockList
 

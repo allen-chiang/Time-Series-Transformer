@@ -37,7 +37,6 @@ class Pandas_IO (io_base):
         """
         if not isinstance(self.dictList,pd.DataFrame):
             raise ValueError("input data must be pandas frame")
-        data = self.dictList.to_dict('list')
         if self.mainCategoryCol is None:
             return self.to_single()
         return self.to_collection()
