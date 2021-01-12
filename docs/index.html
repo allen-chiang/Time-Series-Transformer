@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Welcome to Time Series Transformer documentation! &mdash; Time-Series-Transform 0.0.6 documentation</title>
+  <title>Welcome to Time Series Transformer documentation! &mdash; Time-Series-Transform 1.1.2 documentation</title>
   
 
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -29,7 +32,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
@@ -37,7 +39,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Time Series Transformer" href="quick_start.html" /> 
+    <link rel="next" title="Time Series Transformer" href="introduction.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -51,7 +53,7 @@
           
 
           
-            <a href="#" class="icon icon-home" alt="Documentation Home"> Time-Series-Transform
+            <a href="#" class="icon icon-home"> Time-Series-Transform
           
 
           
@@ -61,7 +63,7 @@
             
             
               <div class="version">
-                0.0.6
+                1.1.2
               </div>
             
           
@@ -87,8 +89,11 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Time Series Transformer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api_documentation.html">Api Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Time Series Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#id1">Time_Series_Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#stock-transformer">Stock_Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">time_series_transform API documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gallery.html">Gallery</a></li>
 </ul>
 
@@ -130,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -141,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -183,95 +190,120 @@
 <h1>Welcome to Time Series Transformer documentation!<a class="headerlink" href="#welcome-to-time-series-transformer-documentation" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Time Series Transformer</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="quick_start.html#pre-processing-for-machine-learning">Pre-Processing for Machine Learning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quick_start.html#deep-learning">Deep Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Time Series Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#id1">Time_Series_Transformer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#pre-made-functions">Pre-made functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#custom-functions">Custom Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#data-with-category">Data with Category</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#io">IO</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="api_documentation.html">Api Documentation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api_documentation.html#time-series-transformer">Time Series Transformer</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="time_series_transform.stock_transform.html">time_series_transform.stock_transform package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.stock_transform.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.stock_transform.html#module-time_series_transform.stock_transform.base">time_series_transform.stock_transform.base module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.stock_transform.html#module-time_series_transform.stock_transform.plot">time_series_transform.stock_transform.plot module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.stock_transform.html#module-time_series_transform.stock_transform.stock_extractor">time_series_transform.stock_transform.stock_extractor module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.stock_transform.html#module-time_series_transform.stock_transform.util">time_series_transform.stock_transform.util module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.stock_transform.html#module-time_series_transform.stock_transform">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#pandas">pandas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#numpy">numpy</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="time_series_transform.transform_core_api.html">time_series_transform.transform_core_api package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.transform_core_api.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.transform_core_api.html#module-time_series_transform.transform_core_api.base">time_series_transform.transform_core_api.base module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.transform_core_api.html#module-time_series_transform.transform_core_api.tensorflow_adopter">time_series_transform.transform_core_api.tensorflow_adopter module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.transform_core_api.html#module-time_series_transform.transform_core_api.time_series_transformer">time_series_transform.transform_core_api.time_series_transformer module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.transform_core_api.html#module-time_series_transform.transform_core_api.util">time_series_transform.transform_core_api.util module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.transform_core_api.html#module-time_series_transform.transform_core_api">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#stock-transformer">Stock_Transformer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#create-technical-indicator">create technical indicator</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">time_series_transform API documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="time_series_transform.html">time_series_transform package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="time_series_transform.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="time_series_transform.io.html">time_series_transform.io package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.io.html#submodules">Submodules</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.io.html#module-time_series_transform.io.arrow">time_series_transform.io.arrow module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.io.html#module-time_series_transform.io.base">time_series_transform.io.base module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.io.html#module-time_series_transform.io.feather">time_series_transform.io.feather module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.io.html#module-time_series_transform.io.generator">time_series_transform.io.generator module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.io.html#module-time_series_transform.io.numpy">time_series_transform.io.numpy module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.io.html#module-time_series_transform.io.pandas">time_series_transform.io.pandas module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.io.html#module-time_series_transform.io.parquet">time_series_transform.io.parquet module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.io.html#module-time_series_transform.io">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="time_series_transform.plot.html">time_series_transform.plot package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.plot.html#submodules">Submodules</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.plot.html#module-time_series_transform.plot.base">time_series_transform.plot.base module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.plot.html#module-time_series_transform.plot.stock_plot">time_series_transform.plot.stock_plot module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.plot.html#module-time_series_transform.plot.time_series_plot">time_series_transform.plot.time_series_plot module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.plot.html#module-time_series_transform.plot">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="time_series_transform.sklearn.html">time_series_transform.sklearn package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.sklearn.html#submodules">Submodules</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.sklearn.html#module-time_series_transform.sklearn.metrics">time_series_transform.sklearn.metrics module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.sklearn.html#module-time_series_transform.sklearn.transformer">time_series_transform.sklearn.transformer module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.sklearn.html#module-time_series_transform.sklearn">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="time_series_transform.stock_transform.html">time_series_transform.stock_transform package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.stock_transform.html#subpackages">Subpackages</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.stock_transform.html#submodules">Submodules</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.stock_transform.html#module-time_series_transform.stock_transform.base">time_series_transform.stock_transform.base module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.stock_transform.html#module-time_series_transform.stock_transform.stock_extractor">time_series_transform.stock_transform.stock_extractor module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.stock_transform.html#module-time_series_transform.stock_transform.stock_transfromer">time_series_transform.stock_transform.stock_transfromer module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.stock_transform.html#module-time_series_transform.stock_transform.util">time_series_transform.stock_transform.util module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.stock_transform.html#module-time_series_transform.stock_transform">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="time_series_transform.transform_core_api.html">time_series_transform.transform_core_api package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.transform_core_api.html#submodules">Submodules</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.transform_core_api.html#module-time_series_transform.transform_core_api.base">time_series_transform.transform_core_api.base module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.transform_core_api.html#module-time_series_transform.transform_core_api.tfDataset_adopter">time_series_transform.transform_core_api.tfDataset_adopter module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.transform_core_api.html#module-time_series_transform.transform_core_api.time_series_transformer">time_series_transform.transform_core_api.time_series_transformer module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.transform_core_api.html#module-time_series_transform.transform_core_api.util">time_series_transform.transform_core_api.util module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="time_series_transform.transform_core_api.html#module-time_series_transform.transform_core_api">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="time_series_transform.html#module-time_series_transform">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="gallery.html">Gallery</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="gallery.html#basic-useage">Basic Useage</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="Pandas_Transformer_Example.html">Pandas Transformer</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="Pandas_Transformer_Example.html#making-lags-and-lead-features-for-machine-learning">Making Lags and Lead Features for Machine Learning</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="Pandas_Transformer_Example.html#lag-data">Lag data</a></li>
-<li class="toctree-l5"><a class="reference internal" href="Pandas_Transformer_Example.html#lead-data">Lead data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html">Time Series Transformer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#introduction">Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#id1">Time_Series_Transformer</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="introduction.html#pre-made-functions">Pre-made functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="introduction.html#custom-functions">Custom Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="introduction.html#data-with-category">Data with Category</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="introduction.html#io">IO</a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="Pandas_Transformer_Example.html#making-tensor-data-for-deep-learning">Making Tensor Data for Deep Learning</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="Pandas_Transformer_Example.html#expand-dataframe">Expand DataFrame</a></li>
-<li class="toctree-l5"><a class="reference internal" href="Pandas_Transformer_Example.html#id1">Lag Data</a></li>
-<li class="toctree-l5"><a class="reference internal" href="Pandas_Transformer_Example.html#id2">Lead Data</a></li>
-<li class="toctree-l5"><a class="reference internal" href="Pandas_Transformer_Example.html#categorical-data">Categorical Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="introduction.html#pandas">pandas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="introduction.html#numpy">numpy</a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="Pandas_Transformer_Example.html#same-data">Same Data</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="Pandas_Transformer_Example.html#stacking-data-and-target-variable">Stacking Data and Target Variable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#stock-transformer">Stock_Transformer</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="introduction.html#create-technical-indicator">create technical indicator</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="Plot_Gallery.html">Time Series Data Plot</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Plot_Gallery.html#introduction">Introduction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Plot_Gallery.html#time-series-plot">Time_Series_Plot</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="Plot_Gallery.html#functions">Functions</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="Pandas_Transformer_Example.html#tensorflow-adopter">Tensorflow Adopter</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="Pandas_Transformer_Example.html#tfreford-writer">TFReford Writer</a></li>
-<li class="toctree-l4"><a class="reference internal" href="Pandas_Transformer_Example.html#tfrecord-reader">TFRecord Reader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Plot_Gallery.html#stock-plot">Stock Plot</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="gallery.html#stock-analysis">Stock Analysis</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="Stock_Example.html">Stock and Portfolio Example</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="Stock_Example.html#data-extraction">Data Extraction</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="Stock_Example.html#stock-data">Stock Data</a></li>
-<li class="toctree-l5"><a class="reference internal" href="Stock_Example.html#portfolio-data">Portfolio Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stock_transform.html">Machine Learning</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="stock_transform.html#data-prep">Data Prep</a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="Stock_Example.html#plot">Plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stock_transform.html#deep-learning">Deep Learning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Stock_Extraction_API_example.html">Stock Extraction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Stock_Extraction_API_example.html#stock-transformer">Stock Transformer</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="Stock_Extraction_API_example.html#extraction-method">Extraction Method</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="Stock_advanced_example.html">Stock Data Advanced Example</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="Stock_advanced_example.html#introduction">Introduction</a></li>
-<li class="toctree-l4"><a class="reference internal" href="Stock_advanced_example.html#data-preprocessing">Data Preprocessing</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="Stock_advanced_example.html#data-extraction">Data Extraction</a></li>
-<li class="toctree-l5"><a class="reference internal" href="Stock_advanced_example.html#user-defined-function">User Defined Function</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="Stock_advanced_example.html#stock-data-and-plot">Stock Data and Plot</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="Stock_advanced_example.html#plot">Plot</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="stock_prediction_with_sklearn.html">Stock Forecast Using Single Denoised Data</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="stock_prediction_with_sklearn.html#prepare-raw-data">Prepare raw data</a></li>
-<li class="toctree-l4"><a class="reference internal" href="stock_prediction_with_sklearn.html#make-lag-lead-features">Make lag/lead features</a></li>
-<li class="toctree-l4"><a class="reference internal" href="stock_prediction_with_sklearn.html#machine-learning-model-visualize-test-results">Machine learning model &amp; visualize test results</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="stock_prediction_with_sklearn.html#stock-forecast-using-multiple-stock-features">Stock Forecast Using Multiple Stock Features</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="stock_prediction_with_sklearn.html#prepare-stocks-data-and-transformation">Prepare stocks data and transformation</a></li>
-<li class="toctree-l4"><a class="reference internal" href="stock_prediction_with_sklearn.html#lag-lead-data-and-other-feature-engineering">Lag/lead data and other feature engineering</a></li>
 </ul>
 </li>
 </ul>
@@ -295,35 +327,28 @@
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="quick_start.html" class="btn btn-neutral float-right" title="Time Series Transformer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
+        <a href="introduction.html" class="btn btn-neutral float-right" title="Time Series Transformer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Chiang
+        &#169; Copyright 2020, Chiang.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

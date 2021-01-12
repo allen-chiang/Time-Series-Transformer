@@ -4,8 +4,8 @@ Welcome to Time Series Transformer documentation!
 .. toctree::
    :maxdepth: 5
 
-   quick_start
-   api_documentation
+   introduction
+   modules
    gallery
 
 

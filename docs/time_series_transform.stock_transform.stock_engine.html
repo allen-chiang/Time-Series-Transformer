@@ -1,0 +1,362 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>time_series_transform.stock_transform.stock_engine package &mdash; Time-Series-Transform 1.1.2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="time_series_transform.transform_core_api package" href="time_series_transform.transform_core_api.html" />
+    <link rel="prev" title="time_series_transform.stock_transform package" href="time_series_transform.stock_transform.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Time-Series-Transform
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.1.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Time Series Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#id1">Time_Series_Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#stock-transformer">Stock_Transformer</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">time_series_transform API documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="time_series_transform.html">time_series_transform package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="time_series_transform.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="time_series_transform.io.html">time_series_transform.io package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="time_series_transform.plot.html">time_series_transform.plot package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="time_series_transform.sklearn.html">time_series_transform.sklearn package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="time_series_transform.stock_transform.html">time_series_transform.stock_transform package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="time_series_transform.transform_core_api.html">time_series_transform.transform_core_api package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="time_series_transform.html#module-time_series_transform">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gallery.html">Gallery</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Time-Series-Transform</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">time_series_transform API documentation</a> &raquo;</li>
+        
+          <li><a href="time_series_transform.html">time_series_transform package</a> &raquo;</li>
+        
+          <li><a href="time_series_transform.stock_transform.html">time_series_transform.stock_transform package</a> &raquo;</li>
+        
+      <li>time_series_transform.stock_transform.stock_engine package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/time_series_transform.stock_transform.stock_engine.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="time-series-transform-stock-transform-stock-engine-package">
+<h1>time_series_transform.stock_transform.stock_engine package<a class="headerlink" href="#time-series-transform-stock-transform-stock-engine-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-time_series_transform.stock_transform.stock_engine.engine_interface">
+<span id="time-series-transform-stock-transform-stock-engine-engine-interface-module"></span><h2>time_series_transform.stock_transform.stock_engine.engine_interface module<a class="headerlink" href="#module-time_series_transform.stock_transform.stock_engine.engine_interface" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="time_series_transform.stock_transform.stock_engine.engine_interface.engine_interface">
+<em class="property">class </em><code class="sig-prename descclassname">time_series_transform.stock_transform.stock_engine.engine_interface.</code><code class="sig-name descname">engine_interface</code><a class="reference internal" href="_modules/time_series_transform/stock_transform/stock_engine/engine_interface.html#engine_interface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.stock_transform.stock_engine.engine_interface.engine_interface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Interface of the stock API engine</p>
+<dl class="py method">
+<dt id="time_series_transform.stock_transform.stock_engine.engine_interface.engine_interface.getAdditionalInfo">
+<em class="property">abstract </em><code class="sig-name descname">getAdditionalInfo</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/stock_transform/stock_engine/engine_interface.html#engine_interface.getAdditionalInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.stock_transform.stock_engine.engine_interface.engine_interface.getAdditionalInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Additional information fetched from the selected stock</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>dictionary of additional information, e.g. company information</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>additional data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.stock_transform.stock_engine.engine_interface.engine_interface.getHistoricalByPeriod">
+<em class="property">abstract </em><code class="sig-name descname">getHistoricalByPeriod</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">period</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/stock_transform/stock_engine/engine_interface.html#engine_interface.getHistoricalByPeriod"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.stock_transform.stock_engine.engine_interface.engine_interface.getHistoricalByPeriod" title="Permalink to this definition">¶</a></dt>
+<dd><p>get historical data by period</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>period</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – period of the stock data
+valid input sample: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>stock data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.stock_transform.stock_engine.engine_interface.engine_interface.getHistoricalByRange">
+<em class="property">abstract </em><code class="sig-name descname">getHistoricalByRange</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">start_date</span></em>, <em class="sig-param"><span class="n">end_date</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/stock_transform/stock_engine/engine_interface.html#engine_interface.getHistoricalByRange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.stock_transform.stock_engine.engine_interface.engine_interface.getHistoricalByRange" title="Permalink to this definition">¶</a></dt>
+<dd><p>get historical data by date range</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – </p></li>
+<li><p><strong>end_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – </p></li>
+<li><p><strong>of the stock</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#range" title="(in Python v3.9)"><em>range</em></a>) – </p></li>
+<li><p><strong>format</strong> (<em>&quot;%Y-%m-%d&quot;</em><em>, </em><em>eg &quot;2020-02-20&quot;</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>stock data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="time_series_transform.stock_transform.stock_engine.engine_interface.engine_interface.getIntraDayData">
+<em class="property">abstract </em><code class="sig-name descname">getIntraDayData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">start_date</span></em>, <em class="sig-param"><span class="n">end_date</span></em>, <em class="sig-param"><span class="n">interval_range</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/stock_transform/stock_engine/engine_interface.html#engine_interface.getIntraDayData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.stock_transform.stock_engine.engine_interface.engine_interface.getIntraDayData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return intra-day data within the start and end date, range cannot be
+larger than 60d</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – </p></li>
+<li><p><strong>end_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – </p></li>
+<li><p><strong>of the stock</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#range" title="(in Python v3.9)"><em>range</em></a>) – </p></li>
+<li><p><strong>format</strong> (<em>&quot;%Y-%m-%d&quot;</em><em>, </em><em>eg &quot;2020-02-20&quot;</em>) – </p></li>
+<li><p><strong>interval_range</strong> (<em>string</em>) – interval of the data
+Valid intervals: [1m, 2m, 5m, 15m, 30m, 60m, 90m, 1h]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>stock data</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="time_series_transform.stock_transform.stock_engine.engine_interface.valid_period_format">
+<code class="sig-prename descclassname">time_series_transform.stock_transform.stock_engine.engine_interface.</code><code class="sig-name descname">valid_period_format</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date_string</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/time_series_transform/stock_transform/stock_engine/engine_interface.html#valid_period_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#time_series_transform.stock_transform.stock_engine.engine_interface.valid_period_format" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-time_series_transform.stock_transform.stock_engine">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-time_series_transform.stock_transform.stock_engine" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="time_series_transform.transform_core_api.html" class="btn btn-neutral float-right" title="time_series_transform.transform_core_api package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="time_series_transform.stock_transform.html" class="btn btn-neutral float-left" title="time_series_transform.stock_transform package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Chiang.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

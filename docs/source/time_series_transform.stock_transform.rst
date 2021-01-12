@@ -1,6 +1,14 @@
 time\_series\_transform.stock\_transform package
 ================================================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   time_series_transform.stock_transform.stock_engine
+
 Submodules
 ----------
 
@@ -8,14 +16,6 @@ time\_series\_transform.stock\_transform.base module
 ----------------------------------------------------
 
 .. automodule:: time_series_transform.stock_transform.base
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-time\_series\_transform.stock\_transform.plot module
-----------------------------------------------------
-
-.. automodule:: time_series_transform.stock_transform.plot
    :members:
    :undoc-members:
    :show-inheritance:
@@ -28,6 +28,14 @@ time\_series\_transform.stock\_transform.stock\_extractor module
    :undoc-members:
    :show-inheritance:
 
+time\_series\_transform.stock\_transform.stock\_transfromer module
+------------------------------------------------------------------
+
+.. automodule:: time_series_transform.stock_transform.stock_transfromer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 time\_series\_transform.stock\_transform.util module
 ----------------------------------------------------
 
@@ -35,7 +43,6 @@ time\_series\_transform.stock\_transform.util module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 Module contents
 ---------------

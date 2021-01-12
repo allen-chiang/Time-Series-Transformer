@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>time_series_transform &mdash; Time-Series-Transform 0.0.6 documentation</title>
+  <title>time_series_transform &mdash; Time-Series-Transform 1.1.2 documentation</title>
   
 
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -29,7 +32,6 @@
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
@@ -50,7 +52,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> Time-Series-Transform
+            <a href="../../index.html" class="icon icon-home"> Time-Series-Transform
           
 
           
@@ -60,7 +62,7 @@
             
             
               <div class="version">
-                0.0.6
+                1.1.2
               </div>
             
           
@@ -86,8 +88,11 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../quick_start.html">Time Series Transformer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api_documentation.html">Api Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Time Series Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html#id1">Time_Series_Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html#stock-transformer">Stock_Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">time_series_transform API documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../gallery.html">Gallery</a></li>
 </ul>
 
@@ -129,6 +134,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -140,7 +147,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/docs/source/modules.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -181,41 +188,6 @@
 <div class="section" id="time-series-transform">
 <h1>time_series_transform<a class="headerlink" href="#time-series-transform" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="time_series_transform.html">time_series_transform package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="time_series_transform.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="time_series_transform.stock_transform.html">time_series_transform.stock_transform package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.stock_transform.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.stock_transform.html#module-time_series_transform.stock_transform.base">time_series_transform.stock_transform.base module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.stock_transform.html#module-time_series_transform.stock_transform.plot">time_series_transform.stock_transform.plot module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.stock_transform.html#module-time_series_transform.stock_transform.stock_extractor">time_series_transform.stock_transform.stock_extractor module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.stock_transform.html#module-time_series_transform.stock_transform.util">time_series_transform.stock_transform.util module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.stock_transform.html#module-time_series_transform.stock_transform">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="time_series_transform.test.html">time_series_transform.test package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.test.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.test.html#module-time_series_transform.test.test_stock_base">time_series_transform.test.test_stock_base module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.test.html#module-time_series_transform.test.test_tensorflow_adopter">time_series_transform.test.test_tensorflow_adopter module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.test.html#module-time_series_transform.test.test_time_series_transform">time_series_transform.test.test_time_series_transform module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.test.html#module-time_series_transform.test">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="time_series_transform.transform_core_api.html">time_series_transform.transform_core_api package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.transform_core_api.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.transform_core_api.html#module-time_series_transform.transform_core_api.base">time_series_transform.transform_core_api.base module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.transform_core_api.html#module-time_series_transform.transform_core_api.tensorflow_adopter">time_series_transform.transform_core_api.tensorflow_adopter module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.transform_core_api.html#module-time_series_transform.transform_core_api.time_series_transformer">time_series_transform.transform_core_api.time_series_transformer module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.transform_core_api.html#module-time_series_transform.transform_core_api.util">time_series_transform.transform_core_api.util module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="time_series_transform.transform_core_api.html#module-time_series_transform.transform_core_api">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="time_series_transform.html#module-time_series_transform">Module contents</a></li>
-</ul>
-</li>
-</ul>
 </div>
 </div>
 
@@ -224,28 +196,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Chiang
+        &#169; Copyright 2020, Chiang.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

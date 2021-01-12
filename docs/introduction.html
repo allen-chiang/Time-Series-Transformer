@@ -1,0 +1,859 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Time Series Transformer &mdash; Time-Series-Transform 1.1.2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="time_series_transform API documentation" href="modules.html" />
+    <link rel="prev" title="Welcome to Time Series Transformer documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Time-Series-Transform
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.1.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Time Series Transformer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#id1">Time_Series_Transformer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pre-made-functions">Pre-made functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#custom-functions">Custom Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-with-category">Data with Category</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#io">IO</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pandas">pandas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#numpy">numpy</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#stock-transformer">Stock_Transformer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#create-technical-indicator">create technical indicator</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">time_series_transform API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallery.html">Gallery</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Time-Series-Transform</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Time Series Transformer</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/introduction.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="time-series-transformer">
+<h1>Time Series Transformer<a class="headerlink" href="#time-series-transformer" title="Permalink to this headline">¶</a></h1>
+<p>Documentation
+<a class="reference external" href="https://allen-chiang.github.io/Time-Series-Transformer/">https://allen-chiang.github.io/Time-Series-Transformer/</a></p>
+<p><a class="reference external" href="https://www.python.org/"><img alt="made-with-python" src="https://img.shields.io/badge/Made%20with-Python-1f425f.svg" /></a> <img alt="Build" src="https://github.com/allen-chiang/Time-Series-Transformer/workflows/Build/badge.svg" /> <a class="reference external" href="https://dev.azure.com/kuanlunchiang/Time%20Series%20Transformer/_build/latest?definitionId=3&amp;branchName=master"><img alt="Build Status" src="https://dev.azure.com/kuanlunchiang/Time%20Series%20Transformer/_apis/build/status/allen-chiang.Time-Series-Transformer?branchName=master" /></a> <a class="reference external" href="https://dev.azure.com/kuanlunchiang/4514fff7-ad24-4603-9373-c28efeaada71/_boards/board/t/b19741c8-3782-44ee-8a92-2805fbeb49f9/Microsoft.RequirementCategory"><img alt="Board Status" src="https://dev.azure.com/kuanlunchiang/4514fff7-ad24-4603-9373-c28efeaada71/b19741c8-3782-44ee-8a92-2805fbeb49f9/_apis/work/boardbadge/e0f238c1-381a-4686-a599-43174bf8237f" /></a></p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">time_series_transform.sklearn</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">time_series_transform</span> <span class="k">as</span> <span class="nn">tst</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>This package provides tools for time series data preprocessing. There
+are two main components inside the package: Time_Series_Transformer and
+Stock_Transformer. Time_Series_Transformer is a general class for all
+type of time series data, while Stock_Transformer is a sub-class of
+Time_Series_Transformer. Time_Series_Transformer has different functions
+for data manipulation, io transformation, and making simple plots. This
+tutorial will take a quick look at the functions for data manipulation
+and basic io. For the plot functions, there will be other tutorial to
+explain.</p>
+</div>
+<div class="section" id="id1">
+<h1>Time_Series_Transformer<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>Since all the time series data having time data, Time_Series_Transformer
+is required to specify time index. The basic time series data is time
+series data with no special category. However, there a lot of cases that
+a time series data is associating with categories. For example,
+inventory data is usually associate with product name or stores, or
+stock data is having different ticker names or brokers. To address this
+question, Time_Series_Transformer can specify the main category index.
+Given the main category index, the data can be manipulated in parallel
+corresponding to its category.</p>
+<p>Here is a simple example to create a Time_Series_Transformer without
+specifying its category.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;time&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span>
+    <span class="s1">&#39;data1&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span>
+    <span class="s1">&#39;data2&#39;</span><span class="p">:[</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span>
+<span class="p">}</span>
+<span class="n">trans</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">Time_Series_Transformer</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">timeSeriesCol</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="n">trans</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="n">column</span>
+<span class="o">-----------</span>
+<span class="n">time</span>
+<span class="n">data1</span>
+<span class="n">data2</span>
+<span class="n">time</span> <span class="n">length</span><span class="p">:</span> <span class="mi">5</span>
+<span class="n">category</span><span class="p">:</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p>There are two ways to manipulate the data. The first way is use the
+pre-made functions, and the second way is to use the transform function
+and provide your custom function. There are six pre-made functions
+including make_lag, make_lead, make_lag_sequence, make_lead_sequence,
+and make_stack_sequence. In the following demonstration, we will show
+each of the pre-made functions.</p>
+<div class="section" id="pre-made-functions">
+<h2>Pre-made functions<a class="headerlink" href="#pre-made-functions" title="Permalink to this headline">¶</a></h2>
+<p>make_lag and make_lead functions are going to create lag/lead data for
+input columns. This type of manipulation could be useful for machine
+learning.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trans</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">Time_Series_Transformer</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">timeSeriesCol</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="n">trans</span> <span class="o">=</span> <span class="n">trans</span><span class="o">.</span><span class="n">make_lag</span><span class="p">(</span>
+    <span class="n">inputLabels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;data1&#39;</span><span class="p">,</span><span class="s1">&#39;data2&#39;</span><span class="p">],</span>
+    <span class="n">lagNum</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">suffix</span> <span class="o">=</span> <span class="s1">&#39;_lag_&#39;</span><span class="p">,</span>
+    <span class="n">fillMissing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">trans</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="n">time</span>  <span class="n">data1</span>  <span class="n">data2</span>  <span class="n">data1_lag_1</span>  <span class="n">data2_lag_1</span>
+<span class="mi">0</span>     <span class="mi">1</span>      <span class="mi">1</span>      <span class="mi">6</span>          <span class="n">NaN</span>          <span class="n">NaN</span>
+<span class="mi">1</span>     <span class="mi">2</span>      <span class="mi">2</span>      <span class="mi">7</span>          <span class="mf">1.0</span>          <span class="mf">6.0</span>
+<span class="mi">2</span>     <span class="mi">3</span>      <span class="mi">3</span>      <span class="mi">8</span>          <span class="mf">2.0</span>          <span class="mf">7.0</span>
+<span class="mi">3</span>     <span class="mi">4</span>      <span class="mi">4</span>      <span class="mi">9</span>          <span class="mf">3.0</span>          <span class="mf">8.0</span>
+<span class="mi">4</span>     <span class="mi">5</span>      <span class="mi">5</span>     <span class="mi">10</span>          <span class="mf">4.0</span>          <span class="mf">9.0</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trans</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">Time_Series_Transformer</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">timeSeriesCol</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="n">trans</span> <span class="o">=</span> <span class="n">trans</span><span class="o">.</span><span class="n">make_lead</span><span class="p">(</span>
+    <span class="n">inputLabels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;data1&#39;</span><span class="p">,</span><span class="s1">&#39;data2&#39;</span><span class="p">],</span>
+    <span class="n">leadNum</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">suffix</span> <span class="o">=</span> <span class="s1">&#39;_lead_&#39;</span><span class="p">,</span>
+    <span class="n">fillMissing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">trans</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="n">time</span>  <span class="n">data1</span>  <span class="n">data2</span>  <span class="n">data1_lead_1</span>  <span class="n">data2_lead_1</span>
+<span class="mi">0</span>     <span class="mi">1</span>      <span class="mi">1</span>      <span class="mi">6</span>           <span class="mf">2.0</span>           <span class="mf">7.0</span>
+<span class="mi">1</span>     <span class="mi">2</span>      <span class="mi">2</span>      <span class="mi">7</span>           <span class="mf">3.0</span>           <span class="mf">8.0</span>
+<span class="mi">2</span>     <span class="mi">3</span>      <span class="mi">3</span>      <span class="mi">8</span>           <span class="mf">4.0</span>           <span class="mf">9.0</span>
+<span class="mi">3</span>     <span class="mi">4</span>      <span class="mi">4</span>      <span class="mi">9</span>           <span class="mf">5.0</span>          <span class="mf">10.0</span>
+<span class="mi">4</span>     <span class="mi">5</span>      <span class="mi">5</span>     <span class="mi">10</span>           <span class="n">NaN</span>           <span class="n">NaN</span>
+</pre></div>
+</div>
+<p>make_lag_sequence and make_lead_sequence is to create a sequence for a
+given window length and lag or lead number. This manipulation could be
+useful for Deep learning.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trans</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">Time_Series_Transformer</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">timeSeriesCol</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="n">trans</span> <span class="o">=</span> <span class="n">trans</span><span class="o">.</span><span class="n">make_lag_sequence</span><span class="p">(</span>
+    <span class="n">inputLabels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;data1&#39;</span><span class="p">,</span><span class="s1">&#39;data2&#39;</span><span class="p">],</span>
+    <span class="n">windowSize</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">lagNum</span> <span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">suffix</span> <span class="o">=</span> <span class="s1">&#39;_lag_seq_&#39;</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">trans</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="n">time</span>  <span class="n">data1</span>  <span class="n">data2</span> <span class="n">data1_lag_seq_2</span> <span class="n">data2_lag_seq_2</span>
+<span class="mi">0</span>     <span class="mi">1</span>      <span class="mi">1</span>      <span class="mi">6</span>      <span class="p">[</span><span class="n">nan</span><span class="p">,</span> <span class="n">nan</span><span class="p">]</span>      <span class="p">[</span><span class="n">nan</span><span class="p">,</span> <span class="n">nan</span><span class="p">]</span>
+<span class="mi">1</span>     <span class="mi">2</span>      <span class="mi">2</span>      <span class="mi">7</span>      <span class="p">[</span><span class="n">nan</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>      <span class="p">[</span><span class="n">nan</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">]</span>
+<span class="mi">2</span>     <span class="mi">3</span>      <span class="mi">3</span>      <span class="mi">8</span>      <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]</span>      <span class="p">[</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">]</span>
+<span class="mi">3</span>     <span class="mi">4</span>      <span class="mi">4</span>      <span class="mi">9</span>      <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]</span>      <span class="p">[</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">]</span>
+<span class="mi">4</span>     <span class="mi">5</span>      <span class="mi">5</span>     <span class="mi">10</span>      <span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]</span>      <span class="p">[</span><span class="mf">8.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trans</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">Time_Series_Transformer</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">timeSeriesCol</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="n">trans</span> <span class="o">=</span> <span class="n">trans</span><span class="o">.</span><span class="n">make_lead_sequence</span><span class="p">(</span>
+    <span class="n">inputLabels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;data1&#39;</span><span class="p">,</span><span class="s1">&#39;data2&#39;</span><span class="p">],</span>
+    <span class="n">windowSize</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">leadNum</span> <span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">suffix</span> <span class="o">=</span> <span class="s1">&#39;_lead_seq_&#39;</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">trans</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="n">time</span>  <span class="n">data1</span>  <span class="n">data2</span> <span class="n">data1_lead_seq_2</span> <span class="n">data2_lead_seq_2</span>
+<span class="mi">0</span>     <span class="mi">1</span>      <span class="mi">1</span>      <span class="mi">6</span>       <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]</span>       <span class="p">[</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">]</span>
+<span class="mi">1</span>     <span class="mi">2</span>      <span class="mi">2</span>      <span class="mi">7</span>       <span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]</span>       <span class="p">[</span><span class="mf">8.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">]</span>
+<span class="mi">2</span>     <span class="mi">3</span>      <span class="mi">3</span>      <span class="mi">8</span>       <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">]</span>      <span class="p">[</span><span class="mf">9.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">]</span>
+<span class="mi">3</span>     <span class="mi">4</span>      <span class="mi">4</span>      <span class="mi">9</span>       <span class="p">[</span><span class="n">nan</span><span class="p">,</span> <span class="n">nan</span><span class="p">]</span>       <span class="p">[</span><span class="n">nan</span><span class="p">,</span> <span class="n">nan</span><span class="p">]</span>
+<span class="mi">4</span>     <span class="mi">5</span>      <span class="mi">5</span>     <span class="mi">10</span>       <span class="p">[</span><span class="n">nan</span><span class="p">,</span> <span class="n">nan</span><span class="p">]</span>       <span class="p">[</span><span class="n">nan</span><span class="p">,</span> <span class="n">nan</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="custom-functions">
+<h2>Custom Functions<a class="headerlink" href="#custom-functions" title="Permalink to this headline">¶</a></h2>
+<p>To use the transform function, you have to create your custom functions.
+The input data will be passed as dict of list, and the output data
+should be either pandas DataFrame, pandas Series, numpy ndArray or list.
+Note, the output length should be in consist with the orignal data
+length.</p>
+<p>For exmaple, this function takes input dictionary data and sum them up.
+The final output is a list.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="k">def</span> <span class="nf">list_output</span> <span class="p">(</span><span class="n">dataDict</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">dataDict</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">dataDict</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">continue</span>
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataDict</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span> <span class="o">+=</span> <span class="n">v</span>
+    <span class="k">return</span> <span class="n">res</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trans</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">Time_Series_Transformer</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">timeSeriesCol</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="n">trans</span> <span class="o">=</span> <span class="n">trans</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span>
+    <span class="n">inputLabels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;data1&#39;</span><span class="p">,</span><span class="s1">&#39;data2&#39;</span><span class="p">],</span>
+    <span class="n">newName</span> <span class="o">=</span> <span class="s1">&#39;sumCol&#39;</span><span class="p">,</span>
+    <span class="n">func</span> <span class="o">=</span> <span class="n">list_output</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">trans</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="n">time</span>  <span class="n">data1</span>  <span class="n">data2</span>  <span class="n">sumCol</span>
+<span class="mi">0</span>     <span class="mi">1</span>      <span class="mi">1</span>      <span class="mi">6</span>       <span class="mi">7</span>
+<span class="mi">1</span>     <span class="mi">2</span>      <span class="mi">2</span>      <span class="mi">7</span>       <span class="mi">9</span>
+<span class="mi">2</span>     <span class="mi">3</span>      <span class="mi">3</span>      <span class="mi">8</span>      <span class="mi">11</span>
+<span class="mi">3</span>     <span class="mi">4</span>      <span class="mi">4</span>      <span class="mi">9</span>      <span class="mi">13</span>
+<span class="mi">4</span>     <span class="mi">5</span>      <span class="mi">5</span>     <span class="mi">10</span>      <span class="mi">15</span>
+</pre></div>
+</div>
+<p>The following example will output as pandas DataFrame and also takes
+additional parameters. Note: since pandas already has column name, the
+new name will automatically beocme suffix.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">pandas_output</span><span class="p">(</span><span class="n">dataDict</span><span class="p">,</span> <span class="n">pandasColName</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">dataDict</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">dataDict</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">continue</span>
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataDict</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span> <span class="o">+=</span> <span class="n">v</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">pandasColName</span><span class="p">:</span><span class="n">res</span><span class="p">})</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trans</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">Time_Series_Transformer</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">timeSeriesCol</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="n">trans</span> <span class="o">=</span> <span class="n">trans</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span>
+    <span class="n">inputLabels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;data1&#39;</span><span class="p">,</span><span class="s1">&#39;data2&#39;</span><span class="p">],</span>
+    <span class="n">newName</span> <span class="o">=</span> <span class="s1">&#39;sumCol&#39;</span><span class="p">,</span>
+    <span class="n">func</span> <span class="o">=</span> <span class="n">pandas_output</span><span class="p">,</span>
+    <span class="n">pandasColName</span> <span class="o">=</span> <span class="s2">&quot;pandasName&quot;</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">trans</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="n">time</span>  <span class="n">data1</span>  <span class="n">data2</span>  <span class="n">sumCol_pandasName</span>
+<span class="mi">0</span>     <span class="mi">1</span>      <span class="mi">1</span>      <span class="mi">6</span>                  <span class="mi">7</span>
+<span class="mi">1</span>     <span class="mi">2</span>      <span class="mi">2</span>      <span class="mi">7</span>                  <span class="mi">9</span>
+<span class="mi">2</span>     <span class="mi">3</span>      <span class="mi">3</span>      <span class="mi">8</span>                 <span class="mi">11</span>
+<span class="mi">3</span>     <span class="mi">4</span>      <span class="mi">4</span>      <span class="mi">9</span>                 <span class="mi">13</span>
+<span class="mi">4</span>     <span class="mi">5</span>      <span class="mi">5</span>     <span class="mi">10</span>                 <span class="mi">15</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="data-with-category">
+<h2>Data with Category<a class="headerlink" href="#data-with-category" title="Permalink to this headline">¶</a></h2>
+<p>Since time series data could be associated with different category,
+Time_Series_Transformer can specify the mainCategoryCol parameter to
+point out the main category. This class only provide one columns for
+main category because multiple dimensions can be aggregated into a new
+column as main category.</p>
+<p>The following example has one category with two type a and b. Each of
+them has some overlaped and different timestamp.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;time&quot;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span>
+    <span class="s1">&#39;data&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span>
+    <span class="s2">&quot;category&quot;</span><span class="p">:[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trans</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">Time_Series_Transformer</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+<span class="n">trans</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="n">column</span>
+<span class="o">-----------</span>
+<span class="n">time</span>
+<span class="n">data</span>
+<span class="n">time</span> <span class="n">length</span><span class="p">:</span> <span class="mi">5</span>
+<span class="n">category</span><span class="p">:</span> <span class="n">a</span>
+
+<span class="n">data</span> <span class="n">column</span>
+<span class="o">-----------</span>
+<span class="n">time</span>
+<span class="n">data</span>
+<span class="n">time</span> <span class="n">length</span><span class="p">:</span> <span class="mi">4</span>
+<span class="n">category</span><span class="p">:</span> <span class="n">b</span>
+
+<span class="n">main</span> <span class="n">category</span> <span class="n">column</span><span class="p">:</span> <span class="n">category</span>
+</pre></div>
+</div>
+<p>Since we specify the main category column, data manipulation functions
+can use n_jobs to execute the function in parallel. The parallel
+execution is with joblib implmentation
+(<a class="reference external" href="https://joblib.readthedocs.io/en/latest/">https://joblib.readthedocs.io/en/latest/</a>).</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trans</span> <span class="o">=</span> <span class="n">trans</span><span class="o">.</span><span class="n">make_lag</span><span class="p">(</span>
+    <span class="n">inputLabels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span>
+    <span class="n">lagNum</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">suffix</span> <span class="o">=</span> <span class="s1">&#39;_lag_&#39;</span><span class="p">,</span>
+    <span class="n">fillMissing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+    <span class="n">n_jobs</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">verbose</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">trans</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">2</span><span class="p">)]:</span> <span class="n">Using</span> <span class="n">backend</span> <span class="n">LokyBackend</span> <span class="k">with</span> <span class="mi">2</span> <span class="n">concurrent</span> <span class="n">workers</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="n">time</span>  <span class="n">data</span>  <span class="n">data_lag_1</span> <span class="n">category</span>
+<span class="mi">0</span>     <span class="mi">1</span>     <span class="mi">1</span>         <span class="n">NaN</span>        <span class="n">a</span>
+<span class="mi">1</span>     <span class="mi">2</span>     <span class="mi">2</span>         <span class="mf">1.0</span>        <span class="n">a</span>
+<span class="mi">2</span>     <span class="mi">3</span>     <span class="mi">3</span>         <span class="mf">2.0</span>        <span class="n">a</span>
+<span class="mi">3</span>     <span class="mi">4</span>     <span class="mi">4</span>         <span class="mf">3.0</span>        <span class="n">a</span>
+<span class="mi">4</span>     <span class="mi">5</span>     <span class="mi">5</span>         <span class="mf">4.0</span>        <span class="n">a</span>
+<span class="mi">5</span>     <span class="mi">1</span>     <span class="mi">1</span>         <span class="n">NaN</span>        <span class="n">b</span>
+<span class="mi">6</span>     <span class="mi">3</span>     <span class="mi">2</span>         <span class="mf">1.0</span>        <span class="n">b</span>
+<span class="mi">7</span>     <span class="mi">4</span>     <span class="mi">3</span>         <span class="mf">2.0</span>        <span class="n">b</span>
+<span class="mi">8</span>     <span class="mi">5</span>     <span class="mi">4</span>         <span class="mf">3.0</span>        <span class="n">b</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">2</span><span class="p">)]:</span> <span class="n">Done</span>   <span class="mi">2</span> <span class="n">out</span> <span class="n">of</span>   <span class="mi">2</span> <span class="o">|</span> <span class="n">elapsed</span><span class="p">:</span>    <span class="mf">3.6</span><span class="n">s</span> <span class="n">remaining</span><span class="p">:</span>    <span class="mf">0.0</span><span class="n">s</span>
+<span class="p">[</span><span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">2</span><span class="p">)]:</span> <span class="n">Done</span>   <span class="mi">2</span> <span class="n">out</span> <span class="n">of</span>   <span class="mi">2</span> <span class="o">|</span> <span class="n">elapsed</span><span class="p">:</span>    <span class="mf">3.6</span><span class="n">s</span> <span class="n">finished</span>
+</pre></div>
+</div>
+<p>To further support the category, there are two functions to deal with
+different time length data: pad_different_category_time and
+remove_different_category_time. The first function is padding the
+different length into same length, while the other is remove different
+timestamp.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trans</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">Time_Series_Transformer</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+<span class="n">trans</span> <span class="o">=</span> <span class="n">trans</span><span class="o">.</span><span class="n">pad_different_category_time</span><span class="p">(</span><span class="n">fillMissing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">trans</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="n">time</span>  <span class="n">data</span> <span class="n">category</span>
+<span class="mi">0</span>     <span class="mi">1</span>   <span class="mf">1.0</span>        <span class="n">a</span>
+<span class="mi">1</span>     <span class="mi">2</span>   <span class="mf">2.0</span>        <span class="n">a</span>
+<span class="mi">2</span>     <span class="mi">3</span>   <span class="mf">3.0</span>        <span class="n">a</span>
+<span class="mi">3</span>     <span class="mi">4</span>   <span class="mf">4.0</span>        <span class="n">a</span>
+<span class="mi">4</span>     <span class="mi">5</span>   <span class="mf">5.0</span>        <span class="n">a</span>
+<span class="mi">5</span>     <span class="mi">1</span>   <span class="mf">1.0</span>        <span class="n">b</span>
+<span class="mi">6</span>     <span class="mi">2</span>   <span class="n">NaN</span>        <span class="n">b</span>
+<span class="mi">7</span>     <span class="mi">3</span>   <span class="mf">2.0</span>        <span class="n">b</span>
+<span class="mi">8</span>     <span class="mi">4</span>   <span class="mf">3.0</span>        <span class="n">b</span>
+<span class="mi">9</span>     <span class="mi">5</span>   <span class="mf">4.0</span>        <span class="n">b</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trans</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">Time_Series_Transformer</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="s1">&#39;time&#39;</span><span class="p">,</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+<span class="n">trans</span> <span class="o">=</span> <span class="n">trans</span><span class="o">.</span><span class="n">remove_different_category_time</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">trans</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="n">time</span>  <span class="n">data</span> <span class="n">category</span>
+<span class="mi">0</span>     <span class="mi">1</span>     <span class="mi">1</span>        <span class="n">a</span>
+<span class="mi">1</span>     <span class="mi">3</span>     <span class="mi">3</span>        <span class="n">a</span>
+<span class="mi">2</span>     <span class="mi">4</span>     <span class="mi">4</span>        <span class="n">a</span>
+<span class="mi">3</span>     <span class="mi">5</span>     <span class="mi">5</span>        <span class="n">a</span>
+<span class="mi">4</span>     <span class="mi">1</span>     <span class="mi">1</span>        <span class="n">b</span>
+<span class="mi">5</span>     <span class="mi">3</span>     <span class="mi">2</span>        <span class="n">b</span>
+<span class="mi">6</span>     <span class="mi">4</span>     <span class="mi">3</span>        <span class="n">b</span>
+<span class="mi">7</span>     <span class="mi">5</span>     <span class="mi">4</span>        <span class="n">b</span>
+</pre></div>
+</div>
+<div class="section" id="io">
+<h3>IO<a class="headerlink" href="#io" title="Permalink to this headline">¶</a></h3>
+<p>IO is a huge component for this package. The current version support
+pandas DataFrame, numpy ndArray, Apache Arrow Table, Apache Feather, and
+Apache Parquet. All those io can specify whether to expand category or
+time for the export format. In this demo, we will show numpy and pandas.
+Also, Transformer can combine make_label function and sepLabel parameter
+inside of export to seperate data and label.</p>
+</div>
+</div>
+<div class="section" id="pandas">
+<h2>pandas<a class="headerlink" href="#pandas" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;time&quot;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span>
+    <span class="s1">&#39;data&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span>
+    <span class="s2">&quot;category&quot;</span><span class="p">:[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">]</span>
+<span class="p">}</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trans</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">Time_Series_Transformer</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span>
+    <span class="n">pandasFrame</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span>
+    <span class="n">timeSeriesCol</span> <span class="o">=</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span>
+    <span class="n">mainCategoryCol</span><span class="o">=</span> <span class="s1">&#39;category&#39;</span>
+<span class="p">)</span>
+<span class="n">trans</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="n">column</span>
+<span class="o">-----------</span>
+<span class="n">time</span>
+<span class="n">data</span>
+<span class="n">time</span> <span class="n">length</span><span class="p">:</span> <span class="mi">5</span>
+<span class="n">category</span><span class="p">:</span> <span class="n">a</span>
+
+<span class="n">data</span> <span class="n">column</span>
+<span class="o">-----------</span>
+<span class="n">time</span>
+<span class="n">data</span>
+<span class="n">time</span> <span class="n">length</span><span class="p">:</span> <span class="mi">4</span>
+<span class="n">category</span><span class="p">:</span> <span class="n">b</span>
+
+<span class="n">main</span> <span class="n">category</span> <span class="n">column</span><span class="p">:</span> <span class="n">category</span>
+</pre></div>
+</div>
+<p>To expand the data, all category should be in consist. Besides the pad
+and remove function, we can use preprocessType parameter to achive that.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">trans</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">(</span>
+    <span class="n">expandCategory</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">expandTime</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">preprocessType</span> <span class="o">=</span> <span class="s1">&#39;pad&#39;</span>
+<span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="n">time</span>  <span class="n">data_a</span>  <span class="n">data_b</span>
+<span class="mi">0</span>     <span class="mi">1</span>       <span class="mi">1</span>     <span class="mf">1.0</span>
+<span class="mi">1</span>     <span class="mi">2</span>       <span class="mi">2</span>     <span class="n">NaN</span>
+<span class="mi">2</span>     <span class="mi">3</span>       <span class="mi">3</span>     <span class="mf">2.0</span>
+<span class="mi">3</span>     <span class="mi">4</span>       <span class="mi">4</span>     <span class="mf">3.0</span>
+<span class="mi">4</span>     <span class="mi">5</span>       <span class="mi">5</span>     <span class="mf">4.0</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">trans</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">(</span>
+    <span class="n">expandCategory</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">expandTime</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">preprocessType</span> <span class="o">=</span> <span class="s1">&#39;pad&#39;</span>
+<span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="n">data_1</span>  <span class="n">data_2</span>  <span class="n">data_3</span>  <span class="n">data_4</span>  <span class="n">data_5</span> <span class="n">category</span>
+<span class="mi">0</span>       <span class="mi">1</span>     <span class="mf">2.0</span>       <span class="mi">3</span>       <span class="mi">4</span>       <span class="mi">5</span>        <span class="n">a</span>
+<span class="mi">1</span>       <span class="mi">1</span>     <span class="n">NaN</span>       <span class="mi">2</span>       <span class="mi">3</span>       <span class="mi">4</span>        <span class="n">b</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">trans</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">(</span>
+    <span class="n">expandCategory</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">expandTime</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">preprocessType</span> <span class="o">=</span> <span class="s1">&#39;pad&#39;</span>
+<span class="p">))</span>
+</pre></div>
+</div>
+<pre class="literal-block">   data_a_1  data_b_1  data_a_2  data_b_2  data_a_3  data_b_3  data_a_4  0         1       1.0         2       NaN         3       2.0         4
+
+   data_b_4  data_a_5  data_b_5
+0       3.0         5       4.0</pre>
+<p>make_label function can be used with sepLabel parameter. This function
+can be used for seperating X and y for machine learning cases.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trans</span> <span class="o">=</span> <span class="n">trans</span><span class="o">.</span><span class="n">make_lead</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span><span class="n">leadNum</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">suffix</span> <span class="o">=</span> <span class="s1">&#39;_lead_&#39;</span><span class="p">)</span>
+<span class="n">trans</span> <span class="o">=</span> <span class="n">trans</span><span class="o">.</span><span class="n">make_label</span><span class="p">(</span><span class="s2">&quot;data_lead_1&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">trans</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">(</span>
+    <span class="n">expandCategory</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">expandTime</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">preprocessType</span> <span class="o">=</span> <span class="s1">&#39;pad&#39;</span><span class="p">,</span>
+    <span class="n">sepLabel</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="n">time</span>  <span class="n">data</span> <span class="n">category</span>
+<span class="mi">0</span>     <span class="mi">1</span>   <span class="mf">1.0</span>        <span class="n">a</span>
+<span class="mi">1</span>     <span class="mi">2</span>   <span class="mf">2.0</span>        <span class="n">a</span>
+<span class="mi">2</span>     <span class="mi">3</span>   <span class="mf">3.0</span>        <span class="n">a</span>
+<span class="mi">3</span>     <span class="mi">4</span>   <span class="mf">4.0</span>        <span class="n">a</span>
+<span class="mi">4</span>     <span class="mi">5</span>   <span class="mf">5.0</span>        <span class="n">a</span>
+<span class="mi">5</span>     <span class="mi">1</span>   <span class="mf">1.0</span>        <span class="n">b</span>
+<span class="mi">6</span>     <span class="mi">2</span>   <span class="n">NaN</span>        <span class="n">b</span>
+<span class="mi">7</span>     <span class="mi">3</span>   <span class="mf">2.0</span>        <span class="n">b</span>
+<span class="mi">8</span>     <span class="mi">4</span>   <span class="mf">3.0</span>        <span class="n">b</span>
+<span class="mi">9</span>     <span class="mi">5</span>   <span class="mf">4.0</span>        <span class="n">b</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="n">data_lead_1</span>
+<span class="mi">0</span>          <span class="mf">2.0</span>
+<span class="mi">1</span>          <span class="mf">3.0</span>
+<span class="mi">2</span>          <span class="mf">4.0</span>
+<span class="mi">3</span>          <span class="mf">5.0</span>
+<span class="mi">4</span>          <span class="n">NaN</span>
+<span class="mi">5</span>          <span class="mf">2.0</span>
+<span class="mi">6</span>          <span class="n">NaN</span>
+<span class="mi">7</span>          <span class="mf">3.0</span>
+<span class="mi">8</span>          <span class="mf">4.0</span>
+<span class="mi">9</span>          <span class="n">NaN</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="numpy">
+<h2>numpy<a class="headerlink" href="#numpy" title="Permalink to this headline">¶</a></h2>
+<p>Since numpy has no column name, it has to use index number to specify
+column.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;time&quot;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span>
+    <span class="s1">&#39;data&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span>
+    <span class="s2">&quot;category&quot;</span><span class="p">:[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">]</span>
+<span class="p">}</span>
+<span class="n">npArray</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trans</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">Time_Series_Transformer</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span>
+    <span class="n">numpyData</span><span class="o">=</span> <span class="n">npArray</span><span class="p">,</span>
+    <span class="n">timeSeriesCol</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">mainCategoryCol</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">trans</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="n">column</span>
+<span class="o">-----------</span>
+<span class="mi">0</span>
+<span class="mi">1</span>
+<span class="n">time</span> <span class="n">length</span><span class="p">:</span> <span class="mi">5</span>
+<span class="n">category</span><span class="p">:</span> <span class="n">a</span>
+
+<span class="n">data</span> <span class="n">column</span>
+<span class="o">-----------</span>
+<span class="mi">0</span>
+<span class="mi">1</span>
+<span class="n">time</span> <span class="n">length</span><span class="p">:</span> <span class="mi">4</span>
+<span class="n">category</span><span class="p">:</span> <span class="n">b</span>
+
+<span class="n">main</span> <span class="n">category</span> <span class="n">column</span><span class="p">:</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trans</span> <span class="o">=</span> <span class="n">trans</span><span class="o">.</span><span class="n">make_lead</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">leadNum</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">suffix</span> <span class="o">=</span> <span class="s1">&#39;_lead_&#39;</span><span class="p">)</span>
+<span class="n">trans</span> <span class="o">=</span> <span class="n">trans</span><span class="o">.</span><span class="n">make_label</span><span class="p">(</span><span class="s2">&quot;1_lead_1&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">trans</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">(</span>
+    <span class="n">expandCategory</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">expandTime</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">preprocessType</span> <span class="o">=</span> <span class="s1">&#39;pad&#39;</span><span class="p">,</span>
+    <span class="n">sepLabel</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="mi">0</span>    <span class="mi">1</span>  <span class="mi">2</span>
+<span class="mi">0</span>  <span class="mi">1</span>  <span class="mf">1.0</span>  <span class="n">a</span>
+<span class="mi">1</span>  <span class="mi">2</span>  <span class="mf">2.0</span>  <span class="n">a</span>
+<span class="mi">2</span>  <span class="mi">3</span>  <span class="mf">3.0</span>  <span class="n">a</span>
+<span class="mi">3</span>  <span class="mi">4</span>  <span class="mf">4.0</span>  <span class="n">a</span>
+<span class="mi">4</span>  <span class="mi">5</span>  <span class="mf">5.0</span>  <span class="n">a</span>
+<span class="mi">5</span>  <span class="mi">1</span>  <span class="mf">1.0</span>  <span class="n">b</span>
+<span class="mi">6</span>  <span class="mi">2</span>  <span class="n">NaN</span>  <span class="n">b</span>
+<span class="mi">7</span>  <span class="mi">3</span>  <span class="mf">2.0</span>  <span class="n">b</span>
+<span class="mi">8</span>  <span class="mi">4</span>  <span class="mf">3.0</span>  <span class="n">b</span>
+<span class="mi">9</span>  <span class="mi">5</span>  <span class="mf">4.0</span>  <span class="n">b</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="mi">1</span><span class="n">_lead_1</span>
+<span class="mi">0</span>       <span class="mf">2.0</span>
+<span class="mi">1</span>       <span class="mf">3.0</span>
+<span class="mi">2</span>       <span class="mf">4.0</span>
+<span class="mi">3</span>       <span class="mf">5.0</span>
+<span class="mi">4</span>       <span class="n">NaN</span>
+<span class="mi">5</span>       <span class="mf">2.0</span>
+<span class="mi">6</span>       <span class="n">NaN</span>
+<span class="mi">7</span>       <span class="mf">3.0</span>
+<span class="mi">8</span>       <span class="mf">4.0</span>
+<span class="mi">9</span>       <span class="n">NaN</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="stock-transformer">
+<h1>Stock_Transformer<a class="headerlink" href="#stock-transformer" title="Permalink to this headline">¶</a></h1>
+<p>Stock_Transformer is a subclass of Time_Series_Transformer. Hence, all
+the function demonstrated in Time_Series_Transformer canbe used in
+Stock_Transformer. The differences for Stock_Transformer is that it is
+required to specify High, Low, Open, Close, Volume columns. Besides
+these information, it has pandas-ta strategy implmentation to create
+technical indicator (<a class="reference external" href="https://github.com/twopirllc/pandas-ta">https://github.com/twopirllc/pandas-ta</a>). Moreover,
+the io class for Stock_Transformer support yfinance and investpy. We can
+directly extract data from these api.</p>
+<div class="section" id="create-technical-indicator">
+<h2>create technical indicator<a class="headerlink" href="#create-technical-indicator" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stock</span> <span class="o">=</span> <span class="n">tst</span><span class="o">.</span><span class="n">Stock_Transformer</span><span class="o">.</span><span class="n">from_stock_engine_period</span><span class="p">(</span>
+    <span class="n">symbols</span> <span class="o">=</span> <span class="s1">&#39;GOOGL&#39;</span><span class="p">,</span><span class="n">period</span> <span class="o">=</span><span class="s1">&#39;1y&#39;</span><span class="p">,</span> <span class="n">engine</span> <span class="o">=</span> <span class="s1">&#39;yahoo&#39;</span>
+<span class="p">)</span>
+<span class="n">stock</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="n">column</span>
+<span class="o">-----------</span>
+<span class="n">Date</span>
+<span class="n">Open</span>
+<span class="n">High</span>
+<span class="n">Low</span>
+<span class="n">Close</span>
+<span class="n">Volume</span>
+<span class="n">Dividends</span>
+<span class="n">Stock</span> <span class="n">Splits</span>
+<span class="n">time</span> <span class="n">length</span><span class="p">:</span> <span class="mi">253</span>
+<span class="n">category</span><span class="p">:</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas_ta</span> <span class="k">as</span> <span class="nn">ta</span>
+<span class="n">MyStrategy</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">Strategy</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;DCSMA10&quot;</span><span class="p">,</span>
+    <span class="n">ta</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;ohlc4&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;sma&quot;</span><span class="p">,</span> <span class="s2">&quot;length&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;donchian&quot;</span><span class="p">,</span> <span class="s2">&quot;lower_length&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;upper_length&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;ema&quot;</span><span class="p">,</span> <span class="s2">&quot;close&quot;</span><span class="p">:</span> <span class="s2">&quot;OHLC4&quot;</span><span class="p">,</span> <span class="s2">&quot;length&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;suffix&quot;</span><span class="p">:</span> <span class="s2">&quot;OHLC4&quot;</span><span class="p">},</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stock</span> <span class="o">=</span> <span class="n">stock</span><span class="o">.</span><span class="n">get_technial_indicator</span><span class="p">(</span><span class="n">MyStrategy</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">stock</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+<pre class="literal-block">         Date         Open         High          Low        Close   Volume  0  2020-01-06  1351.630005  1398.319946  1351.000000  1397.810059  2338400
+1  2020-01-07  1400.459961  1403.500000  1391.560059  1395.109985  1716500
+2  2020-01-08  1394.819946  1411.849976  1392.630005  1405.040039  1765700
+3  2020-01-09  1421.930054  1428.680054  1410.209961  1419.790039  1660000
+4  2020-01-10  1429.469971  1434.939941  1419.599976  1428.959961  1312900
+
+   Dividends  Stock Splits        OHLC4  SMA_10  DCL_10_15  DCM_10_15  0          0             0  1374.690002     NaN        NaN        NaN
+1          0             0  1397.657501     NaN        NaN        NaN
+2          0             0  1401.084991     NaN        NaN        NaN
+3          0             0  1420.152527     NaN        NaN        NaN
+4          0             0  1428.242462     NaN        NaN        NaN
+
+   DCU_10_15  EMA_10_OHLC4
+0        NaN           NaN
+1        NaN           NaN
+2        NaN           NaN
+3        NaN           NaN
+4        NaN           NaN</pre>
+<p>For more usage please visit our gallery</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="modules.html" class="btn btn-neutral float-right" title="time_series_transform API documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Time Series Transformer documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Chiang.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
