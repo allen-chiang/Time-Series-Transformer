@@ -20,11 +20,11 @@ import time_series_transform as tst
 
 # Introduction
 
-This package provides tools for time series data preprocessing. There are two main components inside the package: Time_Series_Transformer and Stock_Transformer. Time_Series_Transformer is a general class for all type of time series data, while Stock_Transformer is a sub-class of Time_Series_Transformer. Time_Series_Transformer has different functions for data manipulation, io transformation, and making simple plots. This tutorial will take a quick look at the functions for data manipulation and basic io. For the plot functions, there will be other tutorial to explain. 
+This package provides tools for time series data preprocessing. There are two main components inside the package: Time_Series_Transformer and Stock_Transformer. Time_Series_Transformer is a general class for all types of time series data, while Stock_Transformer is a subclass of Time_Series_Transformer. Time_Series_Transformer has different functions for data manipulation, io transformation, and making simple plots. This tutorial will take a quick look at the functions for data manipulation and basic io. For the plot functions, there will be another tutorial to explain. 
 
 # Time_Series_Transformer
 
-Since all the time series data having time data, Time_Series_Transformer is required to specify time index. The basic time series data is time series data with no special category. However, there a lot of cases that a time series data is associating with categories. For example, inventory data is usually associate with product name or stores, or stock data is having different ticker names or brokers. To address this question, Time_Series_Transformer can specify the main category index. Given the main category index, the data can be manipulated in parallel corresponding to its category.
+Since all the time series data have time data, Time_Series_Transformer is required the specifiaction of index. The basic time series data is time series data with no special category. However, there are many cases time series data is associated with categories. For example, inventory data is usually associated with product names or stores, or stock data has different ticker names or brokers. To address this question, Time_Series_Transformer can specify the main category index. Given the main category index, the data can be manipulated in parallel corresponding to its category.
 
 Here is a simple example to create a Time_Series_Transformer without specifying its category.
 
@@ -53,7 +53,7 @@ trans
 
 
 
-There are two ways to manipulate the data. The first way is use the pre-made functions, and the second way is to use the transform function and provide your custom function. There are six pre-made functions including make_lag, make_lead, make_lag_sequence, make_lead_sequence, and make_stack_sequence. In the following demonstration, we will show each of the pre-made functions.
+There are two ways to manipulate the data. The first way is uses the pre-made functions, and the second way is to use the transform function and provide your custom function. There are six pre-made functions including make_lag, make_lead, make_lag_sequence, make_lead_sequence, and make_stack_sequence. In the following demonstration, we will show each of the pre-made functions.
 
 ### Pre-made functions
 make_lag and make_lead functions are going to create lag/lead data for input columns. This type of manipulation could be useful for machine learning.
@@ -142,9 +142,9 @@ print(trans.to_pandas())
 
 ### Custom Functions
 
-To use the transform function, you have to create your custom functions. The input data will be passed as dict of list, and the output data should be either pandas DataFrame, pandas Series, numpy ndArray or list. Note, the output length should be in consist with the orignal data length.
+To use the transform function, you have to create your custom functions. The input data will be passed as a dictionary of lists, and the output data should be either pandas DataFrame, pandas Series, numpy ndArray or list. Note that the output length should be consistent with the original data length.
 
-For exmaple, this function takes input dictionary data and sum them up. The final output is a list.
+For example, this function takes input dictionary data and sums them up. The final output is a list.
 
 
 ```python
@@ -179,7 +179,7 @@ print(trans.to_pandas())
     4     5      5     10      15
     
 
-The following example will output as pandas DataFrame and also takes additional parameters. Note: since pandas already has column name, the new name will automatically beocme suffix.
+The following example will output as a pandas DataFrame and also takes additional parameters. Note: since pandas already has column names, the new name will automatically become suffixes.
 
 
 ```python
@@ -216,9 +216,9 @@ print(trans.to_pandas())
 
 ### Data with Category
 
-Since time series data could be associated with different category, Time_Series_Transformer can specify the mainCategoryCol parameter to point out the main category. This class only provide one columns for main category because multiple dimensions can be aggregated into a new column as main category.
+Since time series data can be associated with different categories, Time_Series_Transformer can specify the mainCategoryCol parameter to indicate the main category. This class only provides one column for the main category because multiple dimensions can be aggregated into a new column as main category.
 
-The following example has one category with two type a and b. Each of them has some overlaped and different timestamp.
+The following example has one category with two types a and b. Each of them has some overlapping and different timestamps.
 
 
 ```python
@@ -256,7 +256,7 @@ trans
 
 
 
-Since we specify the main category column, data manipulation functions can use n_jobs to execute the function in parallel. The parallel execution is with joblib implmentation (https://joblib.readthedocs.io/en/latest/). 
+Since we specify the main category column, data manipulation functions can use n_jobs to execute the function in parallel. The parallel execution is implemented using with joblib. (https://joblib.readthedocs.io/en/latest/). 
 
 
 ```python
@@ -290,7 +290,7 @@ print(trans.to_pandas())
     [Parallel(n_jobs=2)]: Done   2 out of   2 | elapsed:    3.6s finished
     
 
-To further support the category, there are two functions to deal with different time length data: pad_different_category_time and remove_different_category_time. The first function is padding the different length into same length, while the other is remove different timestamp.
+To further support the categories, there are two functions to deal with different time lengths data: pad_different_category_time and remove_different_category_time. The first function is padding the different length to the same length, while the other is removing different timestamps.
 
 
 ```python
@@ -333,7 +333,7 @@ print(trans.to_pandas())
 
 ## IO
 
-IO is a huge component for this package. The current version support pandas DataFrame, numpy ndArray, Apache Arrow Table, Apache Feather, and Apache Parquet. All those io can specify whether to expand category or time for the export format. In this demo, we will show numpy and pandas. Also, Transformer can combine make_label function and sepLabel parameter inside of export to seperate data and label.
+IO is a significant component for this package. The current version supports pandas DataFrame, numpy ndArray, Apache Arrow Table, Apache Feather, and Apache Parquet. All these io can specify whether to expand the category or time for the export format. In this demo, we will show numpy and pandas. Additionally, transformer can combine make_label function and sepLabel parameter inside of export to separate data and labels.
 
 ### pandas
 
@@ -578,9 +578,9 @@ print(y)
 
 # Stock_Transformer
 
-Stock_Transformer is a subclass of Time_Series_Transformer. Hence, all the function demonstrated in Time_Series_Transformer canbe used in Stock_Transformer. The differences for Stock_Transformer is that it is required to specify High, Low, Open, Close, Volume columns. Besides these information, it has pandas-ta strategy implmentation to create technical indicator (https://github.com/twopirllc/pandas-ta). Moreover, the io class for Stock_Transformer support yfinance and investpy. We can directly extract data from these api.
+Stock_Transformer is a subclass of Time_Series_Transformer. Hence, all the functions demonstrated in Time_Series_Transformer can be used in Stock_Transformer. The differences for Stock_Transformer are that it requires specifying the High, Low, Open, Close, Volume columns. Besides this information, it has pandas-ta strategy implementation to create technical indicators (https://github.com/twopirllc/pandas-ta). Moreover, the io class for Stock_Transformer supports finance and investpy. We can directly extract data from these API.
 
-### create technical indicator
+### Create technical indicator
 
 
 ```python
